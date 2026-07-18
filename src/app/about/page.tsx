@@ -18,27 +18,27 @@ export default function AboutPage() {
 
         <div className="space-y-6 font-sans text-base leading-relaxed text-ink md:text-[17px] md:leading-[1.65]">
           <p>
-            OFF_COURSE is a London-based studio founded by Yuming Chien, working
-            across large-scale murals and digital product design. The
-            studio&apos;s practice moves between two disciplines that are usually
-            kept apart — public-facing art and the unglamorous digital
-            infrastructure a small business actually needs — treating both as the
-            same problem: how do you make something people notice, trust, and
-            want to come back to.
+            OFF_COURSE is a London creative agency founded by Yuming Chien,
+            working across visual and systems. The practice is organised in two
+            modes — Work for commissioned projects, and Playground for
+            self-initiated experiments — and two disciplines that stay in
+            conversation: large-scale visual work, and the digital infrastructure
+            a small business actually needs.
           </p>
           <p>
-            On the mural side, the studio paints storefronts, interiors, and
-            public walls directly for shop owners and brands who want their space
-            to say something before a single word is read. On the digital side,
-            the studio designs and builds websites, booking systems, and
-            lightweight internal tools for the same kind of independent
-            businesses — the people who need something that works on day one and
-            doesn&apos;t need an agency retainer to maintain.
+            On the visual side, the studio paints storefronts, interiors and
+            public walls for shop owners and brands who want their space to say
+            something before a single word is read. On the systems side, the
+            studio designs and builds websites, booking tools and lightweight
+            internal products for the same kind of independent businesses — the
+            people who need something that works on day one and doesn&apos;t need
+            an agency retainer to maintain.
           </p>
           <p>
-            Both sides of the studio start from the same place: a sketch, a
-            color, and a question about what the space or the business is
-            actually trying to say.
+            Work is where those disciplines meet a brief. Playground is where
+            they meet a hunch. Both start from the same place: a sketch, a color,
+            and a question about what the space or the business is actually
+            trying to say.
           </p>
           <p>
             Get in touch:{" "}

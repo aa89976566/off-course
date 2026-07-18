@@ -1,8 +1,20 @@
 # OFF_COURSE
 
-London studio website — murals + digital systems.
+London creative agency — visual + systems, organised as Work / Playground.
 
 **Tagline:** Making things on purpose, off the beaten path.
+
+## Information architecture
+
+| Stream | Meaning |
+|--------|---------|
+| **Work** | Commissioned projects |
+| **Playground** | Self-initiated experiments |
+
+| Discipline | Meaning |
+|------------|---------|
+| **Visual** | Murals, storefronts, installations |
+| **Systems** | Websites, booking tools, internal products |
 
 ## Stack
 
@@ -22,14 +34,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Content
 
-Replace placeholder imagery in `/public/murals` and `/public/digital` with real photography/screenshots, then update metadata in `/data/projects.json`.
+Replace placeholder imagery in `/public/murals` and `/public/digital` with real photography/screenshots, then update metadata in `/data/projects.json` (`stream` + `discipline` per project).
 
 Before launch, swap:
 
 - Domain / email (`hello@offcourse.studio`)
 - Instagram handle (`@offcourse.studio`)
-- 3–6 real mural projects
-- 3–6 real digital case studies
+- Real Work + Playground projects across Visual and Systems
 
 ## Design rules
 

@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 
 const NAV = [
-  { href: "/murals", label: "MURALS" },
-  { href: "/digital", label: "DIGITAL" },
+  { href: "/work", label: "WORK" },
+  { href: "/playground", label: "PLAYGROUND" },
   { href: "/about", label: "ABOUT" },
   { href: "/contact", label: "CONTACT" },
 ];

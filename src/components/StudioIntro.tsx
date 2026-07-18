@@ -9,24 +9,23 @@ export function StudioIntro() {
           <LogoMark className="text-3xl md:text-5xl" />
         </h2>
         <p className="font-sans text-base leading-relaxed text-ink md:text-[17px] md:leading-[1.65]">
-          A London studio working in two mediums: paint and code. We hand-paint
-          murals for shops, restaurants and public spaces, and we design the
-          websites and back-end systems that keep those same businesses running.
-          One studio, two outputs, the same instinct for color, pattern and
-          clarity.
+          A London creative agency working across visual and systems. We paint
+          walls and build the digital infrastructure shops need to run — then we
+          keep a playground for the experiments that don&apos;t start with a
+          brief. One studio, two practices, two modes of making.
         </p>
         <div className="mt-10 flex flex-wrap gap-8">
           <Link
-            href="/murals"
+            href="/work"
             className="font-display text-sm tracking-nav text-ink hover:text-accent"
           >
-            SEE THE WALLS
+            SEE THE WORK
           </Link>
           <Link
-            href="/digital"
+            href="/playground"
             className="font-display text-sm tracking-nav text-ink hover:text-accent"
           >
-            SEE THE SYSTEMS
+            SEE THE PLAYGROUND
           </Link>
         </div>
       </div>

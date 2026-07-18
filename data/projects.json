@@ -1,12 +1,15 @@
 {
-  "murals": [
+  "projects": [
     {
       "slug": "shoreditch-facade",
       "title": "SHOREDITCH FAÇADE",
+      "stream": "work",
+      "discipline": "visual",
       "year": "2025",
       "type": "Storefront Mural",
       "materials": "Exterior paint, spray paint",
       "location": "Shoreditch, London, UK",
+      "stack": null,
       "client": "for East Street Market",
       "accent": "#FF5A36",
       "cover": "/murals/shoreditch-1.jpg",
@@ -17,92 +20,14 @@
       ]
     },
     {
-      "slug": "borough-market-wall",
-      "title": "BOROUGH MARKET WALL",
-      "year": "2025",
-      "type": "Public Wall",
-      "materials": "Exterior paint",
-      "location": "Borough, London, UK",
-      "client": "for Borough Market",
-      "accent": "#FF3D7F",
-      "cover": "/murals/borough-1.jpg",
-      "images": [
-        "/murals/borough-1.jpg",
-        "/murals/borough-2.jpg",
-        "/murals/borough-3.jpg"
-      ]
-    },
-    {
-      "slug": "camden-interior",
-      "title": "CAMDEN INTERIOR",
-      "year": "2024",
-      "type": "Interior Mural",
-      "materials": "Interior acrylic, spray paint",
-      "location": "Camden, London, UK",
-      "client": "for Northside Café",
-      "accent": "#FF6B00",
-      "cover": "/murals/camden-1.jpg",
-      "images": [
-        "/murals/camden-1.jpg",
-        "/murals/camden-2.jpg",
-        "/murals/camden-3.jpg"
-      ]
-    },
-    {
-      "slug": "hackney-courtyard",
-      "title": "HACKNEY COURTYARD",
-      "year": "2024",
-      "type": "Public Wall",
-      "materials": "Exterior paint, rollers",
-      "location": "Hackney, London, UK",
-      "client": null,
-      "accent": "#7C4DFF",
-      "cover": "/murals/hackney-1.jpg",
-      "images": [
-        "/murals/hackney-1.jpg",
-        "/murals/hackney-2.jpg",
-        "/murals/hackney-3.jpg"
-      ]
-    },
-    {
-      "slug": "soho-storefront",
-      "title": "SOHO STOREFRONT",
-      "year": "2024",
-      "type": "Storefront Mural",
-      "materials": "Exterior paint, spray paint",
-      "location": "Soho, London, UK",
-      "client": "for Violet Records",
-      "accent": "#FF1744",
-      "cover": "/murals/soho-1.jpg",
-      "images": [
-        "/murals/soho-1.jpg",
-        "/murals/soho-2.jpg",
-        "/murals/soho-3.jpg"
-      ]
-    },
-    {
-      "slug": "brixton-arcade",
-      "title": "BRIXTON ARCADE",
-      "year": "2023",
-      "type": "Installation",
-      "materials": "Exterior paint, vinyl accents",
-      "location": "Brixton, London, UK",
-      "client": "for Arcade Collective",
-      "accent": "#FF6F00",
-      "cover": "/murals/brixton-1.jpg",
-      "images": [
-        "/murals/brixton-1.jpg",
-        "/murals/brixton-2.jpg",
-        "/murals/brixton-3.jpg"
-      ]
-    }
-  ],
-  "digital": [
-    {
       "slug": "shop-x-booking",
       "title": "SHOP X — BOOKING SYSTEM",
+      "stream": "work",
+      "discipline": "systems",
       "year": "2025",
       "type": "Booking system",
+      "materials": null,
+      "location": null,
       "stack": "Next.js, Stripe",
       "client": "for Shop X",
       "accent": "#FF5A36",
@@ -114,25 +39,33 @@
       ]
     },
     {
-      "slug": "atelier-north",
-      "title": "ATELIER NORTH",
+      "slug": "borough-market-wall",
+      "title": "BOROUGH MARKET WALL",
+      "stream": "work",
+      "discipline": "visual",
       "year": "2025",
-      "type": "Brand website + CMS",
-      "stack": "Next.js, Sanity",
-      "client": "for Atelier North",
-      "accent": "#7C4DFF",
-      "cover": "/digital/atelier-1.jpg",
+      "type": "Public Wall",
+      "materials": "Exterior paint",
+      "location": "Borough, London, UK",
+      "stack": null,
+      "client": "for Borough Market",
+      "accent": "#FF3D7F",
+      "cover": "/murals/borough-1.jpg",
       "images": [
-        "/digital/atelier-1.jpg",
-        "/digital/atelier-2.jpg",
-        "/digital/atelier-3.jpg"
+        "/murals/borough-1.jpg",
+        "/murals/borough-2.jpg",
+        "/murals/borough-3.jpg"
       ]
     },
     {
       "slug": "green-lane-market",
       "title": "GREEN LANE MARKET",
+      "stream": "work",
+      "discipline": "systems",
       "year": "2024",
       "type": "E-commerce site",
+      "materials": null,
+      "location": null,
       "stack": "Shopify, custom app",
       "client": "for Green Lane Market",
       "accent": "#00A86B",
@@ -144,25 +77,71 @@
       ]
     },
     {
-      "slug": "noon-studio",
-      "title": "NOON STUDIO",
+      "slug": "camden-interior",
+      "title": "CAMDEN INTERIOR",
+      "stream": "work",
+      "discipline": "visual",
       "year": "2024",
-      "type": "Brand website + CMS",
-      "stack": "Next.js, MDX",
-      "client": "for Noon Studio",
-      "accent": "#FF3D7F",
-      "cover": "/digital/noon-1.jpg",
+      "type": "Interior Mural",
+      "materials": "Interior acrylic, spray paint",
+      "location": "Camden, London, UK",
+      "stack": null,
+      "client": "for Northside Café",
+      "accent": "#FF6B00",
+      "cover": "/murals/camden-1.jpg",
       "images": [
-        "/digital/noon-1.jpg",
-        "/digital/noon-2.jpg",
-        "/digital/noon-3.jpg"
+        "/murals/camden-1.jpg",
+        "/murals/camden-2.jpg",
+        "/murals/camden-3.jpg"
+      ]
+    },
+    {
+      "slug": "atelier-north",
+      "title": "ATELIER NORTH",
+      "stream": "work",
+      "discipline": "systems",
+      "year": "2025",
+      "type": "Brand website + CMS",
+      "materials": null,
+      "location": null,
+      "stack": "Next.js, Sanity",
+      "client": "for Atelier North",
+      "accent": "#7C4DFF",
+      "cover": "/digital/atelier-1.jpg",
+      "images": [
+        "/digital/atelier-1.jpg",
+        "/digital/atelier-2.jpg",
+        "/digital/atelier-3.jpg"
+      ]
+    },
+    {
+      "slug": "soho-storefront",
+      "title": "SOHO STOREFRONT",
+      "stream": "work",
+      "discipline": "visual",
+      "year": "2024",
+      "type": "Storefront Mural",
+      "materials": "Exterior paint, spray paint",
+      "location": "Soho, London, UK",
+      "stack": null,
+      "client": "for Violet Records",
+      "accent": "#FF1744",
+      "cover": "/murals/soho-1.jpg",
+      "images": [
+        "/murals/soho-1.jpg",
+        "/murals/soho-2.jpg",
+        "/murals/soho-3.jpg"
       ]
     },
     {
       "slug": "ledger-house",
       "title": "LEDGER HOUSE",
+      "stream": "work",
+      "discipline": "systems",
       "year": "2024",
       "type": "Internal tool",
+      "materials": null,
+      "location": null,
       "stack": "Next.js, Postgres",
       "client": "for Ledger House",
       "accent": "#2979FF",
@@ -174,12 +153,73 @@
       ]
     },
     {
-      "slug": "kiln-ceramics",
-      "title": "KILN CERAMICS",
+      "slug": "hackney-courtyard",
+      "title": "HACKNEY COURTYARD",
+      "stream": "playground",
+      "discipline": "visual",
+      "year": "2024",
+      "type": "Self-initiated wall",
+      "materials": "Exterior paint, rollers",
+      "location": "Hackney, London, UK",
+      "stack": null,
+      "client": null,
+      "accent": "#7C4DFF",
+      "cover": "/murals/hackney-1.jpg",
+      "images": [
+        "/murals/hackney-1.jpg",
+        "/murals/hackney-2.jpg",
+        "/murals/hackney-3.jpg"
+      ]
+    },
+    {
+      "slug": "noon-studio",
+      "title": "NOON — TYPE TOOL",
+      "stream": "playground",
+      "discipline": "systems",
+      "year": "2024",
+      "type": "Prototype",
+      "materials": null,
+      "location": null,
+      "stack": "Next.js, canvas",
+      "client": null,
+      "accent": "#FF3D7F",
+      "cover": "/digital/noon-1.jpg",
+      "images": [
+        "/digital/noon-1.jpg",
+        "/digital/noon-2.jpg",
+        "/digital/noon-3.jpg"
+      ]
+    },
+    {
+      "slug": "brixton-arcade",
+      "title": "BRIXTON ARCADE",
+      "stream": "playground",
+      "discipline": "visual",
       "year": "2023",
-      "type": "E-commerce site",
-      "stack": "Shopify, custom theme",
-      "client": "for Kiln Ceramics",
+      "type": "Installation study",
+      "materials": "Exterior paint, vinyl accents",
+      "location": "Brixton, London, UK",
+      "stack": null,
+      "client": null,
+      "accent": "#FF6F00",
+      "cover": "/murals/brixton-1.jpg",
+      "images": [
+        "/murals/brixton-1.jpg",
+        "/murals/brixton-2.jpg",
+        "/murals/brixton-3.jpg"
+      ]
+    },
+    {
+      "slug": "kiln-ceramics",
+      "title": "KILN — PATTERN ENGINE",
+      "stream": "playground",
+      "discipline": "systems",
+      "year": "2023",
+      "type": "Experiment",
+      "materials": null,
+      "location": null,
+      "stack": "WebGL, custom shaders",
+      "client": null,
       "accent": "#FF6F00",
       "cover": "/digital/kiln-1.jpg",
       "images": [

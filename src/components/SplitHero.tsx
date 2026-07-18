@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, type MouseEvent } from "react";
 
-type Side = "murals" | "digital" | null;
+type Side = "work" | "playground" | null;
 
 export function SplitHero() {
   const [hovered, setHovered] = useState<Side>(null);
@@ -29,10 +29,10 @@ export function SplitHero() {
     my.set(y * 12);
   };
 
-  const muralsGrow =
-    hovered === "murals" ? 1.45 : hovered === "digital" ? 0.7 : 1;
-  const digitalGrow =
-    hovered === "digital" ? 1.45 : hovered === "murals" ? 0.7 : 1;
+  const workGrow =
+    hovered === "work" ? 1.45 : hovered === "playground" ? 0.7 : 1;
+  const playGrow =
+    hovered === "playground" ? 1.45 : hovered === "work" ? 0.7 : 1;
 
   return (
     <section
@@ -44,7 +44,6 @@ export function SplitHero() {
         my.set(0);
       }}
     >
-      {/* Brief white preload */}
       <motion.div
         className="pointer-events-none absolute inset-0 z-20 bg-paper"
         initial={{ opacity: 1 }}
@@ -55,19 +54,19 @@ export function SplitHero() {
       <div className="flex h-full w-full flex-col md:flex-row">
         <motion.div
           className="relative min-h-0 basis-0 overflow-hidden"
-          animate={{ flexGrow: muralsGrow }}
+          animate={{ flexGrow: workGrow }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          onMouseEnter={() => setHovered("murals")}
-          style={{ opacity: hovered === "digital" ? 0.55 : 1, flexGrow: 1 }}
+          onMouseEnter={() => setHovered("work")}
+          style={{ opacity: hovered === "playground" ? 0.55 : 1, flexGrow: 1 }}
         >
-          <Link href="/murals" className="absolute inset-0 block">
+          <Link href="/work" className="absolute inset-0 block">
             <motion.div
               className="absolute inset-[-4%]"
               style={{ x: springX, y: springY }}
             >
               <Image
                 src="/murals/hero.jpg"
-                alt="OFF_COURSE mural work"
+                alt="OFF_COURSE commissioned work"
                 fill
                 priority
                 className="object-cover"
@@ -76,26 +75,26 @@ export function SplitHero() {
             </motion.div>
             <div className="absolute inset-0 bg-ink/10" />
             <span className="absolute bottom-5 left-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:left-6 md:text-base">
-              MURALS →
+              WORK →
             </span>
           </Link>
         </motion.div>
 
         <motion.div
           className="relative min-h-0 basis-0 overflow-hidden"
-          animate={{ flexGrow: digitalGrow }}
+          animate={{ flexGrow: playGrow }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          onMouseEnter={() => setHovered("digital")}
-          style={{ opacity: hovered === "murals" ? 0.55 : 1, flexGrow: 1 }}
+          onMouseEnter={() => setHovered("playground")}
+          style={{ opacity: hovered === "work" ? 0.55 : 1, flexGrow: 1 }}
         >
-          <Link href="/digital" className="absolute inset-0 block">
+          <Link href="/playground" className="absolute inset-0 block">
             <motion.div
               className="absolute inset-[-4%]"
               style={{ x: springX, y: springY }}
             >
               <Image
                 src="/digital/hero.jpg"
-                alt="OFF_COURSE digital work"
+                alt="OFF_COURSE playground experiments"
                 fill
                 priority
                 className="object-cover"
@@ -104,7 +103,7 @@ export function SplitHero() {
             </motion.div>
             <div className="absolute inset-0 bg-ink/15" />
             <span className="absolute bottom-5 right-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:right-6 md:text-base">
-              DIGITAL →
+              PLAYGROUND →
             </span>
           </Link>
         </motion.div>

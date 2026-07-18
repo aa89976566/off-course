@@ -1,58 +1,44 @@
 import projectsData from "../../data/projects.json";
 
-export type ProjectCategory = "murals" | "digital";
+export type ProjectStream = "work" | "playground";
+export type Discipline = "visual" | "systems";
 
-export type MuralProject = {
+export type Project = {
   slug: string;
   title: string;
+  stream: ProjectStream;
+  discipline: Discipline;
   year: string;
   type: string;
-  materials: string;
-  location: string;
+  materials: string | null;
+  location: string | null;
+  stack: string | null;
   client: string | null;
   accent: string;
   cover: string;
   images: string[];
 };
 
-export type DigitalProject = {
-  slug: string;
-  title: string;
-  year: string;
-  type: string;
-  stack: string;
-  client: string | null;
-  accent: string;
-  cover: string;
-  images: string[];
-};
-
-export type Project = MuralProject | DigitalProject;
-
-export function getMurals(): MuralProject[] {
-  return projectsData.murals;
+export function getAllProjects(): Project[] {
+  return projectsData.projects as Project[];
 }
 
-export function getDigital(): DigitalProject[] {
-  return projectsData.digital;
-}
-
-export function getProjects(category: ProjectCategory): Project[] {
-  return category === "murals" ? getMurals() : getDigital();
+export function getProjectsByStream(stream: ProjectStream): Project[] {
+  return getAllProjects().filter((p) => p.stream === stream);
 }
 
 export function getProject(
-  category: ProjectCategory,
+  stream: ProjectStream,
   slug: string
 ): Project | undefined {
-  return getProjects(category).find((p) => p.slug === slug);
+  return getProjectsByStream(stream).find((p) => p.slug === slug);
 }
 
 export function getAdjacentProjects(
-  category: ProjectCategory,
+  stream: ProjectStream,
   slug: string
 ): { prev: Project | null; next: Project | null } {
-  const list = getProjects(category);
+  const list = getProjectsByStream(stream);
   const index = list.findIndex((p) => p.slug === slug);
   if (index === -1) return { prev: null, next: null };
   return {
@@ -61,10 +47,10 @@ export function getAdjacentProjects(
   };
 }
 
-export function isMural(project: Project): project is MuralProject {
-  return "materials" in project;
+export function disciplineLabel(discipline: Discipline): string {
+  return discipline === "visual" ? "VISUAL" : "SYSTEMS";
 }
 
-export function isDigital(project: Project): project is DigitalProject {
-  return "stack" in project;
+export function streamLabel(stream: ProjectStream): string {
+  return stream === "work" ? "WORK" : "PLAYGROUND";
 }
