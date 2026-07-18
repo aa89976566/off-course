@@ -5,11 +5,11 @@ import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 
 const NAV = [
-  { href: "/", label: "HOME", kind: "plain" as const },
   { href: "/get-lost", label: "GET LOST", kind: "drift" as const },
   { href: "/get-found", label: "GET FOUND", kind: "arrive" as const },
+  { href: "/logbook", label: "LOGBOOK", kind: "plain" as const },
   { href: "/about", label: "ABOUT", kind: "plain" as const },
-  { href: "/contact", label: "CONTACT", kind: "plain" as const },
+  { href: "/start", label: "START", kind: "plain" as const },
 ];
 
 export function Header() {
@@ -20,50 +20,26 @@ export function Header() {
       <div className="flex h-14 items-center justify-between px-4 md:h-16 md:px-6">
         <Logo className="text-lg md:text-xl" blink />
 
-        <div className="flex items-center gap-4 md:gap-7">
-          <nav className="hidden md:block" aria-label="Primary">
-            <ul className="flex items-center gap-5 lg:gap-7">
-              {NAV.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname === item.href ||
-                      pathname.startsWith(`${item.href}/`);
-                return (
-                  <li key={item.href}>
-                    <NavLink
-                      href={item.href}
-                      label={item.label}
-                      active={active}
-                      className="text-[11px]"
-                      drift={item.kind === "drift"}
-                      arrive={item.kind === "arrive"}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <a
-              href="https://instagram.com/offcourse.studio"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="text-ink hover:text-accent"
-            >
-              <InstagramIcon />
-            </a>
-            <a
-              href="mailto:hello@offcourse.studio"
-              aria-label="Email"
-              className="text-ink hover:text-accent"
-            >
-              <EmailIcon />
-            </a>
-          </div>
-        </div>
+        <nav className="hidden md:block" aria-label="Primary">
+          <ul className="flex items-center gap-5 lg:gap-7">
+            {NAV.map((item) => {
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item.href}>
+                  <NavLink
+                    href={item.href}
+                    label={item.label}
+                    active={active}
+                    className="text-[11px]"
+                    drift={item.kind === "drift"}
+                    arrive={item.kind === "arrive"}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </div>
 
       <nav
@@ -72,9 +48,7 @@ export function Header() {
       >
         {NAV.map((item) => {
           const active =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <NavLink
               key={item.href}
@@ -89,45 +63,5 @@ export function Header() {
         })}
       </nav>
     </header>
-  );
-}
-
-function InstagramIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect
-        x="3"
-        y="3"
-        width="18"
-        height="18"
-        rx="5"
-        stroke="currentColor"
-        strokeWidth="1.75"
-      />
-      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.75" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
-    </svg>
-  );
-}
-
-function EmailIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="1"
-        stroke="currentColor"
-        strokeWidth="1.75"
-      />
-      <path
-        d="M4 7l8 6 8-6"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

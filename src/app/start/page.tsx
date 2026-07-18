@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Start",
+  description: "Start the detour.",
 };
 
-export default function ContactPage() {
+export default function StartPage() {
   return (
     <article className="px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-xl">
         <h1 className="mb-8 font-display text-2xl tracking-nav text-ink md:text-4xl">
-          CONTACT
+          START THE DETOUR
         </h1>
         <p className="max-w-md font-sans text-base leading-relaxed text-ink md:text-[17px]">
-          A wall, a system, or both. Tell us where you are.
+          A wall. A system. Or both.
+          <br />
+          Tell us where you are.
         </p>
 
         <div className="mt-10 space-y-3 font-sans text-base text-ink">

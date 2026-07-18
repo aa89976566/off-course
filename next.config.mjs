@@ -5,6 +5,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: "/contact", destination: "/start", permanent: false },
       { source: "/work", destination: "/get-lost", permanent: false },
       { source: "/work/:path*", destination: "/get-lost", permanent: false },
       { source: "/playground", destination: "/get-found", permanent: false },

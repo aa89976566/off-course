@@ -1,32 +1,25 @@
 # OFF_COURSE
 
-London studio website.
+**GO OFF COURSE.**
+Sometimes getting lost is how brands get found.
 
-**Idea:** Sometimes getting lost is how brands get found.
+## Core idea
 
-## Navigation
+GET LOST / GET FOUND is not just navigation — it is the studio slogan.
 
-| Route | Meaning |
-|-------|---------|
-| `/get-lost` | Physical interventions — murals, installation, spatial branding |
-| `/get-found` | Systems after discovery — websites, booking, CRM, automation |
+| Path | Meaning |
+|------|---------|
+| `/get-lost` | Physical interventions |
+| `/get-found` | Systems after discovery |
+| `/logbook` | Chronological record of detours |
+| `/about` | Studio |
+| `/start` | Enquiry |
 
 ## Stack
 
-- Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- Framer Motion
-- Archivo Black / Space Grotesk
-- Project data in `/data/projects.json`
-
-## Develop
+Next.js 14 · TypeScript · Tailwind · Framer Motion · Archivo Black / Space Grotesk
 
 ```bash
 npm install
 npm run dev
 ```
-
-## Design rules
-
-- UI chrome is black & white only
-- Color comes from project imagery
-- Navigation is part of the manifesto — not a service menu

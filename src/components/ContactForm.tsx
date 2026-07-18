@@ -55,14 +55,14 @@ export function ContactForm() {
           required
           rows={4}
           className="input-line mt-1 resize-none"
-          placeholder="Wall or website — tell us what you're trying to say."
+          placeholder="A wall, a system — or where you're stuck."
         />
       </label>
       <button
         type="submit"
         className="font-display text-sm tracking-nav text-ink hover:text-accent"
       >
-        SEND →
+        START →
       </button>
     </form>
   );
