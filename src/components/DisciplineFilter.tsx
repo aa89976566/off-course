@@ -25,7 +25,7 @@ export function DisciplineFilter({ projects, stream }: DisciplineFilterProps) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-5 border-b border-ink/10 px-4 pb-4 md:px-6">
+      <div className="flex flex-wrap gap-5 border-b border-ink/10 px-4 pb-5 pt-2 md:px-6">
         {FILTERS.map((item) => (
           <button
             key={item.id}
@@ -39,7 +39,13 @@ export function DisciplineFilter({ projects, stream }: DisciplineFilterProps) {
           </button>
         ))}
       </div>
-      <ProjectGrid projects={filtered} stream={stream} />
+      {filtered.length === 0 ? (
+        <p className="px-4 py-16 font-sans text-sm text-mute md:px-6">
+          No projects in this filter yet.
+        </p>
+      ) : (
+        <ProjectGrid projects={filtered} stream={stream} />
+      )}
     </div>
   );
 }

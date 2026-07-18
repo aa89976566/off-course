@@ -16,15 +16,15 @@ export function LogoMark({
 }) {
   return (
     <span
-      className={`font-display uppercase tracking-logo text-ink ${className}`}
+      className={`inline-flex items-baseline font-display uppercase tracking-logo text-ink ${className}`}
       aria-label="OFF_COURSE"
     >
-      OFF
+      <span>OFF</span>
       <span
-        className={`logo-underscore ${blink ? "cursor-blink" : ""}`}
+        className={`logo-underscore mx-[0.06em] ${blink ? "cursor-blink" : ""}`}
         aria-hidden="true"
       />
-      COURSE
+      <span>COURSE</span>
     </span>
   );
 }

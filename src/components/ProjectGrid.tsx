@@ -19,17 +19,17 @@ export function ProjectGrid({ projects, stream }: ProjectGridProps) {
         <Link
           key={project.slug}
           href={`/${stream}/${project.slug}`}
-          className="group block"
+          className="group flex min-w-0 flex-col overflow-hidden"
         >
-          <div className="relative aspect-[4/3] overflow-hidden bg-ink/5">
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink/10">
             <Image
               src={project.cover}
-              alt={project.title}
+              alt=""
               fill
-              className="object-cover transition-none group-hover:scale-[1.02]"
-              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+              className="object-cover transition-transform duration-0 group-hover:scale-[1.02]"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
-            <span className="absolute left-3 top-3 font-display text-[10px] tracking-nav text-paper mix-blend-difference">
+            <span className="pointer-events-none absolute left-3 top-3 z-10 bg-paper px-1.5 py-0.5 font-display text-[10px] tracking-nav text-ink">
               {disciplineLabel(project.discipline)}
             </span>
           </div>

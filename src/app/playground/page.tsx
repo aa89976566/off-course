@@ -11,7 +11,7 @@ export default function PlaygroundPage() {
 
   return (
     <div>
-      <header className="px-4 py-12 md:px-6 md:py-16">
+      <header className="px-4 pb-8 pt-10 md:px-6 md:pb-10 md:pt-14">
         <h1 className="font-display text-3xl tracking-nav text-ink md:text-5xl">
           PLAYGROUND
         </h1>

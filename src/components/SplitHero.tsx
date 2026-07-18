@@ -36,7 +36,7 @@ export function SplitHero() {
 
   return (
     <section
-      className="relative h-[100svh] w-full overflow-hidden bg-paper pt-24 md:pt-16"
+      className="relative h-[100svh] w-full overflow-hidden bg-paper pt-[6.5rem] md:pt-16"
       onMouseMove={onMove}
       onMouseLeave={() => {
         setHovered(null);

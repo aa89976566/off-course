@@ -15,29 +15,32 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-paper">
-      <div className="flex h-14 items-center justify-between border-b border-ink/10 px-4 md:h-16 md:px-6">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-paper">
+      <div className="flex h-14 items-center justify-between px-4 md:h-16 md:px-6">
         <Logo className="text-lg md:text-xl" blink />
 
-        <nav className="flex items-center gap-4 md:gap-7">
-          <ul className="hidden items-center gap-5 md:flex lg:gap-7">
-            {NAV.map((item) => {
-              const active =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`font-display text-[11px] tracking-nav transition-none ${
-                      active ? "text-accent" : "text-ink hover:text-accent"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="flex items-center gap-4 md:gap-7">
+          <nav className="hidden md:block" aria-label="Primary">
+            <ul className="flex items-center gap-5 lg:gap-7">
+              {NAV.map((item) => {
+                const active =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`font-display text-[11px] tracking-nav ${
+                        active ? "text-accent" : "text-ink hover:text-accent"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
           <div className="flex items-center gap-3">
             <a
@@ -57,10 +60,13 @@ export function Header() {
               <EmailIcon />
             </a>
           </div>
-        </nav>
+        </div>
       </div>
 
-      <nav className="flex h-10 items-center justify-between border-b border-ink/10 px-4 md:hidden">
+      <nav
+        className="flex h-11 items-center justify-between border-t border-ink/10 px-4 md:hidden"
+        aria-label="Primary mobile"
+      >
         {NAV.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);

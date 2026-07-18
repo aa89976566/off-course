@@ -33,15 +33,15 @@ body {
   }
 }
 
-/* Logo underscore as thick graphic bar */
+/* Logo underscore as thick graphic bar / cursor motif */
 .logo-underscore {
   display: inline-block;
-  width: 0.55em;
-  height: 0.14em;
+  width: 0.5em;
+  height: 0.12em;
+  flex-shrink: 0;
   background: currentColor;
-  vertical-align: baseline;
-  margin: 0 0.02em 0.08em;
-  transform: translateY(-0.05em);
+  align-self: flex-end;
+  margin-bottom: 0.18em;
 }
 
 @keyframes ticker {
@@ -55,6 +55,12 @@ body {
 
 .ticker-track {
   animation: ticker 18s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
 }
 
 @keyframes cursor-blink {

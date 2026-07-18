@@ -4,21 +4,24 @@ type ProjectTickerProps = {
 };
 
 export function ProjectTicker({ title, accent }: ProjectTickerProps) {
-  const repeat = Array.from({ length: 8 }, () => title).join(" — ");
+  const unit = `${title} — `;
+  const strip = unit.repeat(6);
 
   return (
     <div
-      className="relative overflow-hidden whitespace-nowrap border-y border-ink/10 py-1.5"
+      className="relative w-full min-w-0 overflow-hidden border-b border-ink/10 py-1.5"
       style={{ backgroundColor: accent }}
+      aria-hidden="true"
     >
-      <div className="ticker-track flex w-max">
-        <span className="pr-8 font-display text-[10px] tracking-nav text-paper md:text-xs">
-          {repeat} —{" "}
+      <div className="ticker-track flex w-max will-change-transform">
+        <span className="shrink-0 pr-4 font-display text-[10px] tracking-nav text-paper md:text-xs">
+          {strip}
         </span>
-        <span className="pr-8 font-display text-[10px] tracking-nav text-paper md:text-xs">
-          {repeat} —{" "}
+        <span className="shrink-0 pr-4 font-display text-[10px] tracking-nav text-paper md:text-xs">
+          {strip}
         </span>
       </div>
+      <span className="sr-only">{title}</span>
     </div>
   );
 }

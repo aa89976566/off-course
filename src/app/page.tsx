@@ -5,7 +5,7 @@ export default function HomePage() {
   return (
     <>
       {/* Home hero is full-bleed under fixed header — override layout padding */}
-      <div className="-mt-24 md:-mt-16">
+      <div className="-mt-[6.5rem] md:-mt-16">
         <SplitHero />
       </div>
       <StudioIntro />
