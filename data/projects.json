@@ -3,8 +3,7 @@
     {
       "slug": "shoreditch-facade",
       "title": "SHOREDITCH FAÇADE",
-      "stream": "work",
-      "discipline": "visual",
+      "stream": "lost",
       "year": "2025",
       "type": "Storefront Mural",
       "materials": "Exterior paint, spray paint",
@@ -20,31 +19,11 @@
       ]
     },
     {
-      "slug": "shop-x-booking",
-      "title": "SHOP X — BOOKING SYSTEM",
-      "stream": "work",
-      "discipline": "systems",
-      "year": "2025",
-      "type": "Booking system",
-      "materials": null,
-      "location": null,
-      "stack": "Next.js, Stripe",
-      "client": "for Shop X",
-      "accent": "#FF5A36",
-      "cover": "/digital/shopx-1.jpg",
-      "images": [
-        "/digital/shopx-1.jpg",
-        "/digital/shopx-2.jpg",
-        "/digital/shopx-3.jpg"
-      ]
-    },
-    {
       "slug": "borough-market-wall",
       "title": "BOROUGH MARKET WALL",
-      "stream": "work",
-      "discipline": "visual",
+      "stream": "lost",
       "year": "2025",
-      "type": "Public Wall",
+      "type": "Public Art",
       "materials": "Exterior paint",
       "location": "Borough, London, UK",
       "stack": null,
@@ -58,31 +37,11 @@
       ]
     },
     {
-      "slug": "green-lane-market",
-      "title": "GREEN LANE MARKET",
-      "stream": "work",
-      "discipline": "systems",
-      "year": "2024",
-      "type": "E-commerce site",
-      "materials": null,
-      "location": null,
-      "stack": "Shopify, custom app",
-      "client": "for Green Lane Market",
-      "accent": "#00A86B",
-      "cover": "/digital/greenlane-1.jpg",
-      "images": [
-        "/digital/greenlane-1.jpg",
-        "/digital/greenlane-2.jpg",
-        "/digital/greenlane-3.jpg"
-      ]
-    },
-    {
       "slug": "camden-interior",
       "title": "CAMDEN INTERIOR",
-      "stream": "work",
-      "discipline": "visual",
+      "stream": "lost",
       "year": "2024",
-      "type": "Interior Mural",
+      "type": "Spatial Branding",
       "materials": "Interior acrylic, spray paint",
       "location": "Camden, London, UK",
       "stack": null,
@@ -96,31 +55,11 @@
       ]
     },
     {
-      "slug": "atelier-north",
-      "title": "ATELIER NORTH",
-      "stream": "work",
-      "discipline": "systems",
-      "year": "2025",
-      "type": "Brand website + CMS",
-      "materials": null,
-      "location": null,
-      "stack": "Next.js, Sanity",
-      "client": "for Atelier North",
-      "accent": "#7C4DFF",
-      "cover": "/digital/atelier-1.jpg",
-      "images": [
-        "/digital/atelier-1.jpg",
-        "/digital/atelier-2.jpg",
-        "/digital/atelier-3.jpg"
-      ]
-    },
-    {
       "slug": "soho-storefront",
       "title": "SOHO STOREFRONT",
-      "stream": "work",
-      "discipline": "visual",
+      "stream": "lost",
       "year": "2024",
-      "type": "Storefront Mural",
+      "type": "Window Painting",
       "materials": "Exterior paint, spray paint",
       "location": "Soho, London, UK",
       "stack": null,
@@ -134,12 +73,101 @@
       ]
     },
     {
+      "slug": "hackney-courtyard",
+      "title": "HACKNEY COURTYARD",
+      "stream": "lost",
+      "year": "2024",
+      "type": "Installation",
+      "materials": "Exterior paint, rollers",
+      "location": "Hackney, London, UK",
+      "stack": null,
+      "client": "for Yard Collective",
+      "accent": "#7C4DFF",
+      "cover": "/murals/hackney-1.jpg",
+      "images": [
+        "/murals/hackney-1.jpg",
+        "/murals/hackney-2.jpg",
+        "/murals/hackney-3.jpg"
+      ]
+    },
+    {
+      "slug": "brixton-arcade",
+      "title": "BRIXTON ARCADE",
+      "stream": "lost",
+      "year": "2023",
+      "type": "Retail Experience",
+      "materials": "Exterior paint, vinyl accents",
+      "location": "Brixton, London, UK",
+      "stack": null,
+      "client": "for Arcade Collective",
+      "accent": "#FF6F00",
+      "cover": "/murals/brixton-1.jpg",
+      "images": [
+        "/murals/brixton-1.jpg",
+        "/murals/brixton-2.jpg",
+        "/murals/brixton-3.jpg"
+      ]
+    },
+    {
+      "slug": "shop-x-booking",
+      "title": "SHOP X — BOOKING",
+      "stream": "found",
+      "year": "2025",
+      "type": "Booking System",
+      "materials": null,
+      "location": null,
+      "stack": "Next.js, Stripe",
+      "client": "for Shop X",
+      "accent": "#FF5A36",
+      "cover": "/digital/shopx-1.jpg",
+      "images": [
+        "/digital/shopx-1.jpg",
+        "/digital/shopx-2.jpg",
+        "/digital/shopx-3.jpg"
+      ]
+    },
+    {
+      "slug": "atelier-north",
+      "title": "ATELIER NORTH",
+      "stream": "found",
+      "year": "2025",
+      "type": "Website",
+      "materials": null,
+      "location": null,
+      "stack": "Next.js, Sanity",
+      "client": "for Atelier North",
+      "accent": "#7C4DFF",
+      "cover": "/digital/atelier-1.jpg",
+      "images": [
+        "/digital/atelier-1.jpg",
+        "/digital/atelier-2.jpg",
+        "/digital/atelier-3.jpg"
+      ]
+    },
+    {
+      "slug": "green-lane-market",
+      "title": "GREEN LANE MARKET",
+      "stream": "found",
+      "year": "2024",
+      "type": "E-commerce",
+      "materials": null,
+      "location": null,
+      "stack": "Shopify, custom app",
+      "client": "for Green Lane Market",
+      "accent": "#00A86B",
+      "cover": "/digital/greenlane-1.jpg",
+      "images": [
+        "/digital/greenlane-1.jpg",
+        "/digital/greenlane-2.jpg",
+        "/digital/greenlane-3.jpg"
+      ]
+    },
+    {
       "slug": "ledger-house",
       "title": "LEDGER HOUSE",
-      "stream": "work",
-      "discipline": "systems",
+      "stream": "found",
       "year": "2024",
-      "type": "Internal tool",
+      "type": "Internal Platform",
       "materials": null,
       "location": null,
       "stack": "Next.js, Postgres",
@@ -153,35 +181,15 @@
       ]
     },
     {
-      "slug": "hackney-courtyard",
-      "title": "HACKNEY COURTYARD",
-      "stream": "playground",
-      "discipline": "visual",
+      "slug": "noon-crm",
+      "title": "NOON — CRM",
+      "stream": "found",
       "year": "2024",
-      "type": "Self-initiated wall",
-      "materials": "Exterior paint, rollers",
-      "location": "Hackney, London, UK",
-      "stack": null,
-      "client": null,
-      "accent": "#7C4DFF",
-      "cover": "/murals/hackney-1.jpg",
-      "images": [
-        "/murals/hackney-1.jpg",
-        "/murals/hackney-2.jpg",
-        "/murals/hackney-3.jpg"
-      ]
-    },
-    {
-      "slug": "noon-studio",
-      "title": "NOON — TYPE TOOL",
-      "stream": "playground",
-      "discipline": "systems",
-      "year": "2024",
-      "type": "Prototype",
+      "type": "CRM",
       "materials": null,
       "location": null,
-      "stack": "Next.js, canvas",
-      "client": null,
+      "stack": "Next.js, Postgres",
+      "client": "for Noon Studio",
       "accent": "#FF3D7F",
       "cover": "/digital/noon-1.jpg",
       "images": [
@@ -191,35 +199,15 @@
       ]
     },
     {
-      "slug": "brixton-arcade",
-      "title": "BRIXTON ARCADE",
-      "stream": "playground",
-      "discipline": "visual",
+      "slug": "kiln-automation",
+      "title": "KILN — AUTOMATION",
+      "stream": "found",
       "year": "2023",
-      "type": "Installation study",
-      "materials": "Exterior paint, vinyl accents",
-      "location": "Brixton, London, UK",
-      "stack": null,
-      "client": null,
-      "accent": "#FF6F00",
-      "cover": "/murals/brixton-1.jpg",
-      "images": [
-        "/murals/brixton-1.jpg",
-        "/murals/brixton-2.jpg",
-        "/murals/brixton-3.jpg"
-      ]
-    },
-    {
-      "slug": "kiln-ceramics",
-      "title": "KILN — PATTERN ENGINE",
-      "stream": "playground",
-      "discipline": "systems",
-      "year": "2023",
-      "type": "Experiment",
+      "type": "Automation",
       "materials": null,
       "location": null,
-      "stack": "WebGL, custom shaders",
-      "client": null,
+      "stack": "Next.js, custom integrations",
+      "client": "for Kiln Ceramics",
       "accent": "#00B0FF",
       "cover": "/digital/kiln-1.jpg",
       "images": [

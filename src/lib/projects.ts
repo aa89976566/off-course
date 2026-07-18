@@ -1,13 +1,11 @@
 import projectsData from "../../data/projects.json";
 
-export type ProjectStream = "work" | "playground";
-export type Discipline = "visual" | "systems";
+export type ProjectStream = "lost" | "found";
 
 export type Project = {
   slug: string;
   title: string;
   stream: ProjectStream;
-  discipline: Discipline;
   year: string;
   type: string;
   materials: string | null;
@@ -17,6 +15,24 @@ export type Project = {
   accent: string;
   cover: string;
   images: string[];
+};
+
+export const STREAM_META: Record<
+  ProjectStream,
+  { href: string; label: string; title: string; line: string }
+> = {
+  lost: {
+    href: "/get-lost",
+    label: "GET LOST",
+    title: "GET LOST",
+    line: "We left the route on purpose.",
+  },
+  found: {
+    href: "/get-found",
+    label: "GET FOUND",
+    title: "GET FOUND",
+    line: "Being found is only the beginning.",
+  },
 };
 
 export function getAllProjects(): Project[] {
@@ -47,10 +63,6 @@ export function getAdjacentProjects(
   };
 }
 
-export function disciplineLabel(discipline: Discipline): string {
-  return discipline === "visual" ? "VISUAL" : "SYSTEMS";
-}
-
-export function streamLabel(stream: ProjectStream): string {
-  return stream === "work" ? "WORK" : "PLAYGROUND";
+export function streamPath(stream: ProjectStream): string {
+  return STREAM_META[stream].href;
 }

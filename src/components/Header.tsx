@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
+import { NavLink } from "./NavLink";
 
 const NAV = [
-  { href: "/work", label: "WORK" },
-  { href: "/playground", label: "PLAYGROUND" },
-  { href: "/about", label: "ABOUT" },
-  { href: "/contact", label: "CONTACT" },
+  { href: "/", label: "HOME", kind: "plain" as const },
+  { href: "/get-lost", label: "GET LOST", kind: "drift" as const },
+  { href: "/get-found", label: "GET FOUND", kind: "arrive" as const },
+  { href: "/about", label: "ABOUT", kind: "plain" as const },
+  { href: "/contact", label: "CONTACT", kind: "plain" as const },
 ];
 
 export function Header() {
@@ -24,18 +25,20 @@ export function Header() {
             <ul className="flex items-center gap-5 lg:gap-7">
               {NAV.map((item) => {
                 const active =
-                  pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`);
+                  item.href === "/"
+                    ? pathname === "/"
+                    : pathname === item.href ||
+                      pathname.startsWith(`${item.href}/`);
                 return (
                   <li key={item.href}>
-                    <Link
+                    <NavLink
                       href={item.href}
-                      className={`font-display text-[11px] tracking-nav ${
-                        active ? "text-accent" : "text-ink hover:text-accent"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
+                      label={item.label}
+                      active={active}
+                      className="text-[11px]"
+                      drift={item.kind === "drift"}
+                      arrive={item.kind === "arrive"}
+                    />
                   </li>
                 );
               })}
@@ -64,22 +67,24 @@ export function Header() {
       </div>
 
       <nav
-        className="flex h-11 items-center justify-between border-t border-ink/10 px-4 md:hidden"
+        className="flex h-11 items-center justify-between gap-2 overflow-x-auto border-t border-ink/10 px-4 md:hidden"
         aria-label="Primary mobile"
       >
         {NAV.map((item) => {
           const active =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
+            item.href === "/"
+              ? pathname === "/"
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
-            <Link
+            <NavLink
               key={item.href}
               href={item.href}
-              className={`font-display text-[10px] tracking-nav ${
-                active ? "text-accent" : "text-ink"
-              }`}
-            >
-              {item.label}
-            </Link>
+              label={item.label}
+              active={active}
+              className="whitespace-nowrap text-[9px]"
+              drift={item.kind === "drift"}
+              arrive={item.kind === "arrive"}
+            />
           );
         })}
       </nav>

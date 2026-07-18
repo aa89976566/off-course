@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, type MouseEvent } from "react";
 
-type Side = "work" | "playground" | null;
+type Side = "lost" | "found" | null;
 
 export function SplitHero() {
   const [hovered, setHovered] = useState<Side>(null);
@@ -29,10 +29,8 @@ export function SplitHero() {
     my.set(y * 12);
   };
 
-  const workGrow =
-    hovered === "work" ? 1.45 : hovered === "playground" ? 0.7 : 1;
-  const playGrow =
-    hovered === "playground" ? 1.45 : hovered === "work" ? 0.7 : 1;
+  const lostGrow = hovered === "lost" ? 1.45 : hovered === "found" ? 0.7 : 1;
+  const foundGrow = hovered === "found" ? 1.45 : hovered === "lost" ? 0.7 : 1;
 
   return (
     <section
@@ -54,19 +52,19 @@ export function SplitHero() {
       <div className="flex h-full w-full flex-col md:flex-row">
         <motion.div
           className="relative min-h-0 basis-0 overflow-hidden"
-          animate={{ flexGrow: workGrow }}
+          animate={{ flexGrow: lostGrow }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          onMouseEnter={() => setHovered("work")}
-          style={{ opacity: hovered === "playground" ? 0.55 : 1, flexGrow: 1 }}
+          onMouseEnter={() => setHovered("lost")}
+          style={{ opacity: hovered === "found" ? 0.55 : 1, flexGrow: 1 }}
         >
-          <Link href="/work" className="absolute inset-0 block">
+          <Link href="/get-lost" className="absolute inset-0 block">
             <motion.div
               className="absolute inset-[-4%]"
               style={{ x: springX, y: springY }}
             >
               <Image
                 src="/murals/hero.jpg"
-                alt="OFF_COURSE commissioned work"
+                alt=""
                 fill
                 priority
                 className="object-cover"
@@ -74,27 +72,31 @@ export function SplitHero() {
               />
             </motion.div>
             <div className="absolute inset-0 bg-ink/10" />
-            <span className="absolute bottom-5 left-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:left-6 md:text-base">
-              WORK →
-            </span>
+            <motion.span
+              className="absolute bottom-5 left-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:left-6 md:text-base"
+              animate={{ x: hovered === "lost" ? 4 : 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              GET LOST →
+            </motion.span>
           </Link>
         </motion.div>
 
         <motion.div
           className="relative min-h-0 basis-0 overflow-hidden"
-          animate={{ flexGrow: playGrow }}
+          animate={{ flexGrow: foundGrow }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          onMouseEnter={() => setHovered("playground")}
-          style={{ opacity: hovered === "work" ? 0.55 : 1, flexGrow: 1 }}
+          onMouseEnter={() => setHovered("found")}
+          style={{ opacity: hovered === "lost" ? 0.55 : 1, flexGrow: 1 }}
         >
-          <Link href="/playground" className="absolute inset-0 block">
+          <Link href="/get-found" className="absolute inset-0 block">
             <motion.div
               className="absolute inset-[-4%]"
               style={{ x: springX, y: springY }}
             >
               <Image
                 src="/digital/hero.jpg"
-                alt="OFF_COURSE playground experiments"
+                alt=""
                 fill
                 priority
                 className="object-cover"
@@ -102,9 +104,16 @@ export function SplitHero() {
               />
             </motion.div>
             <div className="absolute inset-0 bg-ink/15" />
-            <span className="absolute bottom-5 right-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:right-6 md:text-base">
-              PLAYGROUND →
-            </span>
+            <motion.span
+              className="absolute bottom-5 right-4 font-display text-sm tracking-nav text-paper mix-blend-difference md:bottom-8 md:right-6 md:text-base"
+              animate={{
+                opacity: hovered === "found" || hovered === null ? 1 : 0.55,
+                letterSpacing: hovered === "found" ? "0.16em" : "0.12em",
+              }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              GET FOUND →
+            </motion.span>
           </Link>
         </motion.div>
       </div>

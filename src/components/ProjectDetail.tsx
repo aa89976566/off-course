@@ -1,6 +1,5 @@
 import Image from "next/image";
 import {
-  disciplineLabel,
   getAdjacentProjects,
   type Project,
   type ProjectStream,
@@ -20,9 +19,6 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
       <ProjectNav stream={stream} prev={prev} next={next} />
 
       <header className="px-4 py-12 md:px-6 md:py-16">
-        <p className="mb-4 font-display text-[11px] tracking-nav text-mute">
-          {disciplineLabel(project.discipline)}
-        </p>
         <h1 className="max-w-4xl font-display text-3xl tracking-nav text-ink md:text-5xl">
           {project.title}
         </h1>
@@ -67,7 +63,7 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
           <div key={src} className="relative w-full">
             <Image
               src={src}
-              alt={`${project.title} — ${i + 1}`}
+              alt=""
               width={1600}
               height={1200}
               className="h-auto w-full"

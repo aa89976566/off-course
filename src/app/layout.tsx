@@ -23,11 +23,10 @@ export const metadata: Metadata = {
     template: "%s — OFF_COURSE",
   },
   description:
-    "Making things on purpose, off the beaten path. London studio for murals and digital systems.",
+    "Sometimes getting lost is how brands get found. London studio for physical interventions and the systems that follow.",
   openGraph: {
     title: "OFF_COURSE",
-    description:
-      "A London studio working in two mediums: paint and code.",
+    description: "Sometimes getting lost is how brands get found.",
     type: "website",
   },
 };

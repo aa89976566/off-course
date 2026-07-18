@@ -3,29 +3,30 @@ import { LogoMark } from "./Logo";
 
 export function StudioIntro() {
   return (
-    <section className="border-t border-ink/10 bg-paper px-4 py-20 md:px-6 md:py-28">
+    <section className="border-t border-ink/10 bg-paper px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
-        <h2 className="mb-8">
+        <h2 className="mb-10">
           <LogoMark className="text-3xl md:text-5xl" />
         </h2>
-        <p className="font-sans text-base leading-relaxed text-ink md:text-[17px] md:leading-[1.65]">
-          A London creative agency working across visual and systems. We paint
-          walls and build the digital infrastructure shops need to run — then we
-          keep a playground for the experiments that don&apos;t start with a
-          brief. One studio, two practices, two modes of making.
+        <p className="max-w-xl font-display text-2xl leading-tight tracking-tight text-ink md:text-4xl">
+          Sometimes getting lost is how brands get found.
         </p>
-        <div className="mt-10 flex flex-wrap gap-8">
+        <p className="mt-8 max-w-lg font-sans text-base leading-relaxed text-ink md:text-[17px] md:leading-[1.65]">
+          A London studio for physical interventions and the systems that keep
+          brands running after discovery. We take the long way on purpose.
+        </p>
+        <div className="mt-12 flex flex-wrap gap-10">
           <Link
-            href="/work"
+            href="/get-lost"
             className="font-display text-sm tracking-nav text-ink hover:text-accent"
           >
-            SEE THE WORK
+            GET LOST
           </Link>
           <Link
-            href="/playground"
+            href="/get-found"
             className="font-display text-sm tracking-nav text-ink hover:text-accent"
           >
-            SEE THE PLAYGROUND
+            GET FOUND
           </Link>
         </div>
       </div>

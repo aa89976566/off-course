@@ -10,11 +10,10 @@ export default function ContactPage() {
     <article className="px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-xl">
         <h1 className="mb-8 font-display text-2xl tracking-nav text-ink md:text-4xl">
-          GET IN TOUCH
+          CONTACT
         </h1>
-        <p className="font-sans text-base leading-relaxed text-ink md:text-[17px]">
-          Whether it&apos;s a wall or a website — tell us what you&apos;re trying
-          to say.
+        <p className="max-w-md font-sans text-base leading-relaxed text-ink md:text-[17px]">
+          A wall, a system, or both. Tell us where you are.
         </p>
 
         <div className="mt-10 space-y-3 font-sans text-base text-ink">
@@ -27,7 +26,6 @@ export default function ContactPage() {
             </a>
           </p>
           <p>
-            Instagram:{" "}
             <a
               href="https://instagram.com/offcourse.studio"
               target="_blank"

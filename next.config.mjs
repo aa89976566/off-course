@@ -1,16 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Local JPEG assets are served from /public; skip the optimizer so covers
-    // always render (sharp decode via /_next/image was returning null here).
     unoptimized: true,
   },
   async redirects() {
     return [
-      { source: "/murals", destination: "/work", permanent: false },
-      { source: "/murals/:path*", destination: "/work", permanent: false },
-      { source: "/digital", destination: "/work", permanent: false },
-      { source: "/digital/:path*", destination: "/work", permanent: false },
+      { source: "/work", destination: "/get-lost", permanent: false },
+      { source: "/work/:path*", destination: "/get-lost", permanent: false },
+      { source: "/playground", destination: "/get-found", permanent: false },
+      {
+        source: "/playground/:path*",
+        destination: "/get-found",
+        permanent: false,
+      },
+      { source: "/murals", destination: "/get-lost", permanent: false },
+      { source: "/murals/:path*", destination: "/get-lost", permanent: false },
+      { source: "/digital", destination: "/get-found", permanent: false },
+      {
+        source: "/digital/:path*",
+        destination: "/get-found",
+        permanent: false,
+      },
     ];
   },
 };

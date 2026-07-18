@@ -8,17 +8,17 @@ type Props = {
 };
 
 export function generateStaticParams() {
-  return getProjectsByStream("work").map((p) => ({ slug: p.slug }));
+  return getProjectsByStream("found").map((p) => ({ slug: p.slug }));
 }
 
 export function generateMetadata({ params }: Props): Metadata {
-  const project = getProject("work", params.slug);
-  if (!project) return { title: "Work" };
+  const project = getProject("found", params.slug);
+  if (!project) return { title: "GET FOUND" };
   return { title: project.title };
 }
 
-export default function WorkProjectPage({ params }: Props) {
-  const project = getProject("work", params.slug);
+export default function GetFoundProjectPage({ params }: Props) {
+  const project = getProject("found", params.slug);
   if (!project) notFound();
-  return <ProjectDetail project={project} stream="work" />;
+  return <ProjectDetail project={project} stream="found" />;
 }
