@@ -19,19 +19,21 @@ export type Project = {
 
 export const STREAM_META: Record<
   ProjectStream,
-  { href: string; label: string; title: string; line: string }
+  { href: string; label: string; title: string; line: string; sub: string }
 > = {
   lost: {
     href: "/get-lost",
     label: "GET LOST",
     title: "GET LOST",
     line: "We left the route on purpose.",
+    sub: "Some ideas don't belong on screens.",
   },
   found: {
     href: "/get-found",
     label: "GET FOUND",
     title: "GET FOUND",
     line: "Being found is only the beginning.",
+    sub: "Good systems are invisible.",
   },
 };
 

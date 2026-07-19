@@ -9,14 +9,14 @@ const NAV = [
   { href: "/get-found", label: "GET FOUND", kind: "arrive" as const },
   { href: "/logbook", label: "LOGBOOK", kind: "plain" as const },
   { href: "/about", label: "ABOUT", kind: "plain" as const },
-  { href: "/start", label: "START", kind: "plain" as const },
+  { href: "/start", label: "START", kind: "start" as const },
 ];
 
 export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-paper">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-paper/95 backdrop-blur-[2px]">
       <div className="flex h-14 items-center justify-between px-4 md:h-16 md:px-6">
         <Logo className="text-lg md:text-xl" blink />
 
@@ -27,14 +27,23 @@ export function Header() {
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <li key={item.href}>
-                  <NavLink
-                    href={item.href}
-                    label={item.label}
-                    active={active}
-                    className="text-[11px]"
-                    drift={item.kind === "drift"}
-                    arrive={item.kind === "arrive"}
-                  />
+                  {item.kind === "start" ? (
+                    <NavLink
+                      href={item.href}
+                      label="[ START ]"
+                      active={active}
+                      className="text-[11px]"
+                    />
+                  ) : (
+                    <NavLink
+                      href={item.href}
+                      label={item.label}
+                      active={active}
+                      className="text-[11px]"
+                      drift={item.kind === "drift"}
+                      arrive={item.kind === "arrive"}
+                    />
+                  )}
                 </li>
               );
             })}
@@ -49,11 +58,12 @@ export function Header() {
         {NAV.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const label = item.kind === "start" ? "[ START ]" : item.label;
           return (
             <NavLink
               key={item.href}
               href={item.href}
-              label={item.label}
+              label={label}
               active={active}
               className="whitespace-nowrap text-[9px]"
               drift={item.kind === "drift"}
