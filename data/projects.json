@@ -113,18 +113,19 @@
       "title": "BOXING TRAINING",
       "stream": "found",
       "year": "2025",
-      "type": "Booking system + CRM",
+      "type": "Brand website + booking",
       "materials": null,
-      "location": null,
-      "stack": "Next.js, Stripe, Postgres",
-      "client": "for Boxing Training",
+      "location": "166 Benhill Rd, London SE5 7LL",
+      "stack": "Next.js",
+      "client": "for Kings Health & Fitness",
       "accent": "#E10600",
       "cover": "/digital/boxing-1.jpg",
       "images": [
         "/digital/boxing-1.jpg",
         "/digital/boxing-2.jpg",
         "/digital/boxing-3.jpg"
-      ]
+      ],
+      "summary": "Private boxing training site with timetable, pricing and booking for Kings Health & Fitness in Camberwell."
     },
     {
       "slug": "shop-x-booking",

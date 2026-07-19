@@ -23,6 +23,11 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
         <h1 className="max-w-4xl font-display text-3xl tracking-[0.06em] text-black md:text-5xl">
           {project.title}
         </h1>
+        {project.summary && (
+          <p className="mt-5 max-w-xl font-sans text-base leading-relaxed text-black md:text-[16px]">
+            {project.summary}
+          </p>
+        )}
         <dl className="mt-6 space-y-0.5 font-sans text-sm text-[#6b6b6b] md:text-base">
           <dd>{project.year}</dd>
           <dd>{project.type}</dd>
@@ -31,6 +36,18 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
           {project.location && <dd>{project.location}</dd>}
           {project.client && <dd>{project.client}</dd>}
         </dl>
+        {project.liveUrl && (
+          <p className="mt-6">
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-display text-sm tracking-[0.12em] text-black hover:text-accent"
+            >
+              VISIT SITE →
+            </a>
+          </p>
+        )}
       </header>
 
       <div className="flex flex-col gap-3 md:gap-4">

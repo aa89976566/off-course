@@ -15,6 +15,8 @@ export type Project = {
   accent: string;
   cover: string;
   images: string[];
+  summary?: string | null;
+  liveUrl?: string | null;
 };
 
 export const STREAM_META: Record<
