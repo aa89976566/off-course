@@ -11,6 +11,7 @@ type ProjectDetailProps = {
   stream: ProjectStream;
 };
 
+/** Vertical stack of full-width images — Walala project page pattern */
 export function ProjectDetail({ project, stream }: ProjectDetailProps) {
   const { prev, next } = getAdjacentProjects(stream, project.slug);
 
@@ -18,47 +19,21 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
     <article>
       <ProjectNav stream={stream} prev={prev} next={next} />
 
-      <header className="px-4 py-12 md:px-6 md:py-16">
-        <h1 className="max-w-4xl font-display text-3xl tracking-nav text-ink md:text-5xl">
+      <header className="px-5 py-12 md:px-8 md:py-16">
+        <h1 className="max-w-4xl font-display text-3xl tracking-[0.06em] text-black md:text-5xl">
           {project.title}
         </h1>
-        <dl className="mt-8 space-y-1 font-sans text-sm text-mute md:text-base">
-          <div>
-            <dt className="sr-only">Year</dt>
-            <dd>{project.year}</dd>
-          </div>
-          <div>
-            <dt className="sr-only">Type</dt>
-            <dd>{project.type}</dd>
-          </div>
-          {project.materials && (
-            <div>
-              <dt className="sr-only">Materials</dt>
-              <dd>{project.materials}</dd>
-            </div>
-          )}
-          {project.stack && (
-            <div>
-              <dt className="sr-only">Stack</dt>
-              <dd>{project.stack}</dd>
-            </div>
-          )}
-          {project.location && (
-            <div>
-              <dt className="sr-only">Location</dt>
-              <dd>{project.location}</dd>
-            </div>
-          )}
-          {project.client && (
-            <div>
-              <dt className="sr-only">Client</dt>
-              <dd>{project.client}</dd>
-            </div>
-          )}
+        <dl className="mt-6 space-y-0.5 font-sans text-sm text-[#6b6b6b] md:text-base">
+          <dd>{project.year}</dd>
+          <dd>{project.type}</dd>
+          {project.materials && <dd>{project.materials}</dd>}
+          {project.stack && <dd>{project.stack}</dd>}
+          {project.location && <dd>{project.location}</dd>}
+          {project.client && <dd>{project.client}</dd>}
         </dl>
       </header>
 
-      <div className="flex flex-col gap-6 md:gap-10">
+      <div className="flex flex-col gap-3 md:gap-4">
         {project.images.map((src, i) => (
           <div key={src} className="relative w-full">
             <Image
@@ -74,7 +49,7 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
         ))}
       </div>
 
-      <div className="px-4 py-12 md:px-6">
+      <div className="px-5 py-10 md:px-8">
         <ProjectNav stream={stream} prev={prev} next={next} />
       </div>
     </article>

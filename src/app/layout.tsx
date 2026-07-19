@@ -40,10 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${archivoBlack.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col bg-paper font-sans text-ink antialiased`}
+        className={`${archivoBlack.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col bg-white font-sans text-black antialiased`}
       >
         <Header />
-        <main className="flex-1 pt-[6.5rem] md:pt-16">{children}</main>
+        <main className="flex-1 pt-[90px] md:pt-[60px]">{children}</main>
         <Footer />
       </body>
     </html>

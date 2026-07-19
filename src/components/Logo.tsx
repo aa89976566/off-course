@@ -16,7 +16,7 @@ export function LogoMark({
 }) {
   return (
     <span
-      className={`inline-flex items-baseline font-display uppercase tracking-logo text-ink ${className}`}
+      className={`inline-flex items-baseline font-display uppercase tracking-[0.08em] ${className}`}
       aria-label="OFF_COURSE"
     >
       <span>OFF</span>
@@ -35,10 +35,12 @@ export function Logo({
   asLink = true,
   blink = false,
 }: LogoProps) {
-  const mark = <LogoMark className={className} blink={blink} />;
+  const mark = (
+    <LogoMark className={`text-black ${className}`} blink={blink} />
+  );
   if (!asLink) return mark;
   return (
-    <Link href={href} className="inline-flex items-center hover:opacity-80">
+    <Link href={href} className="inline-flex items-center">
       {mark}
     </Link>
   );

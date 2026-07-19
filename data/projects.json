@@ -2,7 +2,7 @@
   "projects": [
     {
       "slug": "shoreditch-facade",
-      "title": "SHOREDITCH FAÇADE",
+      "title": "SHOREDITCH FA\u00c7ADE",
       "stream": "lost",
       "year": "2025",
       "type": "Storefront Mural",
@@ -10,7 +10,7 @@
       "location": "Shoreditch, London, UK",
       "stack": null,
       "client": "for East Street Market",
-      "accent": "#FF5A36",
+      "accent": "#FF3829",
       "cover": "/murals/shoreditch-1.jpg",
       "images": [
         "/murals/shoreditch-1.jpg",
@@ -28,7 +28,7 @@
       "location": "Borough, London, UK",
       "stack": null,
       "client": "for Borough Market",
-      "accent": "#FF3D7F",
+      "accent": "#F7A80D",
       "cover": "/murals/borough-1.jpg",
       "images": [
         "/murals/borough-1.jpg",
@@ -45,8 +45,8 @@
       "materials": "Interior acrylic, spray paint",
       "location": "Camden, London, UK",
       "stack": null,
-      "client": "for Northside Café",
-      "accent": "#FF6B00",
+      "client": "for Northside Caf\u00e9",
+      "accent": "#4848ED",
       "cover": "/murals/camden-1.jpg",
       "images": [
         "/murals/camden-1.jpg",
@@ -64,7 +64,7 @@
       "location": "Soho, London, UK",
       "stack": null,
       "client": "for Violet Records",
-      "accent": "#FF1744",
+      "accent": "#FF3829",
       "cover": "/murals/soho-1.jpg",
       "images": [
         "/murals/soho-1.jpg",
@@ -82,7 +82,7 @@
       "location": "Hackney, London, UK",
       "stack": null,
       "client": "for Yard Collective",
-      "accent": "#7C4DFF",
+      "accent": "#008B8E",
       "cover": "/murals/hackney-1.jpg",
       "images": [
         "/murals/hackney-1.jpg",
@@ -100,7 +100,7 @@
       "location": "Brixton, London, UK",
       "stack": null,
       "client": "for Arcade Collective",
-      "accent": "#FF6F00",
+      "accent": "#D1ADD4",
       "cover": "/murals/brixton-1.jpg",
       "images": [
         "/murals/brixton-1.jpg",
@@ -110,7 +110,7 @@
     },
     {
       "slug": "shop-x-booking",
-      "title": "SHOP X — BOOKING",
+      "title": "SHOP X \u2014 BOOKING",
       "stream": "found",
       "year": "2025",
       "type": "Booking System",
@@ -118,7 +118,7 @@
       "location": null,
       "stack": "Next.js, Stripe",
       "client": "for Shop X",
-      "accent": "#FF5A36",
+      "accent": "#FF3829",
       "cover": "/digital/shopx-1.jpg",
       "images": [
         "/digital/shopx-1.jpg",
@@ -136,7 +136,7 @@
       "location": null,
       "stack": "Next.js, Sanity",
       "client": "for Atelier North",
-      "accent": "#7C4DFF",
+      "accent": "#4848ED",
       "cover": "/digital/atelier-1.jpg",
       "images": [
         "/digital/atelier-1.jpg",
@@ -154,7 +154,7 @@
       "location": null,
       "stack": "Shopify, custom app",
       "client": "for Green Lane Market",
-      "accent": "#00A86B",
+      "accent": "#008B8E",
       "cover": "/digital/greenlane-1.jpg",
       "images": [
         "/digital/greenlane-1.jpg",
@@ -172,7 +172,7 @@
       "location": null,
       "stack": "Next.js, Postgres",
       "client": "for Ledger House",
-      "accent": "#2979FF",
+      "accent": "#4848ED",
       "cover": "/digital/ledger-1.jpg",
       "images": [
         "/digital/ledger-1.jpg",
@@ -182,7 +182,7 @@
     },
     {
       "slug": "noon-crm",
-      "title": "NOON — CRM",
+      "title": "NOON \u2014 CRM",
       "stream": "found",
       "year": "2024",
       "type": "CRM",
@@ -190,7 +190,7 @@
       "location": null,
       "stack": "Next.js, Postgres",
       "client": "for Noon Studio",
-      "accent": "#FF3D7F",
+      "accent": "#FF3829",
       "cover": "/digital/noon-1.jpg",
       "images": [
         "/digital/noon-1.jpg",
@@ -200,7 +200,7 @@
     },
     {
       "slug": "kiln-automation",
-      "title": "KILN — AUTOMATION",
+      "title": "KILN \u2014 AUTOMATION",
       "stream": "found",
       "year": "2023",
       "type": "Automation",
@@ -208,7 +208,7 @@
       "location": null,
       "stack": "Next.js, custom integrations",
       "client": "for Kiln Ceramics",
-      "accent": "#00B0FF",
+      "accent": "#F7A80D",
       "cover": "/digital/kiln-1.jpg",
       "images": [
         "/digital/kiln-1.jpg",
