@@ -74,7 +74,7 @@ export function HomeCanvas() {
     if (!ctx) return;
 
     let raf = 0;
-    let t0 = performance.now();
+    const t0 = performance.now();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
