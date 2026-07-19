@@ -24,26 +24,18 @@ export const metadata: Metadata = {
   },
   description:
     "GO OFF COURSE. Sometimes getting lost is how brands get found.",
-  openGraph: {
-    title: "OFF_COURSE",
-    description:
-      "GO OFF COURSE. Sometimes getting lost is how brands get found.",
-    type: "website",
-  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body
         className={`${archivoBlack.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col bg-white font-sans text-black antialiased`}
       >
         <Header />
-        <main className="flex-1 pt-[90px] md:pt-[60px]">{children}</main>
+        <main className="flex-1 pt-[50px]">{children}</main>
         <Footer />
       </body>
     </html>

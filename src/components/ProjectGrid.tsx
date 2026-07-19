@@ -1,36 +1,26 @@
-import Image from "next/image";
-import Link from "next/link";
-import { streamPath, type Project, type ProjectStream } from "@/lib/projects";
-import { ProjectTicker } from "./ProjectTicker";
+import { streamPath, type Project } from "@/lib/projects";
+import { ProjectTile } from "./ProjectTile";
 
 type ProjectGridProps = {
   projects: Project[];
-  stream: ProjectStream;
 };
 
-/** Gutter-less tile grid — matches Walala projects index */
-export function ProjectGrid({ projects, stream }: ProjectGridProps) {
-  const base = streamPath(stream);
-
+/** Walala projects index: 5→4→3→2→1 cols, zero gap, square tiles */
+export function ProjectGrid({ projects }: ProjectGridProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="flex w-full flex-wrap">
       {projects.map((project) => (
-        <Link
-          key={project.slug}
-          href={`${base}/${project.slug}`}
-          className="group flex min-w-0 flex-col overflow-hidden"
+        <div
+          key={`${project.stream}-${project.slug}`}
+          className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
-            <Image
-              src={project.cover}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-          </div>
-          <ProjectTicker title={project.title} accent={project.accent} />
-        </Link>
+          <ProjectTile
+            href={`${streamPath(project.stream)}/${project.slug}`}
+            title={project.title}
+            cover={project.cover}
+            accent={project.accent}
+          />
+        </div>
       ))}
     </div>
   );

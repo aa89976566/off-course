@@ -14,16 +14,14 @@ export function StreamPage({ stream }: StreamPageProps) {
   const projects = getProjectsByStream(stream);
 
   return (
-    <div>
-      <header className="px-5 pb-10 pt-12 md:px-8 md:pb-12 md:pt-16">
-        <h1 className="font-display text-4xl tracking-[0.08em] text-black md:text-6xl">
+    <div className="bg-white">
+      {/* Minimal label only — projects first, like Walala */}
+      <div className="px-2.5 py-3">
+        <h1 className="font-display text-sm font-bold uppercase tracking-wide text-black">
           {meta.title}
         </h1>
-        <p className="mt-4 max-w-lg font-sans text-base text-black md:text-[16px]">
-          {meta.line}
-        </p>
-      </header>
-      <ProjectGrid projects={projects} stream={stream} />
+      </div>
+      <ProjectGrid projects={projects} />
     </div>
   );
 }

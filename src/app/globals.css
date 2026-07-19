@@ -6,13 +6,21 @@
   --background: #ffffff;
   --foreground: #000000;
   --mute: #6b6b6b;
-  --accent: #ff5a36;
-  --header-h: 50px;
-  --header-h-mobile: 90px;
+  --accent: #ff3829;
+  /* Walala reference palette — used only for UI hover accents */
+  --walala-blue: #4848ed;
+  --walala-yellow: #f7a80d;
+  --walala-lilac: #d1add4;
+  --walala-red: #ff3829;
+  --walala-teal: #008b8e;
+  --headerHeight: 50px;
+  --footerHeight: 50px;
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
@@ -22,30 +30,27 @@ html {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-space-grotesk), "Wix Madefor Display", sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 ::selection {
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--walala-red);
+  color: #fff;
 }
 
 h1::selection,
 h2::selection,
 h3::selection {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--walala-blue);
+  color: #000;
 }
 
-a,
-img,
-button {
-  cursor: pointer;
-}
-
-/* Logo underscore as thick graphic bar / cursor motif */
 .logo-underscore {
   display: inline-block;
   width: 0.5em;
@@ -56,7 +61,8 @@ button {
   margin-bottom: 0.18em;
 }
 
-@keyframes ticker {
+/* Walala-style infinite marquee inside tiles */
+@keyframes marquee-scroll {
   from {
     transform: translateX(0);
   }
@@ -65,12 +71,12 @@ button {
   }
 }
 
-.ticker-track {
-  animation: ticker 16s linear infinite;
+.marquee-track {
+  animation: marquee-scroll 14s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ticker-track {
+  .marquee-track {
     animation: none;
   }
 }
@@ -95,7 +101,7 @@ button {
 }
 
 .input-line:focus {
-  border-color: var(--accent);
+  border-color: var(--walala-red);
 }
 
 .input-line::placeholder {

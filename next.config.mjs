@@ -6,12 +6,13 @@ const nextConfig = {
   async redirects() {
     return [
       { source: "/contact", destination: "/start", permanent: false },
-      { source: "/work", destination: "/get-lost", permanent: false },
-      { source: "/work/:path*", destination: "/get-lost", permanent: false },
-      { source: "/playground", destination: "/get-found", permanent: false },
+      { source: "/logbook", destination: "/projects", permanent: false },
+      { source: "/work", destination: "/projects", permanent: false },
+      { source: "/work/:path*", destination: "/projects", permanent: false },
+      { source: "/playground", destination: "/projects", permanent: false },
       {
         source: "/playground/:path*",
-        destination: "/get-found",
+        destination: "/projects",
         permanent: false,
       },
       { source: "/murals", destination: "/get-lost", permanent: false },
