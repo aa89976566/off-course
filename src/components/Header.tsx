@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { useEffect, useState } from "react";
 
-/** Walala-style chrome: logo left, uppercase links + social right */
 const NAV = [
   { href: "/about", label: "ABOUT" },
   { href: "/projects", label: "PROJECTS" },
@@ -13,15 +13,32 @@ const NAV = [
 
 export function Header() {
   const pathname = usePathname();
+  const isHome = pathname === "/";
+  const [visible, setVisible] = useState(!isHome);
+
+  useEffect(() => {
+    if (!isHome) {
+      setVisible(true);
+      return;
+    }
+    // Walala: header fades in after canvas settles
+    setVisible(false);
+    const t = window.setTimeout(() => setVisible(true), 2200);
+    return () => window.clearTimeout(t);
+  }, [isHome]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex h-[50px] items-center justify-between bg-white md:h-[50px]">
-      <div className="flex w-full items-center justify-start pl-2.5 md:pl-2.5">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 flex h-[50px] items-center justify-between bg-white transition-opacity duration-700 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <div className="flex w-full items-center justify-start pl-2.5">
         <Logo className="text-[15px] md:text-base" blink />
       </div>
 
       <nav
-        className="flex w-full items-center justify-end gap-5 pr-2.5 md:gap-5"
+        className="flex w-full items-center justify-end gap-5 pr-2.5"
         aria-label="Primary"
       >
         <ul className="flex list-none items-center gap-5 text-[13px] font-bold uppercase tracking-wide md:text-sm">
