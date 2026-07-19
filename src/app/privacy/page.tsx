@@ -25,7 +25,7 @@ export default function PrivacyPage() {
             If you have questions about this policy, write to{" "}
             <a
               href="mailto:hello@offcourse.studio"
-              className="underline decoration-2 underline-offset-4 hover:text-accent"
+              className="underline decoration-2 underline-offset-4 hover:text-brand"
             >
               hello@offcourse.studio
             </a>

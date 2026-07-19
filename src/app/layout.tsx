@@ -30,10 +30,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${archivoBlack.variable} ${spaceGrotesk.variable} flex min-h-screen flex-col bg-white font-sans text-black antialiased`}
-      >
+    <html lang="en" className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}>
+      <body className="flex min-h-screen flex-col bg-white font-sans text-black antialiased">
         <Header />
         <main className="flex-1 pt-[50px]">{children}</main>
         <Footer />

@@ -60,7 +60,7 @@ export function ContactForm() {
       </label>
       <button
         type="submit"
-        className="font-display text-sm tracking-nav text-ink hover:text-accent"
+        className="font-display text-sm tracking-nav text-ink hover:text-brand"
       >
         START →
       </button>

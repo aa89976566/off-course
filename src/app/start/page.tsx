@@ -22,7 +22,7 @@ export default function StartPage() {
           <p>
             <a
               href="mailto:hello@offcourse.studio"
-              className="underline decoration-2 underline-offset-4 hover:text-accent"
+              className="underline decoration-2 underline-offset-4 hover:text-brand"
             >
               hello@offcourse.studio
             </a>
@@ -32,7 +32,7 @@ export default function StartPage() {
               href="https://instagram.com/offcourse.studio"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline decoration-2 underline-offset-4 hover:text-accent"
+              className="underline decoration-2 underline-offset-4 hover:text-brand"
             >
               @offcourse.studio
             </a>
