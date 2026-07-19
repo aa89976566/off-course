@@ -2,7 +2,7 @@
   "projects": [
     {
       "slug": "shoreditch-facade",
-      "title": "SHOREDITCH FA\u00c7ADE",
+      "title": "SHOREDITCH FAÇADE",
       "stream": "lost",
       "year": "2025",
       "type": "Storefront Mural",
@@ -45,7 +45,7 @@
       "materials": "Interior acrylic, spray paint",
       "location": "Camden, London, UK",
       "stack": null,
-      "client": "for Northside Caf\u00e9",
+      "client": "for Northside Café",
       "accent": "#4848ED",
       "cover": "/murals/camden-1.jpg",
       "images": [
@@ -109,8 +109,26 @@
       ]
     },
     {
+      "slug": "boxing-training",
+      "title": "BOXING TRAINING",
+      "stream": "found",
+      "year": "2025",
+      "type": "Booking system + CRM",
+      "materials": null,
+      "location": null,
+      "stack": "Next.js, Stripe, Postgres",
+      "client": "for Boxing Training",
+      "accent": "#E10600",
+      "cover": "/digital/boxing-1.jpg",
+      "images": [
+        "/digital/boxing-1.jpg",
+        "/digital/boxing-2.jpg",
+        "/digital/boxing-3.jpg"
+      ]
+    },
+    {
       "slug": "shop-x-booking",
-      "title": "SHOP X \u2014 BOOKING",
+      "title": "SHOP X — BOOKING",
       "stream": "found",
       "year": "2025",
       "type": "Booking System",
@@ -182,7 +200,7 @@
     },
     {
       "slug": "noon-crm",
-      "title": "NOON \u2014 CRM",
+      "title": "NOON — CRM",
       "stream": "found",
       "year": "2024",
       "type": "CRM",
@@ -200,7 +218,7 @@
     },
     {
       "slug": "kiln-automation",
-      "title": "KILN \u2014 AUTOMATION",
+      "title": "KILN — AUTOMATION",
       "stream": "found",
       "year": "2023",
       "type": "Automation",
