@@ -109,6 +109,26 @@
       ]
     },
     {
+      "slug": "freds-cafe",
+      "title": "FRED'S CAFE",
+      "stream": "found",
+      "year": "2025",
+      "type": "Community cafe website",
+      "materials": null,
+      "location": "358 Brockley Road, London SE4 2BY",
+      "stack": "Next.js",
+      "client": "for Fred's Community Cafe",
+      "accent": "#E85A2A",
+      "cover": "/digital/freds-1.jpg",
+      "images": [
+        "/digital/freds-1.jpg",
+        "/digital/freds-2.jpg",
+        "/digital/freds-3.jpg"
+      ],
+      "summary": "Neighbourhood website for Fred's Community Cafe in Crofton Park — Allpress coffee, garden suntrap, events and local gatherings opposite the station.",
+      "liveUrl": "https://aa89976566.github.io/fred-s-cafe/"
+    },
+    {
       "slug": "boxing-training",
       "title": "BOXING TRAINING",
       "stream": "found",
