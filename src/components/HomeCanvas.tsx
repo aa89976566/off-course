@@ -51,12 +51,12 @@ function coverLayout(vw: number, vh: number) {
     height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
   });
 
-  // Road dash corridor in the windshield (follows scene axis → screen center)
-  const roadY0 = dy + dh * 0.33;
-  const roadY1 = dy + dh * 0.48;
+  // Road dashes: only on asphalt inside the windshield (never over dash/pillars)
+  const roadY0 = dy + dh * 0.31; // near horizon
+  const roadY1 = dy + dh * 0.438; // stop above dashboard hood / wipers
   const cx = dx + dw * SCENE_CX;
-  const halfFar = dw * 0.008;
-  const halfNear = dw * 0.04;
+  const halfFar = dw * 0.007;
+  const halfNear = dw * 0.028; // keep centerline slim so marks stay on asphalt
   const pct = (x: number, y: number) =>
     `${((x / vw) * 100).toFixed(3)}% ${((y / vh) * 100).toFixed(3)}%`;
   const roadClip = `polygon(${[
@@ -66,8 +66,20 @@ function coverLayout(vw: number, vh: number) {
     pct(cx - halfNear, roadY1),
   ].join(", ")})`;
 
+  // Stage box = trapezoid AABB (dashes scroll inside, clipped to road)
+  const stageLeft = cx - halfNear;
+  const stageTop = roadY0;
+  const stageW = halfNear * 2;
+  const stageH = roadY1 - roadY0;
+
   return {
     roadClip,
+    roadStage: {
+      left: `${stageLeft}px`,
+      top: `${stageTop}px`,
+      width: `${stageW}px`,
+      height: `${stageH}px`,
+    },
     image: {
       left: `${dx}px`,
       top: `${dy}px`,
@@ -157,7 +169,7 @@ export function HomeCanvas() {
         className="pointer-events-none absolute inset-0 z-[5] overflow-hidden"
         aria-hidden
       >
-        <div className="road-dash-stage">
+        <div className="road-dash-stage" style={layout?.roadStage}>
           <div className="road-dash-track" />
         </div>
       </div>
