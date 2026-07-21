@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-const IW = 1536;
-const IH = 1024;
+/** Portrait hero art (radio-centered). */
+const IW = 1024;
+const IH = 1536;
 
 /** Radio presets → site menu. Channel 1 opens GET LOST. */
 const CHANNELS = [
@@ -18,14 +19,14 @@ const CHANNELS = [
   { id: 6, label: "HELLO", href: "mailto:hello@offcourse.studio" },
 ] as const;
 
-/** Image-normalized button centres (from the illustration). */
-const BUTTON_CX = [0.459, 0.49, 0.521, 0.551, 0.584, 0.615];
-const BUTTON_CY = 0.892;
-const BUTTON_W = 0.028;
-const BUTTON_H = 0.042;
+/** Image-normalized button centres under the LCD. */
+const BUTTON_CX = [0.41, 0.447, 0.484, 0.521, 0.558, 0.595];
+const BUTTON_CY = 0.685;
+const BUTTON_W = 0.042;
+const BUTTON_H = 0.038;
 
-/** Amber LCD panel that currently reads MUSIC in the art. */
-const DISPLAY = { x0: 0.452, y0: 0.797, x1: 0.645, y1: 0.879 };
+/** Amber LCD panel (centered under Toyota mark). */
+const DISPLAY = { x0: 0.362, y0: 0.587, x1: 0.64, y1: 0.65 };
 
 type Box = { left: string; top: string; width: string; height: string };
 
@@ -43,11 +44,12 @@ function coverLayout(vw: number, vh: number) {
     height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
   });
 
-  const roadY0 = dy + dh * 0.448;
-  const roadY1 = dy + dh * 0.608;
+  // Road dash corridor in the windshield
+  const roadY0 = dy + dh * 0.34;
+  const roadY1 = dy + dh * 0.5;
   const cx = dx + dw * 0.5;
-  const halfFar = dw * 0.005;
-  const halfNear = dw * 0.022;
+  const halfFar = dw * 0.008;
+  const halfNear = dw * 0.04;
   const pct = (x: number, y: number) =>
     `${((x / vw) * 100).toFixed(3)}% ${((y / vh) * 100).toFixed(3)}%`;
   const roadClip = `polygon(${[
@@ -72,7 +74,7 @@ function coverLayout(vw: number, vh: number) {
 }
 
 /**
- * Car-interior hero: driving road + radio as the site menu.
+ * Car-interior hero: centered radio is the site menu.
  * Channel 1 = GET LOST; the LCD shows the active channel label.
  */
 export function HomeCanvas() {
@@ -82,7 +84,7 @@ export function HomeCanvas() {
   const [layout, setLayout] = useState<ReturnType<typeof coverLayout> | null>(
     null
   );
-  const [channel, setChannel] = useState(0); // index into CHANNELS — default ch1
+  const [channel, setChannel] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -132,7 +134,6 @@ export function HomeCanvas() {
         />
       </picture>
 
-      {/* Animated road dashes */}
       <div
         ref={roadRef}
         className="pointer-events-none absolute inset-0 z-[5] overflow-hidden"
@@ -143,7 +144,6 @@ export function HomeCanvas() {
         </div>
       </div>
 
-      {/* Radio LCD — replaces printed MUSIC */}
       {layout && (
         <div
           className="radio-lcd pointer-events-none absolute z-[8] flex items-center justify-center overflow-hidden"
@@ -154,7 +154,6 @@ export function HomeCanvas() {
         </div>
       )}
 
-      {/* Preset channels 1–6 as site menu */}
       {layout && (
         <nav className="absolute inset-0 z-[12]" aria-label="Radio channels">
           {CHANNELS.map((ch, i) => (
