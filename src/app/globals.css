@@ -99,53 +99,33 @@ h3::selection {
   left: 50%;
   top: 0;
   bottom: 0;
-  width: min(28vw, 220px);
+  width: min(12vw, 96px);
   transform: translateX(-50%);
   overflow: hidden;
   /* Fake perspective: narrow at horizon, wide near dash */
-  clip-path: polygon(46% 0%, 54% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
+  /* No solid fill — keep illustration asphalt texture underneath */
+  background: transparent;
 }
 
 .road-dash-track {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 28%;
+  right: 28%;
   top: -100%;
   height: 200%;
+  /* Yellow matched to printed dashes in the art */
   background-image: repeating-linear-gradient(
     to bottom,
-    #ffe14a 0,
-    #ffe14a 18px,
-    transparent 18px,
-    transparent 46px
+    #ea9a26 0,
+    #ea9a26 14px,
+    transparent 14px,
+    transparent 40px
   );
-  background-size: 100% 46px;
+  background-size: 100% 40px;
   animation: road-dash-scroll 0.55s linear infinite;
   will-change: transform;
-}
-
-.road-edge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    rgba(240, 240, 235, 0.35),
-    rgba(240, 240, 235, 0.95)
-  );
-}
-
-.road-edge-left {
-  left: 42%;
-  transform: skewX(7deg);
-  transform-origin: top center;
-}
-
-.road-edge-right {
-  right: 42%;
-  transform: skewX(-7deg);
-  transform-origin: top center;
+  opacity: 0.92;
 }
 
 @keyframes road-dash-scroll {
@@ -153,8 +133,7 @@ h3::selection {
     transform: translate3d(0, 0, 0);
   }
   to {
-    /* Move dashes downward = car going forward */
-    transform: translate3d(0, 46px, 0);
+    transform: translate3d(0, 40px, 0);
   }
 }
 

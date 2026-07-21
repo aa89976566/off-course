@@ -35,12 +35,12 @@ export function HomeCanvas() {
       const dx = (w - dw) / 2;
       const dy = (h - dh) / 2;
 
-      // Road trapezoid in the art (fractions of the illustration)
+      // Clip only the centre-dash corridor (transparent overlay)
       const y0 = dy + dh * 0.448;
       const y1 = dy + dh * 0.608;
       const cx = dx + dw * 0.5;
-      const halfFar = dw * 0.01;
-      const halfNear = dw * 0.09;
+      const halfFar = dw * 0.005;
+      const halfNear = dw * 0.022;
 
       const pct = (x: number, y: number) =>
         `${((x / w) * 100).toFixed(3)}% ${((y / h) * 100).toFixed(3)}%`;
@@ -96,12 +96,10 @@ export function HomeCanvas() {
         className="pointer-events-none absolute inset-0 z-[5] overflow-hidden"
         aria-hidden
       >
-        <div className="absolute inset-0 bg-[#101010]" />
+        {/* Transparent overlay — art already has clean asphalt; only dashes move */}
         <div className="road-dash-stage">
           <div className="road-dash-track" />
         </div>
-        <div className="road-edge road-edge-left" />
-        <div className="road-edge road-edge-right" />
       </div>
 
       <div
