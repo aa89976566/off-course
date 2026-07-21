@@ -19,12 +19,12 @@ const CHANNELS = [
   { id: 6, label: "HELLO", href: "mailto:hello@offcourse.studio" },
 ] as const;
 
-/** Amber LCD panel (nudged left for optical center with hand on right). */
-const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
+/** Amber LCD panel — aligned to image & screen center. */
+const DISPLAY = { x0: 0.363, y0: 0.591, x1: 0.639, y1: 0.656 };
 
 /** Image-normalized button centres under the LCD. */
-const BUTTON_CX = [0.361, 0.403, 0.445, 0.487, 0.529, 0.572];
-const BUTTON_CY = 0.686;
+const BUTTON_CX = [0.398, 0.439, 0.48, 0.522, 0.563, 0.604];
+const BUTTON_CY = 0.688;
 const BUTTON_W = 0.042;
 const BUTTON_H = 0.038;
 
@@ -45,8 +45,8 @@ function coverLayout(vw: number, vh: number) {
   });
 
   // Road dash corridor in the windshield
-  const roadY0 = dy + dh * 0.34;
-  const roadY1 = dy + dh * 0.5;
+  const roadY0 = dy + dh * 0.33;
+  const roadY1 = dy + dh * 0.48;
   const cx = dx + dw * 0.5;
   const halfFar = dw * 0.008;
   const halfNear = dw * 0.04;
@@ -122,9 +122,9 @@ export function HomeCanvas() {
       className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
     >
       <picture>
-        <source srcSet={`${BASE}/hero-car-road.webp?v=3`} type="image/webp" />
+        <source srcSet={`${BASE}/hero-car-road.webp?v=5`} type="image/webp" />
         <img
-          src={`${BASE}/hero-car-road.jpg?v=3`}
+          src={`${BASE}/hero-car-road.jpg?v=5`}
           alt=""
           className="absolute inset-0 h-full w-full object-cover select-none"
           draggable={false}
