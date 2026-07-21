@@ -93,6 +93,77 @@ h3::selection {
   animation: cursor-blink 1.1s step-end infinite;
 }
 
+/* —— Hero road motion —— */
+.road-dash-stage {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: min(28vw, 220px);
+  transform: translateX(-50%);
+  overflow: hidden;
+  /* Fake perspective: narrow at horizon, wide near dash */
+  clip-path: polygon(46% 0%, 54% 0%, 100% 100%, 0% 100%);
+}
+
+.road-dash-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -100%;
+  height: 200%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #ffe14a 0,
+    #ffe14a 18px,
+    transparent 18px,
+    transparent 46px
+  );
+  background-size: 100% 46px;
+  animation: road-dash-scroll 0.55s linear infinite;
+  will-change: transform;
+}
+
+.road-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 240, 235, 0.35),
+    rgba(240, 240, 235, 0.95)
+  );
+}
+
+.road-edge-left {
+  left: 42%;
+  transform: skewX(7deg);
+  transform-origin: top center;
+}
+
+.road-edge-right {
+  right: 42%;
+  transform: skewX(-7deg);
+  transform-origin: top center;
+}
+
+@keyframes road-dash-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* Move dashes downward = car going forward */
+    transform: translate3d(0, 46px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .road-dash-track {
+    animation: none;
+  }
+}
+
 .input-line {
   @apply w-full border-0 border-b border-black bg-transparent px-0 py-3 text-base outline-none;
 }

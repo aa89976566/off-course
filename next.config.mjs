@@ -3,6 +3,13 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Allow Cloudflare quick-tunnel previews to load /_next assets in dev
+  allowedDevOrigins: [
+    "*.trycloudflare.com",
+    "*.loca.lt",
+    "127.0.0.1",
+    "localhost",
+  ],
   async redirects() {
     return [
       { source: "/contact", destination: "/start", permanent: false },
