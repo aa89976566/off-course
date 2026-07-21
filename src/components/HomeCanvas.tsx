@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 /**
  * Car-interior hero.
  * - Compressed photo as <img object-cover>
@@ -50,8 +52,9 @@ export function HomeCanvas() {
         pct(cx - halfNear, y1),
       ].join(", ");
 
-      road.style.clipPath = `polygon(${poly})`;
-      road.style.webkitClipPath = `polygon(${poly})`;
+      const clip = `polygon(${poly})`;
+      road.style.clipPath = clip;
+      road.style.setProperty("-webkit-clip-path", clip);
     };
 
     syncClip();
@@ -75,9 +78,9 @@ export function HomeCanvas() {
       className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
     >
       <picture>
-        <source srcSet="/hero-car-road.webp" type="image/webp" />
+        <source srcSet={`${BASE}/hero-car-road.webp`} type="image/webp" />
         <img
-          src="/hero-car-road.jpg"
+          src={`${BASE}/hero-car-road.jpg`}
           alt=""
           className="absolute inset-0 h-full w-full object-cover select-none"
           draggable={false}

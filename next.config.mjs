@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const staticExport = process.env.STATIC_EXPORT === "1";
+
 const nextConfig = {
+  ...(staticExport ? { output: "export" } : {}),
   images: {
     unoptimized: true,
   },
+  trailingSlash: true,
+  basePath: basePath || undefined,
+  assetPrefix: basePath || undefined,
   // Allow Cloudflare quick-tunnel previews to load /_next assets in dev
   allowedDevOrigins: [
     "*.trycloudflare.com",
@@ -10,28 +17,45 @@ const nextConfig = {
     "127.0.0.1",
     "localhost",
   ],
-  async redirects() {
-    return [
-      { source: "/contact", destination: "/start", permanent: false },
-      { source: "/logbook", destination: "/projects", permanent: false },
-      { source: "/work", destination: "/projects", permanent: false },
-      { source: "/work/:path*", destination: "/projects", permanent: false },
-      { source: "/playground", destination: "/projects", permanent: false },
-      {
-        source: "/playground/:path*",
-        destination: "/projects",
-        permanent: false,
-      },
-      { source: "/murals", destination: "/get-lost", permanent: false },
-      { source: "/murals/:path*", destination: "/get-lost", permanent: false },
-      { source: "/digital", destination: "/get-found", permanent: false },
-      {
-        source: "/digital/:path*",
-        destination: "/get-found",
-        permanent: false,
-      },
-    ];
-  },
+  // redirects are unsupported with `output: 'export'`
+  ...(!staticExport
+    ? {
+        async redirects() {
+          return [
+            { source: "/contact", destination: "/start", permanent: false },
+            { source: "/logbook", destination: "/projects", permanent: false },
+            { source: "/work", destination: "/projects", permanent: false },
+            {
+              source: "/work/:path*",
+              destination: "/projects",
+              permanent: false,
+            },
+            {
+              source: "/playground",
+              destination: "/projects",
+              permanent: false,
+            },
+            {
+              source: "/playground/:path*",
+              destination: "/projects",
+              permanent: false,
+            },
+            { source: "/murals", destination: "/get-lost", permanent: false },
+            {
+              source: "/murals/:path*",
+              destination: "/get-lost",
+              permanent: false,
+            },
+            { source: "/digital", destination: "/get-found", permanent: false },
+            {
+              source: "/digital/:path*",
+              destination: "/get-found",
+              permanent: false,
+            },
+          ];
+        },
+      }
+    : {}),
 };
 
 export default nextConfig;
