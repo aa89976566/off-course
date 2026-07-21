@@ -147,9 +147,9 @@ export function HomeCanvas() {
       className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
     >
       <picture>
-        <source srcSet={`${BASE}/hero-car-road.webp?v=10`} type="image/webp" />
+        <source srcSet={`${BASE}/hero-car-road.webp?v=12`} type="image/webp" />
         <img
-          src={`${BASE}/hero-car-road.jpg?v=10`}
+          src={`${BASE}/hero-car-road.jpg?v=12`}
           alt=""
           className={
             layout
