@@ -19,14 +19,14 @@ const CHANNELS = [
   { id: 6, label: "HELLO", href: "mailto:hello@offcourse.studio" },
 ] as const;
 
+/** Amber LCD panel (nudged left for optical center with hand on right). */
+const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
+
 /** Image-normalized button centres under the LCD. */
-const BUTTON_CX = [0.41, 0.447, 0.484, 0.521, 0.558, 0.595];
-const BUTTON_CY = 0.685;
+const BUTTON_CX = [0.361, 0.403, 0.445, 0.487, 0.529, 0.572];
+const BUTTON_CY = 0.686;
 const BUTTON_W = 0.042;
 const BUTTON_H = 0.038;
-
-/** Amber LCD panel (centered under Toyota mark). */
-const DISPLAY = { x0: 0.362, y0: 0.587, x1: 0.64, y1: 0.65 };
 
 type Box = { left: string; top: string; width: string; height: string };
 
@@ -122,9 +122,9 @@ export function HomeCanvas() {
       className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
     >
       <picture>
-        <source srcSet={`${BASE}/hero-car-road.webp`} type="image/webp" />
+        <source srcSet={`${BASE}/hero-car-road.webp?v=3`} type="image/webp" />
         <img
-          src={`${BASE}/hero-car-road.jpg`}
+          src={`${BASE}/hero-car-road.jpg?v=3`}
           alt=""
           className="absolute inset-0 h-full w-full object-cover select-none"
           draggable={false}
