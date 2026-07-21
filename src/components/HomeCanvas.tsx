@@ -29,10 +29,10 @@ const SCENE_CX = 0.466;
 const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
 
 /** Image-normalized button centres under the LCD (aligned to printed 1–6). */
-const BUTTON_CX = [0.345, 0.394, 0.440, 0.484, 0.532, 0.581];
-const BUTTON_CY = 0.663;
+const BUTTON_CX = [0.346, 0.394, 0.441, 0.49, 0.533, 0.584];
+const BUTTON_CY = 0.664;
 const BUTTON_W = 0.04;
-const BUTTON_H = 0.032;
+const BUTTON_H = 0.03;
 
 type Box = { left: string; top: string; width: string; height: string };
 
