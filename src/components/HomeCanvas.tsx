@@ -28,11 +28,11 @@ const SCENE_CX = 0.466;
 /** Amber LCD panel in image-normalized coords. */
 const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
 
-/** Image-normalized button centres under the LCD. */
-const BUTTON_CX = [0.361, 0.403, 0.445, 0.487, 0.529, 0.572];
-const BUTTON_CY = 0.686;
-const BUTTON_W = 0.042;
-const BUTTON_H = 0.038;
+/** Image-normalized button centres under the LCD (aligned to printed 1–6). */
+const BUTTON_CX = [0.345, 0.394, 0.440, 0.484, 0.532, 0.581];
+const BUTTON_CY = 0.663;
+const BUTTON_W = 0.04;
+const BUTTON_H = 0.032;
 
 type Box = { left: string; top: string; width: string; height: string };
 
