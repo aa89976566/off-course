@@ -175,6 +175,20 @@ h3::selection {
   text-transform: uppercase;
   white-space: nowrap;
   user-select: none;
+  animation: lcd-flip 0.35s ease-out;
+}
+
+@keyframes lcd-flip {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: none;
+  }
 }
 
 .radio-channel {
@@ -184,7 +198,34 @@ h3::selection {
 
 .radio-channel:hover,
 .radio-channel:focus-visible {
-  background: rgba(255, 200, 40, 0.18);
+  background: rgba(255, 200, 40, 0.22);
+}
+
+/* One-shot “station seek” — presets light in order to teach the affordance */
+.radio-seeking .radio-channel {
+  animation: radio-seek-pulse 0.7s ease-in-out both;
+  animation-delay: calc(var(--seek-i, 0) * 0.12s);
+}
+
+@keyframes radio-seek-pulse {
+  0%,
+  100% {
+    background: transparent;
+    box-shadow: none;
+  }
+  40% {
+    background: rgba(255, 200, 40, 0.34);
+    box-shadow: 0 0 10px rgba(234, 154, 38, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio-lcd-text {
+    animation: none;
+  }
+  .radio-seeking .radio-channel {
+    animation: none;
+  }
 }
 
 .input-line {

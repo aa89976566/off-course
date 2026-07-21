@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -100,7 +105,7 @@ function coverLayout(vw: number, vh: number) {
 
 /**
  * Car-interior hero: centered radio is the site menu.
- * Channel 1 = GET LOST; the LCD shows the active channel label.
+ * Channel 1 = GET LOST; the LCD coaches the first interaction in-radio.
  */
 export function HomeCanvas() {
   const roadRef = useRef<HTMLDivElement>(null);
@@ -110,6 +115,10 @@ export function HomeCanvas() {
     null
   );
   const [channel, setChannel] = useState(0);
+  const [lcdText, setLcdText] = useState("GET LOST");
+  const [seekPulse, setSeekPulse] = useState(false);
+  const [hinting, setHinting] = useState(true);
+  const touchedRef = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -139,7 +148,76 @@ export function HomeCanvas() {
     };
   }, []);
 
-  const active = CHANNELS[channel];
+  // Diegetic coach: LCD copy + one "station seek" pulse across presets.
+  useEffect(() => {
+    if (!ready || !hinting) return;
+
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduce) {
+      setLcdText("GET LOST");
+      setHinting(false);
+      return;
+    }
+
+    const script = ["TUNE IN", "SEEK 1–6", "GET LOST"] as const;
+    let i = 0;
+    setLcdText(script[0]);
+    setSeekPulse(true);
+
+    const iv = window.setInterval(() => {
+      i += 1;
+      if (i >= script.length) {
+        window.clearInterval(iv);
+        setSeekPulse(false);
+        setHinting(false);
+        if (!touchedRef.current) {
+          setChannel(0);
+          setLcdText(CHANNELS[0].label);
+        }
+        return;
+      }
+      setLcdText(script[i]);
+    }, 1400);
+
+    const stopPulse = window.setTimeout(() => setSeekPulse(false), 4200);
+
+    return () => {
+      window.clearInterval(iv);
+      window.clearTimeout(stopPulse);
+    };
+  }, [ready, hinting]);
+
+  // If idle too long, whisper once more through the LCD.
+  useEffect(() => {
+    if (!ready || hinting) return;
+    let backTimer = 0;
+    const idle = window.setTimeout(() => {
+      if (touchedRef.current) return;
+      setLcdText("PRESS 1–6");
+      setSeekPulse(true);
+      backTimer = window.setTimeout(() => {
+        setSeekPulse(false);
+        if (!touchedRef.current) {
+          setLcdText(CHANNELS[channel].label);
+        }
+      }, 2200);
+    }, 9000);
+    return () => {
+      window.clearTimeout(idle);
+      window.clearTimeout(backTimer);
+    };
+  }, [ready, hinting, channel]);
+
+  const markTouched = (i: number) => {
+    touchedRef.current = true;
+    setHinting(false);
+    setSeekPulse(false);
+    setChannel(i);
+    setLcdText(CHANNELS[i].label);
+  };
 
   return (
     <section
@@ -180,27 +258,42 @@ export function HomeCanvas() {
           style={layout.display}
           aria-live="polite"
         >
-          <span className="radio-lcd-text">{active.label}</span>
+          <span className="radio-lcd-text" key={lcdText}>
+            {lcdText}
+          </span>
         </div>
       )}
 
       {layout && (
-        <nav className="absolute inset-0 z-[12]" aria-label="Radio channels">
+        <nav
+          className={`absolute inset-0 z-[12]${seekPulse ? " radio-seeking" : ""}`}
+          aria-label="Radio channels — press presets 1 to 6"
+        >
           {CHANNELS.map((ch, i) => (
             <Link
               key={ch.id}
               href={ch.href}
               className="radio-channel absolute block rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ea9a26]"
-              style={layout.buttons[i]}
+              style={
+                {
+                  ...layout.buttons[i],
+                  ["--seek-i" as string]: i,
+                } as CSSProperties
+              }
               aria-label={`Channel ${ch.id}: ${ch.label}`}
               aria-current={channel === i ? "page" : undefined}
-              onMouseEnter={() => setChannel(i)}
-              onFocus={() => setChannel(i)}
-              onTouchStart={() => setChannel(i)}
+              onMouseEnter={() => markTouched(i)}
+              onFocus={() => markTouched(i)}
+              onTouchStart={() => markTouched(i)}
             />
           ))}
         </nav>
       )}
+
+      <p className="sr-only">
+        The car radio is the menu. Press presets 1 through 6 to navigate, or use
+        the header links.
+      </p>
 
       <div
         className="pointer-events-none absolute inset-0 z-20 bg-white transition-opacity duration-500"
