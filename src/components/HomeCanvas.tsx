@@ -19,12 +19,18 @@ const CHANNELS = [
   { id: 6, label: "HELLO", href: "mailto:hello@offcourse.studio" },
 ] as const;
 
-/** Amber LCD panel — aligned to image & screen center. */
-const DISPLAY = { x0: 0.363, y0: 0.591, x1: 0.639, y1: 0.656 };
+/**
+ * Scene axis in the art (LCD / logo / road). Pinned to the viewport
+ * midline so the radio sits in the exact screen center.
+ */
+const SCENE_CX = 0.466;
+
+/** Amber LCD panel in image-normalized coords. */
+const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
 
 /** Image-normalized button centres under the LCD. */
-const BUTTON_CX = [0.398, 0.439, 0.48, 0.522, 0.563, 0.604];
-const BUTTON_CY = 0.688;
+const BUTTON_CX = [0.361, 0.403, 0.445, 0.487, 0.529, 0.572];
+const BUTTON_CY = 0.686;
 const BUTTON_W = 0.042;
 const BUTTON_H = 0.038;
 
@@ -34,7 +40,8 @@ function coverLayout(vw: number, vh: number) {
   const scale = Math.max(vw / IW, vh / IH);
   const dw = IW * scale;
   const dh = IH * scale;
-  const dx = (vw - dw) / 2;
+  // Pin the scene axis to the viewport center (moves radio left into place).
+  const dx = vw / 2 - SCENE_CX * dw;
   const dy = (vh - dh) / 2;
 
   const box = (x0: number, y0: number, x1: number, y1: number): Box => ({
@@ -44,10 +51,10 @@ function coverLayout(vw: number, vh: number) {
     height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
   });
 
-  // Road dash corridor in the windshield
+  // Road dash corridor in the windshield (follows scene axis → screen center)
   const roadY0 = dy + dh * 0.33;
   const roadY1 = dy + dh * 0.48;
-  const cx = dx + dw * 0.5;
+  const cx = dx + dw * SCENE_CX;
   const halfFar = dw * 0.008;
   const halfNear = dw * 0.04;
   const pct = (x: number, y: number) =>
@@ -61,6 +68,12 @@ function coverLayout(vw: number, vh: number) {
 
   return {
     roadClip,
+    image: {
+      left: `${dx}px`,
+      top: `${dy}px`,
+      width: `${dw}px`,
+      height: `${dh}px`,
+    },
     display: box(DISPLAY.x0, DISPLAY.y0, DISPLAY.x1, DISPLAY.y1),
     buttons: BUTTON_CX.map((cxFrac) =>
       box(
@@ -122,11 +135,16 @@ export function HomeCanvas() {
       className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
     >
       <picture>
-        <source srcSet={`${BASE}/hero-car-road.webp?v=5`} type="image/webp" />
+        <source srcSet={`${BASE}/hero-car-road.webp?v=9`} type="image/webp" />
         <img
-          src={`${BASE}/hero-car-road.jpg?v=5`}
+          src={`${BASE}/hero-car-road.jpg?v=9`}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover select-none"
+          className={
+            layout
+              ? "pointer-events-none absolute max-w-none select-none"
+              : "pointer-events-none absolute inset-0 h-full w-full object-cover select-none"
+          }
+          style={layout?.image}
           draggable={false}
           decoding="async"
           fetchPriority="high"
