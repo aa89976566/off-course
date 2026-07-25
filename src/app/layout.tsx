@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo_Black, Space_Grotesk } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { MainShell } from "@/components/MainShell";
 import "./globals.css";
 
 const archivoBlack = Archivo_Black({
@@ -33,7 +34,7 @@ export default function RootLayout({
     <html lang="en" className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}>
       <body className="flex min-h-screen flex-col bg-white font-sans text-black antialiased">
         <Header />
-        <main className="flex-1 pt-[50px]">{children}</main>
+        <MainShell>{children}</MainShell>
         <Footer />
       </body>
     </html>

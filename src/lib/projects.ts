@@ -34,8 +34,8 @@ export const STREAM_META: Record<
     href: "/get-found",
     label: "GET FOUND",
     title: "GET FOUND",
-    line: "Being found is only the beginning.",
-    sub: "Flip through the systems we ship after discovery.",
+    line: "Collapse the stack.",
+    sub: "Websites, booking, and platforms after discovery.",
   },
 };
 

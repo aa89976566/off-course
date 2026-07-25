@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { FoundGallery } from "@/components/FoundGallery";
-import { getProjectsByStream } from "@/lib/projects";
+import { FoundLanding } from "@/components/FoundLanding";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
   description:
-    "Flip through the digital systems we ship after discovery — websites, booking, and platforms.",
+    "Collapse the stack — websites, booking, and platforms that keep brands found.",
 };
 
 export default function GetFoundPage() {
-  const projects = getProjectsByStream("found");
-  return <FoundGallery projects={projects} />;
+  return <FoundLanding />;
 }

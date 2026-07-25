@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
@@ -39,7 +40,9 @@ export default function StartPage() {
           </p>
         </div>
 
-        <ContactForm />
+        <Suspense fallback={null}>
+          <ContactForm />
+        </Suspense>
       </div>
     </article>
   );
