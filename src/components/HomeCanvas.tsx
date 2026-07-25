@@ -139,7 +139,8 @@ export function HomeCanvas() {
     const ro = new ResizeObserver(sync);
     ro.observe(section);
     window.addEventListener("orientationchange", sync);
-    const t = window.setTimeout(() => setReady(true), 600);
+    // Fallback if image onLoad never fires (cached / decode quirks).
+    const t = window.setTimeout(() => setReady(true), 2400);
 
     return () => {
       ro.disconnect();
@@ -296,9 +297,22 @@ export function HomeCanvas() {
       </p>
 
       <div
-        className="pointer-events-none absolute inset-0 z-20 bg-white transition-opacity duration-500"
-        style={{ opacity: ready ? 0 : 1 }}
-      />
+        className={`pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-white transition-opacity duration-700 ${
+          ready ? "opacity-0" : "opacity-100"
+        }`}
+        aria-hidden={ready}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <span className="inline-flex items-baseline font-display text-lg uppercase tracking-[0.08em] text-black md:text-xl">
+            <span>OFF</span>
+            <span className="logo-underscore mx-[0.06em] cursor-blink" />
+            <span>COURSE</span>
+          </span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+            Loading
+          </span>
+        </div>
+      </div>
     </section>
   );
 }

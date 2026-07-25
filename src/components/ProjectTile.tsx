@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { assetPath } from "@/lib/utils";
 
 type ProjectTileProps = {
   href: string;
@@ -31,7 +32,7 @@ export function ProjectTile({ href, title, cover, accent }: ProjectTileProps) {
     >
       <div className="absolute inset-0 overflow-hidden transition-opacity duration-200 group-hover:opacity-50">
         <Image
-          src={cover}
+          src={assetPath(cover)}
           alt={title}
           fill
           className="object-cover"

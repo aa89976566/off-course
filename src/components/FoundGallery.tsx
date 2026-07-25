@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import type { Project } from "@/lib/projects";
+import { assetPath } from "@/lib/utils";
 
 type FoundGalleryProps = {
   projects: Project[];
@@ -161,7 +162,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
                 aria-label={`Open ${project.title}`}
               >
                 <Image
-                  src={showcaseSrc(project)}
+                  src={assetPath(showcaseSrc(project))}
                   alt={project.title}
                   fill
                   priority

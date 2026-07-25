@@ -6,6 +6,7 @@ import {
   type Project,
   type ProjectStream,
 } from "@/lib/projects";
+import { assetPath } from "@/lib/utils";
 
 type ProjectDetailProps = {
   project: Project;
@@ -77,7 +78,7 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
           {project.images.map((src, i) => (
             <div key={src} className="relative w-full">
               <Image
-                src={src}
+                src={assetPath(src)}
                 alt=""
                 width={1600}
                 height={1200}
