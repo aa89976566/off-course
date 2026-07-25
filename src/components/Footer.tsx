@@ -1,7 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /** Ultra-minimal Walala footer */
 export function Footer() {
+  const pathname = usePathname();
+  // Immersive design browser — keep the stage clear.
+  if (pathname === "/get-found" || pathname === "/get-found/") {
+    return null;
+  }
+
   return (
     <footer className="group mt-auto flex h-[50px] min-h-[50px] w-full items-center justify-between bg-white px-2.5 text-black transition-colors duration-300 hover:bg-black hover:text-white">
       <Link

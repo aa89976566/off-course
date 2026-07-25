@@ -35,7 +35,7 @@ export const STREAM_META: Record<
     label: "GET FOUND",
     title: "GET FOUND",
     line: "Being found is only the beginning.",
-    sub: "Good systems are invisible.",
+    sub: "Flip through the systems we ship after discovery.",
   },
 };
 

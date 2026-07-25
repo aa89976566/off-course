@@ -27,11 +27,14 @@ export function Header() {
     return () => window.clearTimeout(t);
   }, [isHome]);
 
+  const onFoundGallery =
+    pathname === "/get-found" || pathname === "/get-found/";
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 flex h-[50px] items-center justify-between bg-white transition-opacity duration-700 ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 flex h-[50px] items-center justify-between transition-opacity duration-700 ${
+        onFoundGallery ? "bg-[#1a1b1e] text-white" : "bg-white text-black"
+      } ${visible ? "opacity-100" : "opacity-0"}`}
     >
       <div className="flex w-full items-center justify-start pl-2.5">
         <Logo className="text-[15px] md:text-base" blink />
@@ -52,7 +55,9 @@ export function Header() {
                   className={
                     active
                       ? "text-[var(--walala-lilac)]"
-                      : "text-black hover:text-[var(--walala-lilac)]"
+                      : onFoundGallery
+                        ? "text-white/80 hover:text-[var(--walala-lilac)]"
+                        : "text-black hover:text-[var(--walala-lilac)]"
                   }
                 >
                   {item.label}
@@ -67,14 +72,22 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="text-black hover:text-[var(--walala-red)]"
+            className={
+              onFoundGallery
+                ? "text-white/80 hover:text-[var(--walala-red)]"
+                : "text-black hover:text-[var(--walala-red)]"
+            }
           >
             <Ig />
           </a>
           <a
             href="mailto:hello@offcourse.studio"
             aria-label="Email"
-            className="text-black hover:text-[var(--walala-red)]"
+            className={
+              onFoundGallery
+                ? "text-white/80 hover:text-[var(--walala-red)]"
+                : "text-black hover:text-[var(--walala-red)]"
+            }
           >
             <Mail />
           </a>

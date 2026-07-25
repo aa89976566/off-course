@@ -10,7 +10,7 @@ GET LOST / GET FOUND is not just navigation — it is the studio slogan.
 | Path | Meaning |
 |------|---------|
 | `/get-lost` | Physical interventions |
-| `/get-found` | Systems after discovery |
+| `/get-found` | Design library — flip through digital systems |
 | `/logbook` | Chronological record of detours |
 | `/about` | Studio |
 | `/start` | Enquiry |

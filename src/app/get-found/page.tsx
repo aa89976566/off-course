@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { StreamPage } from "@/components/StreamPage";
+import { FoundGallery } from "@/components/FoundGallery";
+import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
-  description: "Being found is only the beginning.",
+  description:
+    "Flip through the digital systems we ship after discovery — websites, booking, and platforms.",
 };
 
 export default function GetFoundPage() {
-  return <StreamPage stream="found" />;
+  const projects = getProjectsByStream("found");
+  return <FoundGallery projects={projects} />;
 }

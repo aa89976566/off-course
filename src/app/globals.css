@@ -228,6 +228,11 @@ h3::selection {
   }
 }
 
+/* GET FOUND design browser stage */
+.found-gallery {
+  --found-stage: #1a1b1e;
+}
+
 .input-line {
   @apply w-full border-0 border-b border-black bg-transparent px-0 py-3 text-base outline-none;
 }
