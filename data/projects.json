@@ -11,11 +11,11 @@
       "stack": null,
       "client": "for East Street Market",
       "accent": "#FF3829",
-      "cover": "/murals/shoreditch-1.jpg",
+      "cover": "/media/murals/shoreditch-1.jpg",
       "images": [
-        "/murals/shoreditch-1.jpg",
-        "/murals/shoreditch-2.jpg",
-        "/murals/shoreditch-3.jpg"
+        "/media/murals/shoreditch-1.jpg",
+        "/media/murals/shoreditch-2.jpg",
+        "/media/murals/shoreditch-3.jpg"
       ]
     },
     {
@@ -29,11 +29,11 @@
       "stack": null,
       "client": "for Borough Market",
       "accent": "#F7A80D",
-      "cover": "/murals/borough-1.jpg",
+      "cover": "/media/murals/borough-1.jpg",
       "images": [
-        "/murals/borough-1.jpg",
-        "/murals/borough-2.jpg",
-        "/murals/borough-3.jpg"
+        "/media/murals/borough-1.jpg",
+        "/media/murals/borough-2.jpg",
+        "/media/murals/borough-3.jpg"
       ]
     },
     {
@@ -47,11 +47,11 @@
       "stack": null,
       "client": "for Northside Café",
       "accent": "#4848ED",
-      "cover": "/murals/camden-1.jpg",
+      "cover": "/media/murals/camden-1.jpg",
       "images": [
-        "/murals/camden-1.jpg",
-        "/murals/camden-2.jpg",
-        "/murals/camden-3.jpg"
+        "/media/murals/camden-1.jpg",
+        "/media/murals/camden-2.jpg",
+        "/media/murals/camden-3.jpg"
       ]
     },
     {
@@ -65,11 +65,11 @@
       "stack": null,
       "client": "for Violet Records",
       "accent": "#FF3829",
-      "cover": "/murals/soho-1.jpg",
+      "cover": "/media/murals/soho-1.jpg",
       "images": [
-        "/murals/soho-1.jpg",
-        "/murals/soho-2.jpg",
-        "/murals/soho-3.jpg"
+        "/media/murals/soho-1.jpg",
+        "/media/murals/soho-2.jpg",
+        "/media/murals/soho-3.jpg"
       ]
     },
     {
@@ -83,11 +83,11 @@
       "stack": null,
       "client": "for Yard Collective",
       "accent": "#008B8E",
-      "cover": "/murals/hackney-1.jpg",
+      "cover": "/media/murals/hackney-1.jpg",
       "images": [
-        "/murals/hackney-1.jpg",
-        "/murals/hackney-2.jpg",
-        "/murals/hackney-3.jpg"
+        "/media/murals/hackney-1.jpg",
+        "/media/murals/hackney-2.jpg",
+        "/media/murals/hackney-3.jpg"
       ]
     },
     {
@@ -101,11 +101,11 @@
       "stack": null,
       "client": "for Arcade Collective",
       "accent": "#D1ADD4",
-      "cover": "/murals/brixton-1.jpg",
+      "cover": "/media/murals/brixton-1.jpg",
       "images": [
-        "/murals/brixton-1.jpg",
-        "/murals/brixton-2.jpg",
-        "/murals/brixton-3.jpg"
+        "/media/murals/brixton-1.jpg",
+        "/media/murals/brixton-2.jpg",
+        "/media/murals/brixton-3.jpg"
       ]
     },
     {
@@ -119,11 +119,11 @@
       "stack": "Next.js",
       "client": "for Fred's Community Cafe",
       "accent": "#E85A2A",
-      "cover": "/digital/freds-1.jpg",
+      "cover": "/media/digital/freds-1.jpg",
       "images": [
-        "/digital/freds-1.jpg",
-        "/digital/freds-2.jpg",
-        "/digital/freds-3.jpg"
+        "/media/digital/freds-1.jpg",
+        "/media/digital/freds-2.jpg",
+        "/media/digital/freds-3.jpg"
       ],
       "summary": "Neighbourhood website for Fred's Community Cafe in Crofton Park — Allpress coffee, garden suntrap, events and local gatherings opposite the station.",
       "liveUrl": "https://aa89976566.github.io/fred-s-cafe/"
@@ -139,11 +139,11 @@
       "stack": "Next.js",
       "client": "for Kings Health & Fitness",
       "accent": "#E10600",
-      "cover": "/digital/boxing-1.jpg",
+      "cover": "/media/digital/boxing-1.jpg",
       "images": [
-        "/digital/boxing-1.jpg",
-        "/digital/boxing-2.jpg",
-        "/digital/boxing-3.jpg"
+        "/media/digital/boxing-1.jpg",
+        "/media/digital/boxing-2.jpg",
+        "/media/digital/boxing-3.jpg"
       ],
       "summary": "Private boxing training site with timetable, pricing and booking for Kings Health & Fitness in Camberwell."
     },
@@ -158,11 +158,11 @@
       "stack": "Next.js, Stripe",
       "client": "for Shop X",
       "accent": "#FF3829",
-      "cover": "/digital/shopx-1.jpg",
+      "cover": "/media/digital/shopx-1.jpg",
       "images": [
-        "/digital/shopx-1.jpg",
-        "/digital/shopx-2.jpg",
-        "/digital/shopx-3.jpg"
+        "/media/digital/shopx-1.jpg",
+        "/media/digital/shopx-2.jpg",
+        "/media/digital/shopx-3.jpg"
       ]
     },
     {
@@ -176,11 +176,11 @@
       "stack": "Next.js, Sanity",
       "client": "for Atelier North",
       "accent": "#4848ED",
-      "cover": "/digital/atelier-1.jpg",
+      "cover": "/media/digital/atelier-1.jpg",
       "images": [
-        "/digital/atelier-1.jpg",
-        "/digital/atelier-2.jpg",
-        "/digital/atelier-3.jpg"
+        "/media/digital/atelier-1.jpg",
+        "/media/digital/atelier-2.jpg",
+        "/media/digital/atelier-3.jpg"
       ]
     },
     {
@@ -194,11 +194,11 @@
       "stack": "Shopify, custom app",
       "client": "for Green Lane Market",
       "accent": "#008B8E",
-      "cover": "/digital/greenlane-1.jpg",
+      "cover": "/media/digital/greenlane-1.jpg",
       "images": [
-        "/digital/greenlane-1.jpg",
-        "/digital/greenlane-2.jpg",
-        "/digital/greenlane-3.jpg"
+        "/media/digital/greenlane-1.jpg",
+        "/media/digital/greenlane-2.jpg",
+        "/media/digital/greenlane-3.jpg"
       ]
     },
     {
@@ -212,11 +212,11 @@
       "stack": "Next.js, Postgres",
       "client": "for Ledger House",
       "accent": "#4848ED",
-      "cover": "/digital/ledger-1.jpg",
+      "cover": "/media/digital/ledger-1.jpg",
       "images": [
-        "/digital/ledger-1.jpg",
-        "/digital/ledger-2.jpg",
-        "/digital/ledger-3.jpg"
+        "/media/digital/ledger-1.jpg",
+        "/media/digital/ledger-2.jpg",
+        "/media/digital/ledger-3.jpg"
       ]
     },
     {
@@ -230,11 +230,11 @@
       "stack": "Next.js, Postgres",
       "client": "for Noon Studio",
       "accent": "#FF3829",
-      "cover": "/digital/noon-1.jpg",
+      "cover": "/media/digital/noon-1.jpg",
       "images": [
-        "/digital/noon-1.jpg",
-        "/digital/noon-2.jpg",
-        "/digital/noon-3.jpg"
+        "/media/digital/noon-1.jpg",
+        "/media/digital/noon-2.jpg",
+        "/media/digital/noon-3.jpg"
       ]
     },
     {
@@ -248,11 +248,11 @@
       "stack": "Next.js, custom integrations",
       "client": "for Kiln Ceramics",
       "accent": "#F7A80D",
-      "cover": "/digital/kiln-1.jpg",
+      "cover": "/media/digital/kiln-1.jpg",
       "images": [
-        "/digital/kiln-1.jpg",
-        "/digital/kiln-2.jpg",
-        "/digital/kiln-3.jpg"
+        "/media/digital/kiln-1.jpg",
+        "/media/digital/kiln-2.jpg",
+        "/media/digital/kiln-3.jpg"
       ]
     }
   ]

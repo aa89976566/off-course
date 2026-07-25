@@ -96,7 +96,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
       };
 
   return (
-    <div className="found-gallery relative flex min-h-[calc(100svh-50px)] flex-col bg-[#1a1b1e] text-white">
+    <div className="found-gallery relative flex h-[calc(100svh-50px)] flex-col overflow-hidden bg-[#1a1b1e] text-white">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -106,15 +106,15 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
         }}
       />
 
-      <header className="relative z-10 flex items-end justify-between gap-4 px-4 pb-2 pt-5 md:px-8 md:pt-7">
+      <header className="relative z-10 flex shrink-0 items-end justify-between gap-4 px-4 pb-1 pt-3 md:px-8 md:pt-4">
         <div>
           <p className="font-display text-[11px] uppercase tracking-[0.18em] text-white/45">
             GET FOUND
           </p>
-          <h1 className="mt-1 max-w-xl font-display text-2xl uppercase tracking-wide md:text-3xl">
+          <h1 className="mt-0.5 font-display text-xl uppercase tracking-wide md:text-2xl">
             Design library
           </h1>
-          <p className="mt-1 max-w-md text-sm text-white/55">
+          <p className="mt-0.5 max-w-md text-xs text-white/55 md:text-sm">
             Flip through the systems we ship after discovery.
           </p>
         </div>
@@ -123,8 +123,8 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
         </p>
       </header>
 
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-3 pb-6 pt-2 md:px-10 md:pb-10">
-        <div className="relative w-full max-w-[1080px]">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-3 pb-3 pt-1 md:px-10 md:pb-5">
+        <div className="relative w-full max-w-[980px]">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={project.slug}
@@ -138,10 +138,10 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.12}
               onDragEnd={onDragEnd}
-              className="found-frame mx-auto overflow-hidden rounded-[18px] bg-[#0e0f11] shadow-[0_40px_100px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[22px]"
+              className="found-frame mx-auto overflow-hidden rounded-[16px] bg-[#0e0f11] shadow-[0_40px_100px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[20px]"
             >
               {/* Browser chrome */}
-              <div className="flex items-center gap-3 border-b border-white/8 bg-[#2a2b30] px-3.5 py-2.5 md:px-4">
+              <div className="flex items-center gap-3 border-b border-white/[0.08] bg-[#2a2b30] px-3 py-2 md:px-4">
                 <div className="flex gap-1.5" aria-hidden>
                   <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
                   <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
@@ -157,7 +157,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
 
               <Link
                 href={`/get-found/${project.slug}`}
-                className="group relative block aspect-[16/10] w-full overflow-hidden bg-white"
+                className="group relative block h-[min(48svh,520px)] w-full overflow-hidden bg-white sm:h-[min(52svh,560px)]"
                 aria-label={`Open ${project.title}`}
               >
                 <Image
@@ -166,9 +166,9 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
                   fill
                   priority
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  sizes="(max-width: 1100px) 100vw, 1080px"
+                  sizes="(max-width: 1100px) 100vw, 980px"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:h-36" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </Link>
             </motion.div>
           </AnimatePresence>
@@ -192,7 +192,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
           </button>
         </div>
 
-        <div className="mt-5 flex w-full max-w-[1080px] flex-col gap-4 md:mt-7 md:flex-row md:items-end md:justify-between">
+        <div className="mt-3 flex w-full max-w-[980px] flex-col gap-3 md:mt-4 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
             <AnimatePresence mode="wait">
               <motion.div
@@ -202,16 +202,16 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
                 exit={reduce ? undefined : { opacity: 0, y: -6 }}
                 transition={{ duration: 0.28 }}
               >
-                <h2 className="font-display text-lg uppercase tracking-wide md:text-xl">
+                <h2 className="font-display text-base uppercase tracking-wide md:text-lg">
                   {project.title}
                 </h2>
-                <p className="mt-1 text-sm text-white/55">
+                <p className="mt-0.5 text-sm text-white/55">
                   {project.type}
                   {project.year ? ` · ${project.year}` : ""}
                   {project.stack ? ` · ${project.stack}` : ""}
                 </p>
                 {project.summary && (
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/70">
+                  <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/70 line-clamp-2">
                     {project.summary}
                   </p>
                 )}
@@ -258,7 +258,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
         </div>
 
         <div
-          className="mt-5 flex max-w-full flex-wrap justify-center gap-1.5"
+          className="mt-3 flex max-w-full flex-wrap justify-center gap-1.5"
           role="tablist"
           aria-label="Designs"
         >
@@ -282,7 +282,7 @@ export function FoundGallery({ projects }: FoundGalleryProps) {
           ))}
         </div>
 
-        <p className="mt-3 hidden text-[11px] uppercase tracking-[0.14em] text-white/30 md:block">
+        <p className="mt-2 hidden text-[11px] uppercase tracking-[0.14em] text-white/30 md:block">
           Arrow keys · swipe · click frame
         </p>
       </div>
