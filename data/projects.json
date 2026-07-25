@@ -109,6 +109,24 @@
       ]
     },
     {
+      "slug": "ams-com",
+      "title": "AMS.COM",
+      "stream": "found",
+      "year": "2025",
+      "type": "Brand website",
+      "materials": null,
+      "location": null,
+      "stack": "HTML, CSS",
+      "client": "for AMS",
+      "accent": "#B8D170",
+      "cover": "/media/digital/ams-1.jpg",
+      "images": [
+        "/media/digital/ams-1.jpg"
+      ],
+      "summary": "Live brand site for AMS — featured in the GET FOUND product stage.",
+      "liveUrl": "https://aa89976566.github.io/Ams.com/"
+    },
+    {
       "slug": "freds-cafe",
       "title": "FRED'S CAFE",
       "stream": "found",
@@ -119,14 +137,33 @@
       "stack": "Next.js",
       "client": "for Fred's Community Cafe",
       "accent": "#E85A2A",
-      "cover": "/media/digital/freds-1.jpg",
+      "cover": "/media/digital/freds-live-1.jpg",
       "images": [
+        "/media/digital/freds-live-1.jpg",
         "/media/digital/freds-1.jpg",
         "/media/digital/freds-2.jpg",
         "/media/digital/freds-3.jpg"
       ],
       "summary": "Neighbourhood website for Fred's Community Cafe in Crofton Park — Allpress coffee, garden suntrap, events and local gatherings opposite the station.",
       "liveUrl": "https://aa89976566.github.io/fred-s-cafe/"
+    },
+    {
+      "slug": "crespidia-coffee",
+      "title": "CRESPIDIA COFFEE",
+      "stream": "found",
+      "year": "2025",
+      "type": "Cafe website",
+      "materials": null,
+      "location": "Crystal Palace, London",
+      "stack": "HTML, CSS",
+      "client": "for Crespidia",
+      "accent": "#C4A484",
+      "cover": "/media/digital/crespidia-1.jpg",
+      "images": [
+        "/media/digital/crespidia-1.jpg"
+      ],
+      "summary": "Cafe website for Crespidia in Crystal Palace.",
+      "liveUrl": "https://aa89976566.github.io/Crespidia-coffee/"
     },
     {
       "slug": "boxing-training",

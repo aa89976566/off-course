@@ -1,18 +1,36 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState, type CSSProperties, type ReactNode } from "react";
+import { FormEvent, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import type { Project } from "@/lib/projects";
+import { assetPath } from "@/lib/utils";
+
+type FoundLandingProps = {
+  projects: Project[];
+};
+
+type CardTilt = {
+  tilt: string;
+  zIndex?: number;
+};
+
+const TILTS: CardTilt[] = [
+  { tilt: "rotateY(-18deg) rotateX(8deg) translateY(12px)" },
+  { tilt: "scale(1.06) translateY(-4px)", zIndex: 10 },
+  { tilt: "rotateY(18deg) rotateX(8deg) translateY(12px)" },
+];
 
 /**
- * GET FOUND destination — SaaS landing composition (reference: iru-style):
- * dark stage, rounded white page, hero + email CTA, floating product panels.
+ * GET FOUND destination — SaaS landing with real project website cards.
  */
-export function FoundLanding() {
+export function FoundLanding({ projects }: FoundLandingProps) {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const cards = projects.slice(0, 3);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -127,7 +145,7 @@ export function FoundLanding() {
                 className="pointer-events-none absolute left-1/2 top-[8%] h-[95%] w-[92%] -translate-x-1/2 rounded-full blur-3xl"
                 style={{
                   background:
-                    "radial-gradient(ellipse at center, rgba(72,72,237,0.28), rgba(255,56,41,0.14), transparent 68%)",
+                    "radial-gradient(ellipse at center, rgba(72,72,237,0.22), rgba(255,56,41,0.12), transparent 68%)",
                 }}
               />
 
@@ -135,51 +153,16 @@ export function FoundLanding() {
                 className="found-panels relative mx-auto grid h-[150px] max-w-3xl grid-cols-3 items-end gap-2 px-1 sm:h-[180px] sm:gap-3 md:h-[210px]"
                 style={{ perspective: "1200px" }}
               >
-                <Panel
-                  tilt="rotateY(-18deg) rotateX(8deg) translateY(12px)"
-                  gradient="linear-gradient(160deg, #7eb6ff 0%, #4848ed 45%, #d1add4 100%)"
-                >
-                  <div className="absolute inset-0 opacity-45">
-                    <div className="absolute left-3 top-4 h-8 w-8 rounded-md bg-white/30" />
-                    <div className="absolute left-3 top-16 h-2 w-16 rounded bg-white/25" />
-                    <div className="absolute left-3 top-24 h-2 w-12 rounded bg-white/20" />
-                  </div>
-                  <Cursor reduce={!!reduce} />
-                </Panel>
-
-                <Panel
-                  tilt="scale(1.06) translateY(-4px)"
-                  zIndex={10}
-                  gradient="linear-gradient(165deg, #5b4bff 0%, #ff3829 55%, #f7a80d 100%)"
-                >
-                  <div className="flex h-full flex-col p-3 text-left text-white md:p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/80 md:text-[11px]">
-                      Endpoint Management
-                    </p>
-                    <div className="mt-3 space-y-2 rounded-md bg-black/20 p-2.5 text-[10px] leading-snug backdrop-blur-sm md:text-[11px]">
-                      <p className="text-white/70">if (User group is Engineering)</p>
-                      <Row label="Github Desktop" />
-                      <Row label="Docker Desktop" />
-                      <Row label="Booking System" />
-                    </div>
-                  </div>
-                </Panel>
-
-                <Panel
-                  tilt="rotateY(18deg) rotateX(8deg) translateY(12px)"
-                  gradient="linear-gradient(160deg, #ffb347 0%, #ff3829 50%, #008b8e 100%)"
-                >
-                  <div className="flex h-full flex-col p-3 text-left text-white md:p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85 md:text-[11px]">
-                      Detection & Response
-                    </p>
-                    <ul className="mt-3 space-y-2 text-[10px] md:text-[11px]">
-                      <Threat id="Thread00_9068" />
-                      <Threat id="Thread00_8972" />
-                      <Threat id="Thread00_8120" />
-                    </ul>
-                  </div>
-                </Panel>
+                {cards.map((project, i) => (
+                  <ProjectPanel
+                    key={project.slug}
+                    project={project}
+                    tilt={TILTS[i]?.tilt ?? "none"}
+                    zIndex={TILTS[i]?.zIndex}
+                    showCursor={i === 0}
+                    reduce={!!reduce}
+                  />
+                ))}
               </div>
             </div>
           </section>
@@ -189,54 +172,59 @@ export function FoundLanding() {
   );
 }
 
-function Panel({
-  children,
-  gradient,
+function ProjectPanel({
+  project,
   tilt,
   zIndex,
+  showCursor,
+  reduce,
 }: {
-  children?: ReactNode;
-  gradient: string;
+  project: Project;
   tilt: string;
   zIndex?: number;
+  showCursor?: boolean;
+  reduce: boolean;
 }) {
+  const href = project.liveUrl || `/get-found/${project.slug}`;
+  const external = Boolean(project.liveUrl);
+
   return (
-    <div className="relative h-[88%]" style={{ zIndex, perspective: "800px" }}>
-      <div
-        className="relative h-full overflow-hidden rounded-2xl shadow-[0_24px_60px_rgba(18,20,26,0.28)] ring-1 ring-white/30"
+    <div className="relative h-[92%]" style={{ zIndex, perspective: "800px" }}>
+      <a
+        href={href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        aria-label={`Open ${project.title}`}
+        className="group relative block h-full overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(18,20,26,0.28)] ring-1 ring-black/10 transition duration-300 hover:ring-black/25"
         style={
           {
-            background: gradient,
             transform: tilt,
             transformOrigin: "bottom center",
             transformStyle: "preserve-3d",
           } as CSSProperties
         }
       >
-        <div className="absolute inset-0 bg-white/10" />
-        <div className="relative h-full">{children}</div>
-      </div>
+        <div className="absolute inset-0">
+          <Image
+            src={assetPath(project.cover)}
+            alt={project.title}
+            fill
+            className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 33vw, 280px"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-2.5 text-left text-white md:p-3">
+          <p className="truncate font-display text-[10px] uppercase tracking-[0.08em] md:text-[11px]">
+            {project.title}
+          </p>
+          <p className="mt-0.5 truncate text-[9px] text-white/75 md:text-[10px]">
+            {project.type}
+          </p>
+        </div>
+        {showCursor && <Cursor reduce={reduce} />}
+      </a>
     </div>
-  );
-}
-
-function Row({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-2 rounded bg-white/10 px-2 py-1.5">
-      <span className="h-3.5 w-3.5 rounded bg-white/35" />
-      <span>{label}</span>
-    </div>
-  );
-}
-
-function Threat({ id }: { id: string }) {
-  return (
-    <li className="flex items-center justify-between gap-2 rounded-md bg-black/20 px-2 py-1.5 backdrop-blur-sm">
-      <span className="truncate font-mono text-white/90">{id}</span>
-      <span className="shrink-0 rounded bg-white/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">
-        Open
-      </span>
-    </li>
   );
 }
 
@@ -244,7 +232,7 @@ function Cursor({ reduce }: { reduce: boolean }) {
   return (
     <motion.div
       aria-hidden
-      className="absolute bottom-[28%] right-[18%] z-20"
+      className="pointer-events-none absolute bottom-[34%] right-[16%] z-20"
       animate={
         reduce
           ? undefined
