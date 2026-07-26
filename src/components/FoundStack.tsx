@@ -3,14 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Transition,
+} from "framer-motion";
 import type { Project } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
 
@@ -24,7 +23,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   "boxing-training": "Boxing coach",
 };
 
-/** Card surface themes — matches the uploaded stack reference. */
+/** Card surface themes — kinetic deck palette. */
 const CARD_THEME: Record<
   string,
   { bg: string; fg: string; muted: string; accent: string }
@@ -50,17 +49,50 @@ const CARD_THEME: Record<
 };
 
 /**
- * GET FOUND — vertical 3D card stack (reference: kinetic deck).
- * Scroll / swipe / keys to pick; left rail shows name + location.
+ * Spring tuned like Awwwards stacked-card sliders
+ * (Eliot Besson / Ruixen-style physics — soft settle, no snap).
+ */
+const STACK_SPRING: Transition = {
+  type: "spring",
+  stiffness: 260,
+  damping: 28,
+  mass: 0.85,
+};
+
+const META_EASE: Transition = {
+  duration: 0.42,
+  ease: [0.22, 1, 0.36, 1],
+};
+
+function stackOffset(i: number, index: number, total: number) {
+  let d = i - index;
+  if (d > total / 2) d -= total;
+  if (d < -total / 2) d += total;
+  return d;
+}
+
+/**
+ * GET FOUND — split stage modeled on Eliot Besson’s Stacked Cards Slider:
+ * left rail = sticky project meta; right viewport = 3D overlapping deck.
+ * Mobile keeps the same two-column shell (no column stack).
  */
 export function FoundStack({ projects }: FoundStackProps) {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [index, setIndex] = useState(0);
+  const [narrow, setNarrow] = useState(false);
   const lock = useRef(false);
   const touchY = useRef<number | null>(null);
   const total = projects.length;
   const active = projects[index];
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setNarrow(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const go = useCallback(
     (delta: number) => {
@@ -69,7 +101,7 @@ export function FoundStack({ projects }: FoundStackProps) {
       setIndex((i) => (i + delta + total) % total);
       window.setTimeout(() => {
         lock.current = false;
-      }, reduce ? 120 : 480);
+      }, reduce ? 100 : 420);
     },
     [total, reduce]
   );
@@ -106,9 +138,12 @@ export function FoundStack({ projects }: FoundStackProps) {
   }
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
+  const yStep = narrow ? 56 : 88;
+  const xStep = narrow ? 10 : 18;
+  const zStep = narrow ? 90 : 120;
 
   return (
-    <div
+    <section
       className="found-stack found-landing relative min-h-svh overflow-x-hidden overflow-y-hidden bg-[#e9e9e9] text-black"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
@@ -124,11 +159,7 @@ export function FoundStack({ projects }: FoundStackProps) {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 65% 50% at 58% 48%, #fff 0%, transparent 68%), linear-gradient(180deg, #f4f4f4 0%, #dcdcdc 100%)",
-        }}
+        className="found-stack__atmosphere pointer-events-none absolute inset-0"
       />
 
       <header className="found-stack__header relative z-30 flex items-center justify-between px-3 py-3 sm:px-4 md:px-8 md:py-4">
@@ -149,34 +180,37 @@ export function FoundStack({ projects }: FoundStackProps) {
         </p>
       </header>
 
-      <div className="found-stack__layout relative z-10 mx-auto grid min-h-[calc(100svh-56px)] max-w-[1240px] items-center gap-2 px-3 pb-4 sm:gap-4 sm:px-4 sm:pb-6 md:min-h-[calc(100svh-64px)] md:gap-8 md:px-8 md:pb-10">
-        {/* Left rail — name + location */}
-        <div className="found-stack__info relative z-20 min-w-0 pl-0.5 md:pl-2">
+      {/*
+        Shell mirrors Eliot Besson stacked-cards composition:
+        rail (meta) | viewport (deck) — never collapses to a single column.
+      */}
+      <div className="found-stack__shell relative z-10 mx-auto grid min-h-[calc(100svh-56px)] max-w-[1240px] items-center px-3 pb-4 sm:px-4 sm:pb-6 md:min-h-[calc(100svh-64px)] md:px-8 md:pb-10">
+        <aside className="found-stack__rail relative z-20 min-w-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={active.slug}
-              initial={reduce ? false : { y: 14 }}
-              animate={{ y: 0 }}
-              exit={reduce ? undefined : { y: -10, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               className="found-stack__meta"
+              initial={reduce ? false : { y: 12, opacity: 0.35 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={reduce ? undefined : { y: -8, opacity: 0 }}
+              transition={reduce ? { duration: 0 } : META_EASE}
             >
-              <p className="found-stack__category font-mono text-[9px] uppercase tracking-[0.18em] text-black/40 sm:text-[11px] sm:tracking-[0.22em]">
+              <p className="found-stack__eyebrow font-mono text-[9px] uppercase tracking-[0.18em] text-black/40 sm:text-[11px] sm:tracking-[0.22em]">
                 {category}
               </p>
-              <h1 className="found-stack__title mt-1.5 max-w-[12ch] font-display text-[clamp(1.15rem,4.2vw,3.6rem)] uppercase leading-[0.92] tracking-wide sm:mt-3">
+              <h1 className="found-stack__title mt-1.5 max-w-[12ch] font-display text-[clamp(1.1rem,3.8vw,3.6rem)] uppercase leading-[0.92] tracking-wide sm:mt-3">
                 {active.title}
               </h1>
               {active.location && (
-                <p className="found-stack__location mt-2 max-w-[18ch] text-[11px] leading-snug text-black/55 sm:mt-4 sm:max-w-xs sm:text-sm sm:leading-relaxed md:text-[15px]">
+                <p className="found-stack__address mt-2 max-w-[16ch] text-[11px] leading-snug text-black/55 sm:mt-4 sm:max-w-xs sm:text-sm sm:leading-relaxed md:text-[15px]">
                   {active.location}
                 </p>
               )}
 
-              <div className="found-stack__actions mt-4 flex flex-col gap-2 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-3">
+              <div className="found-stack__cta mt-4 flex flex-col gap-2 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-3">
                 <Link
                   href={`/get-found/${active.slug}`}
-                  className="found-stack__btn found-stack__btn--primary inline-flex min-h-11 items-center justify-center rounded-md bg-black px-3 text-[10px] font-bold uppercase tracking-wide text-white transition hover:bg-[var(--walala-red)] sm:px-4 sm:text-xs"
+                  className="found-stack__btn found-stack__btn--primary inline-flex min-h-11 items-center justify-center rounded-md bg-black px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors duration-300 hover:bg-[var(--walala-red)] sm:px-4 sm:text-xs"
                 >
                   View case
                 </Link>
@@ -185,7 +219,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                     href={active.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="found-stack__btn found-stack__btn--ghost inline-flex min-h-11 items-center justify-center rounded-md border border-black/20 px-3 text-[10px] font-bold uppercase tracking-wide transition hover:border-black sm:px-4 sm:text-xs"
+                    className="found-stack__btn found-stack__btn--ghost inline-flex min-h-11 items-center justify-center rounded-md border border-black/20 px-3 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300 hover:border-black sm:px-4 sm:text-xs"
                   >
                     Visit site
                   </a>
@@ -194,10 +228,7 @@ export function FoundStack({ projects }: FoundStackProps) {
             </motion.div>
           </AnimatePresence>
 
-          <ul
-            className="found-stack__nav mt-5 space-y-0.5 sm:mt-10 sm:space-y-1"
-            aria-label="Project types"
-          >
+          <ul className="found-stack__index mt-5 space-y-0.5 sm:mt-10 sm:space-y-1" aria-label="Project types">
             {projects.map((p, i) => {
               const cat = CATEGORY_LABEL[p.slug] || p.type;
               const on = i === index;
@@ -206,7 +237,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                   <button
                     type="button"
                     onClick={() => setIndex(i)}
-                    className={`found-stack__nav-item flex min-h-11 w-full items-center gap-2 border-l-2 py-1 pl-2 text-left transition sm:gap-3 sm:pl-3 ${
+                    className={`found-stack__index-item flex min-h-11 w-full items-center gap-2 border-l-2 py-1 pl-2 text-left transition-[color,border-color] duration-300 sm:gap-3 sm:pl-3 ${
                       on
                         ? "border-[var(--walala-red)] text-black"
                         : "border-transparent text-black/30 hover:text-black/60"
@@ -227,36 +258,20 @@ export function FoundStack({ projects }: FoundStackProps) {
           <p className="found-stack__hint mt-4 text-[9px] uppercase tracking-[0.12em] text-black/30 sm:mt-8 sm:text-[11px] sm:tracking-[0.14em]">
             Scroll · swipe · ↑↓
           </p>
-        </div>
+        </aside>
 
-        {/* Kinetic 3D stack */}
-        <div className="found-stack__stage relative z-10 flex h-[min(70svh,520px)] min-w-0 items-center justify-center md:h-[min(78svh,680px)]">
-          <div
-            className="found-stack__deck relative h-full w-full max-w-[560px]"
-            style={{ perspective: "1600px", perspectiveOrigin: "50% 40%" }}
-          >
+        <div className="found-stack__viewport relative z-10 flex min-w-0 items-center justify-center">
+          <div className="found-stack__perspective relative h-full w-full max-w-[560px]">
             {projects.map((project, i) => {
-              const offset = i - index;
-              let d = offset;
-              if (d > total / 2) d -= total;
-              if (d < -total / 2) d += total;
-
+              const d = stackOffset(i, index, total);
               const abs = Math.abs(d);
               const visible = abs <= 2;
-              const y = d * 88;
-              const x = d * 18;
-              const z = -abs * 120;
-              const scale = 1 - abs * 0.08;
-              const rotateX = 18 + abs * 6;
-              const rotateY = d * -8;
-              const rotateZ = d * -2;
-              const opacity = visible ? 1 - abs * 0.12 : 0;
               const theme =
                 CARD_THEME[project.slug] || CARD_THEME["jieshin-tseng"];
               const cat = CATEGORY_LABEL[project.slug] || project.type;
 
               return (
-                <button
+                <motion.button
                   key={project.slug}
                   type="button"
                   tabIndex={d === 0 ? 0 : -1}
@@ -277,22 +292,43 @@ export function FoundStack({ projects }: FoundStackProps) {
                     }
                     setIndex(i);
                   }}
-                  className="found-stack__card absolute left-1/2 top-1/2 w-[min(100%,480px)] origin-center overflow-hidden rounded-[18px] text-left shadow-[0_28px_70px_rgba(0,0,0,0.28)] outline-none focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
-                  style={
-                    {
-                      transform: `translate(-50%, calc(-50% + ${y}px)) translateX(${x}px) translateZ(${z}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`,
-                      opacity,
-                      zIndex: 30 - abs,
-                      pointerEvents: visible ? "auto" : "none",
-                      backgroundColor: theme.bg,
-                      color: theme.fg,
-                      transition: reduce
-                        ? "none"
-                        : "transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease",
-                    } as CSSProperties
+                  className="found-stack__card absolute left-1/2 top-1/2 w-[min(100%,480px)] origin-center overflow-hidden rounded-[18px] text-left outline-none will-change-transform focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
+                  style={{
+                    zIndex: 30 - abs,
+                    pointerEvents: visible ? "auto" : "none",
+                    backgroundColor: theme.bg,
+                    color: theme.fg,
+                    boxShadow: "0 28px 70px rgba(0,0,0,0.28)",
+                  }}
+                  transformTemplate={({
+                    x,
+                    y,
+                    z,
+                    rotateX,
+                    rotateY,
+                    rotateZ,
+                    scale,
+                  }) =>
+                    `translate3d(calc(-50% + ${x ?? 0}), calc(-50% + ${y ?? 0}), ${z ?? 0}) rotateX(${rotateX ?? 0}) rotateY(${rotateY ?? 0}) rotateZ(${rotateZ ?? 0}) scale(${scale ?? 1})`
                   }
+                  initial={false}
+                  animate={{
+                    x: d * xStep,
+                    y: d * yStep,
+                    z: -abs * zStep,
+                    rotateX: 18 + abs * 6,
+                    rotateY: d * -8,
+                    rotateZ: d * -2,
+                    scale: 1 - abs * 0.08,
+                    opacity: visible ? 1 - abs * 0.12 : 0,
+                    filter:
+                      abs > 0
+                        ? `blur(${Math.min(abs, 2) * 0.35}px)`
+                        : "blur(0px)",
+                  }}
+                  transition={reduce ? { duration: 0 } : STACK_SPRING}
                 >
-                  <div className="found-stack__card-inner grid h-[min(38svh,280px)] grid-cols-[1.05fr_0.95fr] sm:h-[min(42svh,320px)] md:h-[360px]">
+                  <div className="found-stack__card-inner grid h-[min(34svh,240px)] grid-cols-[1.05fr_0.95fr] sm:h-[min(42svh,320px)] md:h-[360px]">
                     <div className="flex min-w-0 flex-col justify-between p-2.5 sm:p-4 md:p-6">
                       <div className="min-w-0">
                         <p
@@ -301,7 +337,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                         >
                           {cat}
                         </p>
-                        <p className="mt-1.5 font-display text-[clamp(0.85rem,2.8vw,1.85rem)] uppercase leading-[0.95] tracking-wide sm:mt-3">
+                        <p className="mt-1.5 font-display text-[clamp(0.8rem,2.6vw,1.85rem)] uppercase leading-[0.95] tracking-wide sm:mt-3">
                           {project.title}
                         </p>
                       </div>
@@ -334,12 +370,12 @@ export function FoundStack({ projects }: FoundStackProps) {
                       />
                     </div>
                   </div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

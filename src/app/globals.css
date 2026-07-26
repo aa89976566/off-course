@@ -233,76 +233,121 @@ h3::selection {
   --found-stage: #1a1b1e;
 }
 
-/* GET FOUND project stack — always two columns (incl. mobile) */
-/* GET FOUND project section — always two columns (incl. mobile) */
-.found-stack__layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+/*
+ * GET FOUND stack — structure after Eliot Besson Stacked Cards Slider:
+ * sticky left rail (meta) + right 3D deck viewport.
+ * Always two columns; never collapse to flex-column / 1fr on mobile.
+ */
+.found-stack {
+  --found-rail: 0.36fr;
+  --found-deck: 0.64fr;
+  --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.found-stack__info {
-  grid-column: 1;
-  grid-row: 1;
+.found-stack__atmosphere {
+  background:
+    radial-gradient(ellipse 65% 50% at 58% 48%, #fff 0%, transparent 68%),
+    linear-gradient(180deg, #f4f4f4 0%, #dcdcdc 100%);
+}
+
+.found-stack__shell,
+.found-stack .found-stack__shell,
+.found-landing .found-stack__shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, var(--found-rail)) minmax(0, var(--found-deck)) !important;
+  align-items: center;
+  column-gap: clamp(0.5rem, 2vw, 2rem);
+  width: 100% !important;
+  max-width: 100%;
+  overflow-x: clip;
+  flex-direction: unset !important;
+}
+
+.found-stack__rail,
+.found-stack .found-stack__rail,
+.found-landing .found-stack__rail {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
   position: relative;
   z-index: 20;
   min-width: 0;
   max-width: 100%;
+  width: auto !important;
+  padding-inline: 0.125rem;
+  /* Soft veil so overlapping cards never kill text readability */
+  isolation: isolate;
 }
 
-.found-stack__stage {
-  grid-column: 2;
-  grid-row: 1;
+.found-stack__rail::before {
+  content: "";
+  position: absolute;
+  inset: -8% -12% -8% -8%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(233, 233, 233, 0.92) 0%,
+    rgba(233, 233, 233, 0.78) 55%,
+    rgba(233, 233, 233, 0) 100%
+  );
+}
+
+.found-stack__viewport,
+.found-stack .found-stack__viewport,
+.found-landing .found-stack__viewport {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
   position: relative;
   z-index: 10;
   min-width: 0;
   max-width: 100%;
-  /* Allow cards to slightly bleed toward the info column without covering text */
-  margin-left: -2%;
+  width: auto !important;
+  height: min(68svh, 480px);
+  /* Slight deck bleed toward rail — visual overlap without covering copy */
+  margin-left: -4%;
+  transform: translateZ(0);
+}
+
+.found-stack__perspective {
+  height: 100%;
+  perspective: 1600px;
+  perspective-origin: 50% 40%;
+  transform-style: preserve-3d;
+}
+
+.found-stack__card {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.found-stack__meta,
+.found-stack__index-item,
+.found-stack__btn {
+  transition-timing-function: var(--found-ease);
 }
 
 @media (min-width: 768px) {
-  .found-stack__layout {
-    grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.5fr);
+  .found-stack {
+    --found-rail: minmax(220px, 0.85fr);
+    --found-deck: minmax(0, 1.5fr);
   }
 
-  .found-stack__stage {
+  .found-stack__shell,
+  .found-stack .found-stack__shell,
+  .found-landing .found-stack__shell {
+    grid-template-columns: var(--found-rail) var(--found-deck) !important;
+  }
+
+  .found-stack__viewport,
+  .found-stack .found-stack__viewport,
+  .found-landing .found-stack__viewport {
+    height: min(78svh, 680px);
     margin-left: 0;
   }
-}
 
-/* Lock this section against column / full-width stacking overrides */
-.found-stack .found-stack__layout,
-.found-landing .found-stack__layout {
-  display: grid !important;
-  flex-direction: unset !important;
-  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr) !important;
-  width: 100% !important;
-}
-
-.found-stack .found-stack__info,
-.found-landing .found-stack__info {
-  grid-column: 1 !important;
-  grid-row: 1 !important;
-  width: auto !important;
-  max-width: 100% !important;
-}
-
-.found-stack .found-stack__stage,
-.found-landing .found-stack__stage {
-  grid-column: 2 !important;
-  grid-row: 1 !important;
-  width: auto !important;
-  max-width: 100% !important;
-}
-
-@media (min-width: 768px) {
-  .found-stack .found-stack__layout,
-  .found-landing .found-stack__layout {
-    grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.5fr) !important;
+  .found-stack__rail::before {
+    display: none;
   }
 }
 
