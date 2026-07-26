@@ -23,7 +23,6 @@ const CATEGORY_LABEL: Record<string, string> = {
   "boxing-training": "Boxing coach",
 };
 
-/** Card surface themes — kinetic deck palette. */
 const CARD_THEME: Record<
   string,
   { bg: string; fg: string; muted: string; accent: string }
@@ -48,19 +47,16 @@ const CARD_THEME: Record<
   },
 };
 
-/**
- * Spring tuned like Awwwards stacked-card sliders
- * (Eliot Besson / Ruixen-style physics — soft settle, no snap).
- */
+/** Soft spring — same family as Awwwards stacked decks. */
 const STACK_SPRING: Transition = {
   type: "spring",
-  stiffness: 260,
-  damping: 28,
-  mass: 0.85,
+  stiffness: 240,
+  damping: 26,
+  mass: 0.9,
 };
 
 const META_EASE: Transition = {
-  duration: 0.42,
+  duration: 0.4,
   ease: [0.22, 1, 0.36, 1],
 };
 
@@ -72,9 +68,8 @@ function stackOffset(i: number, index: number, total: number) {
 }
 
 /**
- * GET FOUND — split stage modeled on Eliot Besson’s Stacked Cards Slider:
- * left rail = sticky project meta; right viewport = 3D overlapping deck.
- * Mobile keeps the same two-column shell (no column stack).
+ * GET FOUND — full-bleed kinetic card deck (reference stack).
+ * Cards own the screen; the left open margin holds a short project intro.
  */
 export function FoundStack({ projects }: FoundStackProps) {
   const reduce = useReducedMotion();
@@ -138,13 +133,14 @@ export function FoundStack({ projects }: FoundStackProps) {
   }
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
-  const yStep = narrow ? 48 : 88;
-  const xStep = narrow ? 6 : 18;
-  const zStep = narrow ? 80 : 120;
+  // Fan offsets — mobile keeps the same 3D deck language as desktop.
+  const yStep = narrow ? 78 : 96;
+  const xStep = narrow ? 8 : 20;
+  const zStep = narrow ? 110 : 140;
 
   return (
     <section
-      className="found-stack found-landing relative min-h-svh overflow-x-hidden overflow-y-hidden bg-[#e9e9e9] text-black"
+      className="found-stack found-landing relative h-svh min-h-svh overflow-hidden bg-[#e9e9e9] text-black"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
       }}
@@ -162,7 +158,7 @@ export function FoundStack({ projects }: FoundStackProps) {
         className="found-stack__atmosphere pointer-events-none absolute inset-0"
       />
 
-      <header className="found-stack__header relative z-30 flex items-center justify-between px-3 py-3 sm:px-4 md:px-8 md:py-4">
+      <header className="found-stack__header relative z-40 flex items-center justify-between px-4 py-3 md:px-8 md:py-4">
         <Link
           href="/"
           className="inline-flex min-h-11 items-center font-display text-xs uppercase tracking-[0.08em] sm:text-sm md:text-base"
@@ -180,202 +176,173 @@ export function FoundStack({ projects }: FoundStackProps) {
         </p>
       </header>
 
-      {/*
-        Shell mirrors Eliot Besson stacked-cards composition:
-        rail (meta) | viewport (deck) — never collapses to a single column.
-      */}
-      <div className="found-stack__shell relative z-10 mx-auto grid min-h-[calc(100svh-56px)] max-w-[1240px] items-center px-3 pb-4 sm:px-4 sm:pb-6 md:min-h-[calc(100svh-64px)] md:px-8 md:pb-10">
-        <aside className="found-stack__rail relative z-20 min-w-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active.slug}
-              className="found-stack__meta"
-              initial={reduce ? false : { y: 12, opacity: 0.35 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={reduce ? undefined : { y: -8, opacity: 0 }}
-              transition={reduce ? { duration: 0 } : META_EASE}
-            >
-              <p className="found-stack__eyebrow font-mono text-[9px] uppercase tracking-[0.18em] text-black/40 sm:text-[11px] sm:tracking-[0.22em]">
-                {category}
-              </p>
-              <h1 className="found-stack__title mt-1.5 max-w-[12ch] font-display text-[clamp(1.1rem,3.8vw,3.6rem)] uppercase leading-[0.92] tracking-wide sm:mt-3">
-                {active.title}
-              </h1>
-              {active.location && (
-                <p className="found-stack__address mt-2 max-w-[16ch] text-[11px] leading-snug text-black/55 sm:mt-4 sm:max-w-xs sm:text-sm sm:leading-relaxed md:text-[15px]">
-                  {active.location}
-                </p>
-              )}
+      {/* Full-bleed card stage — owns the frame */}
+      <div className="found-stack__stage" aria-label="Project cards">
+        <div className="found-stack__perspective">
+          {projects.map((project, i) => {
+            const d = stackOffset(i, index, total);
+            const abs = Math.abs(d);
+            const visible = abs <= 2;
+            const theme =
+              CARD_THEME[project.slug] || CARD_THEME["jieshin-tseng"];
+            const cat = CATEGORY_LABEL[project.slug] || project.type;
 
-              <div className="found-stack__cta mt-4 flex flex-col gap-2 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-3">
-                <Link
-                  href={`/get-found/${active.slug}`}
-                  className="found-stack__btn found-stack__btn--primary inline-flex min-h-11 items-center justify-center rounded-md bg-black px-3 text-[10px] font-bold uppercase tracking-wide text-white transition-colors duration-300 hover:bg-[var(--walala-red)] sm:px-4 sm:text-xs"
-                >
-                  View case
-                </Link>
-                {active.liveUrl && (
-                  <a
-                    href={active.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="found-stack__btn found-stack__btn--ghost inline-flex min-h-11 items-center justify-center rounded-md border border-black/20 px-3 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300 hover:border-black sm:px-4 sm:text-xs"
-                  >
-                    Visit site
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          <ul className="found-stack__index mt-5 space-y-0.5 sm:mt-10 sm:space-y-1" aria-label="Project types">
-            {projects.map((p, i) => {
-              const cat = CATEGORY_LABEL[p.slug] || p.type;
-              const on = i === index;
-              return (
-                <li key={p.slug}>
-                  <button
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    className={`found-stack__index-item flex min-h-11 w-full items-center gap-2 border-l-2 py-1 pl-2 text-left transition-[color,border-color] duration-300 sm:gap-3 sm:pl-3 ${
-                      on
-                        ? "border-[var(--walala-red)] text-black"
-                        : "border-transparent text-black/30 hover:text-black/60"
-                    }`}
-                  >
-                    <span className="font-mono text-[9px] tabular-nums sm:text-[10px]">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-display text-[9px] uppercase tracking-[0.1em] sm:text-[11px] sm:tracking-[0.14em]">
-                      {cat}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-
-          <p className="found-stack__hint mt-4 text-[9px] uppercase tracking-[0.12em] text-black/30 sm:mt-8 sm:text-[11px] sm:tracking-[0.14em]">
-            Scroll · swipe · ↑↓
-          </p>
-        </aside>
-
-        <div className="found-stack__viewport relative z-10 flex min-w-0 items-center justify-center">
-          <div className="found-stack__perspective relative h-full w-full max-w-[560px]">
-            {projects.map((project, i) => {
-              const d = stackOffset(i, index, total);
-              const abs = Math.abs(d);
-              const visible = abs <= 2;
-              const theme =
-                CARD_THEME[project.slug] || CARD_THEME["jieshin-tseng"];
-              const cat = CATEGORY_LABEL[project.slug] || project.type;
-
-              return (
-                <motion.button
-                  key={project.slug}
-                  type="button"
-                  tabIndex={d === 0 ? 0 : -1}
-                  aria-label={`${project.title}${project.location ? `, ${project.location}` : ""}`}
-                  aria-current={d === 0 ? "true" : undefined}
-                  onClick={() => {
-                    if (d === 0) {
-                      if (project.liveUrl) {
-                        window.open(
-                          project.liveUrl,
-                          "_blank",
-                          "noopener,noreferrer"
-                        );
-                      } else {
-                        router.push(`/get-found/${project.slug}`);
-                      }
-                      return;
+            return (
+              <motion.button
+                key={project.slug}
+                type="button"
+                tabIndex={d === 0 ? 0 : -1}
+                aria-label={`${project.title}${project.location ? `, ${project.location}` : ""}`}
+                aria-current={d === 0 ? "true" : undefined}
+                onClick={() => {
+                  if (d === 0) {
+                    if (project.liveUrl) {
+                      window.open(
+                        project.liveUrl,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    } else {
+                      router.push(`/get-found/${project.slug}`);
                     }
-                    setIndex(i);
-                  }}
-                  className="found-stack__card absolute left-1/2 top-1/2 origin-center overflow-hidden rounded-[18px] text-left outline-none will-change-transform focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
-                  style={{
-                    zIndex: 30 - abs,
-                    pointerEvents: visible ? "auto" : "none",
-                    backgroundColor: theme.bg,
-                    color: theme.fg,
-                    boxShadow: "0 28px 70px rgba(0,0,0,0.28)",
-                  }}
-                  transformTemplate={({
-                    x,
-                    y,
-                    z,
-                    rotateX,
-                    rotateY,
-                    rotateZ,
-                    scale,
-                  }) =>
-                    `translate3d(calc(-50% + ${x ?? 0}), calc(-50% + ${y ?? 0}), ${z ?? 0}) rotateX(${rotateX ?? 0}) rotateY(${rotateY ?? 0}) rotateZ(${rotateZ ?? 0}) scale(${scale ?? 1})`
+                    return;
                   }
-                  initial={false}
-                  animate={{
-                    x: d * xStep,
-                    y: d * yStep,
-                    z: -abs * zStep,
-                    rotateX: 18 + abs * 6,
-                    rotateY: d * -8,
-                    rotateZ: d * -2,
-                    scale: 1 - abs * 0.08,
-                    opacity: visible ? 1 - abs * 0.12 : 0,
-                    filter:
-                      abs > 0
-                        ? `blur(${Math.min(abs, 2) * 0.35}px)`
-                        : "blur(0px)",
-                  }}
-                  transition={reduce ? { duration: 0 } : STACK_SPRING}
-                >
-                  <div className="found-stack__card-inner grid h-[min(34svh,240px)] grid-cols-[1.05fr_0.95fr] sm:h-[min(42svh,320px)] md:h-[360px]">
-                    <div className="flex min-w-0 flex-col justify-between p-2.5 sm:p-4 md:p-6">
-                      <div className="min-w-0">
+                  setIndex(i);
+                }}
+                className="found-stack__card"
+                style={{
+                  zIndex: 30 - abs,
+                  pointerEvents: visible ? "auto" : "none",
+                  backgroundColor: theme.bg,
+                  color: theme.fg,
+                }}
+                transformTemplate={({
+                  x,
+                  y,
+                  z,
+                  rotateX,
+                  rotateY,
+                  rotateZ,
+                  scale,
+                }) =>
+                  `translate3d(calc(-50% + ${x ?? 0}), calc(-50% + ${y ?? 0}), ${z ?? 0}) rotateX(${rotateX ?? 0}) rotateY(${rotateY ?? 0}) rotateZ(${rotateZ ?? 0}) scale(${scale ?? 1})`
+                }
+                initial={false}
+                animate={{
+                  x: d * xStep,
+                  y: d * yStep,
+                  z: -abs * zStep,
+                  rotateX: narrow ? 14 + abs * 4 : 16 + abs * 5,
+                  rotateY: d * (narrow ? -4 : -7),
+                  rotateZ: d * (narrow ? -1.4 : -2.2),
+                  scale: 1 - abs * 0.07,
+                  opacity: visible ? 1 - abs * 0.1 : 0,
+                }}
+                transition={reduce ? { duration: 0 } : STACK_SPRING}
+              >
+                <div className="found-stack__card-inner">
+                  <div className="found-stack__card-copy">
+                    <div>
+                      <p
+                        className="found-stack__card-eyebrow"
+                        style={{ color: theme.muted }}
+                      >
+                        {cat}
+                      </p>
+                      <p className="found-stack__card-title">{project.title}</p>
+                    </div>
+                    <div>
+                      {project.location && (
                         <p
-                          className="font-mono text-[8px] uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.2em]"
+                          className="found-stack__card-place"
                           style={{ color: theme.muted }}
                         >
-                          {cat}
+                          {project.location}
                         </p>
-                        <p className="mt-1.5 font-display text-[clamp(0.8rem,2.6vw,1.85rem)] uppercase leading-[0.95] tracking-wide sm:mt-3">
-                          {project.title}
-                        </p>
-                      </div>
-                      <div className="min-w-0">
-                        {project.location && (
-                          <p
-                            className="text-[9px] leading-snug sm:text-[11px] md:text-xs"
-                            style={{ color: theme.muted }}
-                          >
-                            {project.location}
-                          </p>
-                        )}
-                        <p
-                          className="mt-1.5 font-display text-2xl leading-none sm:mt-3 sm:text-4xl md:text-5xl"
-                          style={{ color: theme.accent }}
-                        >
-                          {String(i + 1)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="relative m-2 overflow-hidden rounded-[12px] sm:m-3 sm:rounded-[18px] md:m-4">
-                      <Image
-                        src={assetPath(project.cover)}
-                        alt={project.title}
-                        fill
-                        className="object-cover object-top"
-                        sizes="(max-width: 768px) 40vw, 240px"
-                        priority={abs === 0}
-                      />
+                      )}
+                      <p
+                        className="found-stack__card-num"
+                        style={{ color: theme.accent }}
+                      >
+                        {String(i + 1)}
+                      </p>
                     </div>
                   </div>
-                </motion.button>
-              );
-            })}
-          </div>
+                  <div className="found-stack__card-media">
+                    <Image
+                      src={assetPath(project.cover)}
+                      alt={project.title}
+                      fill
+                      className="object-cover object-top"
+                      sizes="(max-width: 768px) 55vw, 320px"
+                      priority={abs === 0}
+                    />
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
+
+      {/* Left open margin — short project intro only */}
+      <aside className="found-stack__intro">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active.slug}
+            className="found-stack__meta"
+            initial={reduce ? false : { y: 10, opacity: 0.4 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={reduce ? undefined : { y: -8, opacity: 0 }}
+            transition={reduce ? { duration: 0 } : META_EASE}
+          >
+            <p className="found-stack__eyebrow">{category}</p>
+            <h1 className="found-stack__title">{active.title}</h1>
+            {active.location && (
+              <p className="found-stack__address">{active.location}</p>
+            )}
+            <div className="found-stack__cta">
+              <Link
+                href={`/get-found/${active.slug}`}
+                className="found-stack__btn found-stack__btn--primary"
+              >
+                View case
+              </Link>
+              {active.liveUrl && (
+                <a
+                  href={active.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="found-stack__btn found-stack__btn--ghost"
+                >
+                  Visit site
+                </a>
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        <ul className="found-stack__index" aria-label="Project types">
+          {projects.map((p, i) => {
+            const cat = CATEGORY_LABEL[p.slug] || p.type;
+            const on = i === index;
+            return (
+              <li key={p.slug}>
+                <button
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  className={`found-stack__index-item${on ? " is-active" : ""}`}
+                >
+                  <span className="found-stack__index-num">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="found-stack__index-label">{cat}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </aside>
     </section>
   );
 }
