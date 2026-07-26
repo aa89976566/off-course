@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { FoundLanding } from "@/components/FoundLanding";
+import { FoundStack } from "@/components/FoundStack";
 import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
   description:
-    "Collapse the stack — websites, booking, and platforms that keep brands found.",
+    "Scroll the stack — coffee shop, artist portfolio, and boxing coach websites.",
 };
 
-const FEATURED = ["ams-com", "jieshin-tseng", "crespidia-coffee"] as const;
+/** Featured GET FOUND stack: cafe → artist → boxing coach */
+const FEATURED = ["freds-cafe", "jieshin-tseng", "boxing-training"] as const;
 
 export default function GetFoundPage() {
   const found = getProjectsByStream("found");
@@ -16,8 +17,7 @@ export default function GetFoundPage() {
     found.find((p) => p.slug === slug)
   ).filter(Boolean) as typeof found;
 
-  // Fallback if featured slugs missing.
   const projects = featured.length >= 3 ? featured : found.slice(0, 3);
 
-  return <FoundLanding projects={projects} />;
+  return <FoundStack projects={projects} />;
 }

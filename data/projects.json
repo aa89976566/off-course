@@ -151,7 +151,7 @@
       "title": "FRED'S CAFE",
       "stream": "found",
       "year": "2025",
-      "type": "Community cafe website",
+      "type": "Coffee shop",
       "materials": null,
       "location": "358 Brockley Road, London SE4 2BY",
       "stack": "Next.js",
@@ -190,7 +190,7 @@
       "title": "BOXING TRAINING",
       "stream": "found",
       "year": "2025",
-      "type": "Brand website + booking",
+      "type": "Boxing coach",
       "materials": null,
       "location": "166 Benhill Rd, London SE5 7LL",
       "stack": "Next.js",
@@ -202,7 +202,7 @@
         "/media/digital/boxing-2.jpg",
         "/media/digital/boxing-3.jpg"
       ],
-      "summary": "Private boxing training site with timetable, pricing and booking for Kings Health & Fitness in Camberwell."
+      "summary": "Private boxing coaching site with timetable, pricing and booking for Kings Health & Fitness in Camberwell."
     },
     {
       "slug": "shop-x-booking",
