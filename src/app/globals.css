@@ -234,19 +234,20 @@ h3::selection {
 }
 
 /*
- * GET FOUND — full-bleed kinetic deck.
- * Cards fill the stage; left open margin = short project intro.
+ * GET FOUND — staggered overlapping deck (reference layout).
+ * Flat-facing cards with organic rotate + vertical overlap;
+ * left open margin = short project intro.
  */
 .found-stack {
   --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --found-card-w: min(74vw, 34rem);
-  --found-card-h: min(60svh, 29rem);
+  --found-card-w: min(68vw, 20rem);
+  --found-card-h: min(38svh, 16.5rem);
 }
 
 .found-stack__atmosphere {
   background:
-    radial-gradient(ellipse 80% 65% at 60% 48%, #fff 0%, transparent 72%),
-    linear-gradient(180deg, #f3f3f3 0%, #d9d9d9 100%);
+    radial-gradient(ellipse 70% 55% at 58% 45%, #fff 0%, transparent 68%),
+    linear-gradient(180deg, #f0f0f0 0%, #dbdbdb 100%);
 }
 
 .found-stack__stage {
@@ -257,39 +258,40 @@ h3::selection {
   pointer-events: none;
 }
 
-.found-stack__perspective {
+.found-stack__deck {
   position: absolute;
-  inset: 0;
-  perspective: 1500px;
-  perspective-origin: 58% 42%;
-  transform-style: preserve-3d;
+  /* Deck sits mid-right — open left third for intro */
+  left: 30%;
+  right: -2%;
+  top: 8%;
+  bottom: 4%;
   pointer-events: auto;
 }
 
 .found-stack__card {
   position: absolute;
-  /* Right-biased: left edge clears the intro gutter (~34vw) */
-  left: 70%;
-  top: 52%;
+  left: 56%;
+  top: 48%;
   width: var(--found-card-w);
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 24px;
+  border-radius: 22px;
   overflow: hidden;
   text-align: left;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.32);
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
+  /* Soft layered shadow — floating deck feel */
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.16),
+    0 4px 12px rgba(0, 0, 0, 0.08);
   will-change: transform, opacity;
   -webkit-tap-highlight-color: transparent;
 }
 
 .found-stack__card:focus-visible {
   box-shadow:
-    0 36px 90px rgba(0, 0, 0, 0.32),
+    0 18px 40px rgba(0, 0, 0, 0.16),
     0 0 0 2px #111;
 }
 
@@ -351,7 +353,7 @@ h3::selection {
   left: 0.85rem;
   top: 50%;
   transform: translateY(-46%);
-  width: min(28vw, 7.75rem);
+  width: min(26vw, 7.5rem);
   pointer-events: none;
 }
 
@@ -480,18 +482,23 @@ h3::selection {
 
 @media (min-width: 768px) {
   .found-stack {
-    --found-card-w: min(54vw, 32rem);
-    --found-card-h: min(54svh, 25rem);
+    --found-card-w: min(48vw, 28rem);
+    --found-card-h: min(44svh, 22rem);
   }
 
-  .found-stack__perspective {
-    perspective: 1700px;
-    perspective-origin: 55% 40%;
+  .found-stack__deck {
+    left: 28%;
+    right: 2%;
+    top: 4%;
+    bottom: 2%;
   }
 
   .found-stack__card {
-    left: 58%;
+    left: 50%;
     border-radius: 26px;
+    box-shadow:
+      0 24px 56px rgba(0, 0, 0, 0.18),
+      0 6px 16px rgba(0, 0, 0, 0.08);
   }
 
   .found-stack__card-copy {
@@ -547,10 +554,6 @@ h3::selection {
     gap: 0.75rem;
     margin-top: 1.5rem;
     width: auto;
-  }
-
-  .found-stack__card {
-    left: 60%;
   }
 
   .found-stack__btn {

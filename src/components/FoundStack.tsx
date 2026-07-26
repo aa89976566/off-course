@@ -47,18 +47,21 @@ const CARD_THEME: Record<
   },
 };
 
-/** Soft spring — same family as Awwwards stacked decks. */
+/** Soft spring — hand-dealt deck settle. */
 const STACK_SPRING: Transition = {
   type: "spring",
-  stiffness: 240,
-  damping: 26,
-  mass: 0.9,
+  stiffness: 220,
+  damping: 24,
+  mass: 0.95,
 };
 
 const META_EASE: Transition = {
   duration: 0.4,
   ease: [0.22, 1, 0.36, 1],
 };
+
+/** Per-card organic tilt — matches the staggered reference deck. */
+const CARD_TWIST = [-3.8, 2.6, -1.8, 3.2, -2.4];
 
 function stackOffset(i: number, index: number, total: number) {
   let d = i - index;
@@ -68,8 +71,9 @@ function stackOffset(i: number, index: number, total: number) {
 }
 
 /**
- * GET FOUND — full-bleed kinetic card deck (reference stack).
- * Cards own the screen; the left open margin holds a short project intro.
+ * GET FOUND — staggered overlapping card stack (reference layout).
+ * Flat-facing cards with rotateZ stagger + vertical overlap;
+ * left open margin holds a short project intro.
  */
 export function FoundStack({ projects }: FoundStackProps) {
   const reduce = useReducedMotion();
@@ -133,14 +137,13 @@ export function FoundStack({ projects }: FoundStackProps) {
   }
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
-  // Fan offsets — mobile keeps the same 3D deck language as desktop.
-  const yStep = narrow ? 78 : 96;
-  const xStep = narrow ? 8 : 20;
-  const zStep = narrow ? 110 : 140;
+  // Reference deck: tall vertical overlap + light horizontal stagger
+  const yStep = narrow ? 52 : 68;
+  const xStep = narrow ? 22 : 32;
 
   return (
     <section
-      className="found-stack found-landing relative h-svh min-h-svh overflow-hidden bg-[#e9e9e9] text-black"
+      className="found-stack found-landing relative h-svh min-h-svh overflow-hidden bg-[#e8e8e8] text-black"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
       }}
@@ -176,9 +179,9 @@ export function FoundStack({ projects }: FoundStackProps) {
         </p>
       </header>
 
-      {/* Full-bleed card stage — owns the frame */}
+      {/* Staggered overlapping deck — reference composition */}
       <div className="found-stack__stage" aria-label="Project cards">
-        <div className="found-stack__perspective">
+        <div className="found-stack__deck">
           {projects.map((project, i) => {
             const d = stackOffset(i, index, total);
             const abs = Math.abs(d);
@@ -186,6 +189,10 @@ export function FoundStack({ projects }: FoundStackProps) {
             const theme =
               CARD_THEME[project.slug] || CARD_THEME["jieshin-tseng"];
             const cat = CATEGORY_LABEL[project.slug] || project.type;
+            const twist = CARD_TWIST[i % CARD_TWIST.length];
+            // Active card settles flatter; neighbors keep organic tilt
+            const rotateZ = d === 0 ? twist * 0.25 : twist + d * 1.4;
+            const x = d * xStep + (d === 0 ? 0 : Math.sign(d || 1) * 6);
 
             return (
               <motion.button
@@ -211,32 +218,21 @@ export function FoundStack({ projects }: FoundStackProps) {
                 }}
                 className="found-stack__card"
                 style={{
-                  zIndex: 30 - abs,
+                  zIndex: 40 - abs,
                   pointerEvents: visible ? "auto" : "none",
                   backgroundColor: theme.bg,
                   color: theme.fg,
                 }}
-                transformTemplate={({
-                  x,
-                  y,
-                  z,
-                  rotateX,
-                  rotateY,
-                  rotateZ,
-                  scale,
-                }) =>
-                  `translate3d(calc(-50% + ${x ?? 0}), calc(-50% + ${y ?? 0}), ${z ?? 0}) rotateX(${rotateX ?? 0}) rotateY(${rotateY ?? 0}) rotateZ(${rotateZ ?? 0}) scale(${scale ?? 1})`
+                transformTemplate={({ x: tx, y: ty, rotateZ: rz, scale }) =>
+                  `translate3d(calc(-50% + ${tx ?? 0}), calc(-50% + ${ty ?? 0}), 0) rotate(${rz ?? 0}) scale(${scale ?? 1})`
                 }
                 initial={false}
                 animate={{
-                  x: d * xStep,
+                  x,
                   y: d * yStep,
-                  z: -abs * zStep,
-                  rotateX: narrow ? 14 + abs * 4 : 16 + abs * 5,
-                  rotateY: d * (narrow ? -4 : -7),
-                  rotateZ: d * (narrow ? -1.4 : -2.2),
-                  scale: 1 - abs * 0.07,
-                  opacity: visible ? 1 - abs * 0.1 : 0,
+                  rotateZ,
+                  scale: 1 - abs * 0.04,
+                  opacity: visible ? 1 : 0,
                 }}
                 transition={reduce ? { duration: 0 } : STACK_SPRING}
               >
@@ -285,7 +281,7 @@ export function FoundStack({ projects }: FoundStackProps) {
         </div>
       </div>
 
-      {/* Left open margin — short project intro only */}
+      {/* Left open margin — short project intro */}
       <aside className="found-stack__intro">
         <AnimatePresence mode="wait">
           <motion.div
