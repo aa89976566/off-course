@@ -23,6 +23,28 @@ const CATEGORY_LABEL: Record<string, string> = {
   "boxing-training": "Boxing coach",
 };
 
+/** Papercuts poster art — category type + illustration + project title. */
+const POSTER_ART: Record<
+  string,
+  { categoryType: string; figure: string; titleType: string }
+> = {
+  "freds-cafe": {
+    categoryType: "/media/found/type-coffee.webp",
+    figure: "/media/found/poster-coffee.webp",
+    titleType: "/media/found/type-freds.webp",
+  },
+  "jieshin-tseng": {
+    categoryType: "/media/found/type-artist.webp",
+    figure: "/media/found/poster-artist.webp",
+    titleType: "/media/found/type-jieshin.webp",
+  },
+  "boxing-training": {
+    categoryType: "/media/found/type-boxing.webp",
+    figure: "/media/found/poster-boxing.webp",
+    titleType: "/media/found/type-training.webp",
+  },
+};
+
 const CARD_THEME: Record<
   string,
   { bg: string; fg: string; muted: string; accent: string }
@@ -137,6 +159,7 @@ export function FoundStack({ projects }: FoundStackProps) {
   }
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
+  const poster = POSTER_ART[active.slug];
   // Reference deck: tall vertical overlap + light horizontal stagger
   const yStep = narrow ? 52 : 68;
   const xStep = narrow ? 22 : 32;
@@ -281,19 +304,57 @@ export function FoundStack({ projects }: FoundStackProps) {
         </div>
       </div>
 
-      {/* Left open margin — short project intro */}
+      {/* Left rail — Papercuts poster intro (type + figure by category) */}
       <aside className="found-stack__intro">
         <AnimatePresence mode="wait">
           <motion.div
             key={active.slug}
-            className="found-stack__meta"
-            initial={reduce ? false : { y: 10, opacity: 0.4 }}
+            className="found-stack__poster"
+            initial={reduce ? false : { y: 12, opacity: 0.35 }}
             animate={{ y: 0, opacity: 1 }}
             exit={reduce ? undefined : { y: -8, opacity: 0 }}
             transition={reduce ? { duration: 0 } : META_EASE}
           >
-            <p className="found-stack__eyebrow">{category}</p>
-            <h1 className="found-stack__title">{active.title}</h1>
+            {poster ? (
+              <>
+                <div className="found-stack__poster-type">
+                  <Image
+                    src={assetPath(poster.categoryType)}
+                    alt={category}
+                    width={420}
+                    height={420}
+                    className="found-stack__poster-img"
+                    priority
+                  />
+                </div>
+                <div className="found-stack__poster-figure">
+                  <Image
+                    src={assetPath(poster.figure)}
+                    alt=""
+                    width={420}
+                    height={560}
+                    className="found-stack__poster-img"
+                    priority
+                  />
+                </div>
+                <h1 className="found-stack__poster-title">
+                  <span className="sr-only">{active.title}</span>
+                  <Image
+                    src={assetPath(poster.titleType)}
+                    alt={active.title}
+                    width={480}
+                    height={360}
+                    className="found-stack__poster-img"
+                    priority
+                  />
+                </h1>
+              </>
+            ) : (
+              <>
+                <p className="found-stack__eyebrow">{category}</p>
+                <h1 className="found-stack__title">{active.title}</h1>
+              </>
+            )}
             {active.location && (
               <p className="found-stack__address">{active.location}</p>
             )}
