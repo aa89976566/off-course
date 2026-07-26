@@ -261,7 +261,7 @@ h3::selection {
   min-width: 0;
   max-width: 100%;
   /* Allow cards to slightly bleed toward the info column without covering text */
-  margin-left: -6%;
+  margin-left: -2%;
 }
 
 @media (min-width: 768px) {
