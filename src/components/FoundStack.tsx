@@ -109,7 +109,7 @@ export function FoundStack({ projects }: FoundStackProps) {
 
   return (
     <div
-      className="found-landing relative min-h-svh overflow-hidden bg-[#e9e9e9] text-black"
+      className="found-stack found-landing relative min-h-svh overflow-x-hidden overflow-y-hidden bg-[#e9e9e9] text-black"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
       }}
@@ -131,27 +131,27 @@ export function FoundStack({ projects }: FoundStackProps) {
         }}
       />
 
-      <header className="relative z-20 flex items-center justify-between px-4 py-4 md:px-8">
+      <header className="found-stack__header relative z-30 flex items-center justify-between px-3 py-3 sm:px-4 md:px-8 md:py-4">
         <Link
           href="/"
-          className="inline-flex items-baseline font-display text-sm uppercase tracking-[0.08em] md:text-base"
+          className="inline-flex min-h-11 items-center font-display text-xs uppercase tracking-[0.08em] sm:text-sm md:text-base"
           aria-label="OFF_COURSE home"
         >
           <span>OFF</span>
           <span className="logo-underscore mx-[0.06em]" aria-hidden />
           <span>COURSE</span>
         </Link>
-        <p className="font-display text-[11px] uppercase tracking-[0.18em] text-black/45">
+        <p className="font-display text-[10px] uppercase tracking-[0.18em] text-black/45 sm:text-[11px]">
           GET FOUND
         </p>
-        <p className="font-mono text-xs tabular-nums text-black/40">
+        <p className="font-mono text-[11px] tabular-nums text-black/40 sm:text-xs">
           {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </p>
       </header>
 
-      <div className="relative z-10 mx-auto grid min-h-[calc(100svh-64px)] max-w-[1240px] grid-cols-1 items-center gap-4 px-4 pb-8 md:grid-cols-[minmax(220px,0.85fr)_1.5fr] md:gap-8 md:px-8 md:pb-10">
+      <div className="found-stack__layout relative z-10 mx-auto grid min-h-[calc(100svh-56px)] max-w-[1240px] items-center gap-2 px-3 pb-4 sm:gap-4 sm:px-4 sm:pb-6 md:min-h-[calc(100svh-64px)] md:gap-8 md:px-8 md:pb-10">
         {/* Left rail — name + location */}
-        <div className="relative order-2 md:order-1 md:pl-2">
+        <div className="found-stack__info relative z-20 min-w-0 pl-0.5 md:pl-2">
           <AnimatePresence mode="wait">
             <motion.div
               key={active.slug}
@@ -159,23 +159,24 @@ export function FoundStack({ projects }: FoundStackProps) {
               animate={{ y: 0 }}
               exit={reduce ? undefined : { y: -10, opacity: 0 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="found-stack__meta"
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-black/40">
+              <p className="found-stack__category font-mono text-[9px] uppercase tracking-[0.18em] text-black/40 sm:text-[11px] sm:tracking-[0.22em]">
                 {category}
               </p>
-              <h1 className="mt-3 max-w-[12ch] font-display text-[clamp(2.2rem,5vw,3.6rem)] uppercase leading-[0.92] tracking-wide">
+              <h1 className="found-stack__title mt-1.5 max-w-[12ch] font-display text-[clamp(1.15rem,4.2vw,3.6rem)] uppercase leading-[0.92] tracking-wide sm:mt-3">
                 {active.title}
               </h1>
               {active.location && (
-                <p className="mt-4 max-w-xs text-sm leading-relaxed text-black/55 md:text-[15px]">
+                <p className="found-stack__location mt-2 max-w-[18ch] text-[11px] leading-snug text-black/55 sm:mt-4 sm:max-w-xs sm:text-sm sm:leading-relaxed md:text-[15px]">
                   {active.location}
                 </p>
               )}
 
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="found-stack__actions mt-4 flex flex-col gap-2 sm:mt-7 sm:flex-row sm:flex-wrap sm:gap-3">
                 <Link
                   href={`/get-found/${active.slug}`}
-                  className="inline-flex h-10 items-center rounded-md bg-black px-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[var(--walala-red)]"
+                  className="found-stack__btn found-stack__btn--primary inline-flex min-h-11 items-center justify-center rounded-md bg-black px-3 text-[10px] font-bold uppercase tracking-wide text-white transition hover:bg-[var(--walala-red)] sm:px-4 sm:text-xs"
                 >
                   View case
                 </Link>
@@ -184,7 +185,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                     href={active.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-10 items-center rounded-md border border-black/20 px-4 text-xs font-bold uppercase tracking-wide transition hover:border-black"
+                    className="found-stack__btn found-stack__btn--ghost inline-flex min-h-11 items-center justify-center rounded-md border border-black/20 px-3 text-[10px] font-bold uppercase tracking-wide transition hover:border-black sm:px-4 sm:text-xs"
                   >
                     Visit site
                   </a>
@@ -193,7 +194,10 @@ export function FoundStack({ projects }: FoundStackProps) {
             </motion.div>
           </AnimatePresence>
 
-          <ul className="mt-10 space-y-1" aria-label="Project types">
+          <ul
+            className="found-stack__nav mt-5 space-y-0.5 sm:mt-10 sm:space-y-1"
+            aria-label="Project types"
+          >
             {projects.map((p, i) => {
               const cat = CATEGORY_LABEL[p.slug] || p.type;
               const on = i === index;
@@ -202,16 +206,16 @@ export function FoundStack({ projects }: FoundStackProps) {
                   <button
                     type="button"
                     onClick={() => setIndex(i)}
-                    className={`flex w-full items-baseline gap-3 border-l-2 py-2 pl-3 text-left transition ${
+                    className={`found-stack__nav-item flex min-h-11 w-full items-center gap-2 border-l-2 py-1 pl-2 text-left transition sm:gap-3 sm:pl-3 ${
                       on
                         ? "border-[var(--walala-red)] text-black"
                         : "border-transparent text-black/30 hover:text-black/60"
                     }`}
                   >
-                    <span className="font-mono text-[10px] tabular-nums">
+                    <span className="font-mono text-[9px] tabular-nums sm:text-[10px]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-display text-[11px] uppercase tracking-[0.14em]">
+                    <span className="font-display text-[9px] uppercase tracking-[0.1em] sm:text-[11px] sm:tracking-[0.14em]">
                       {cat}
                     </span>
                   </button>
@@ -220,15 +224,15 @@ export function FoundStack({ projects }: FoundStackProps) {
             })}
           </ul>
 
-          <p className="mt-8 text-[11px] uppercase tracking-[0.14em] text-black/30">
+          <p className="found-stack__hint mt-4 text-[9px] uppercase tracking-[0.12em] text-black/30 sm:mt-8 sm:text-[11px] sm:tracking-[0.14em]">
             Scroll · swipe · ↑↓
           </p>
         </div>
 
         {/* Kinetic 3D stack */}
-        <div className="relative order-1 flex h-[min(56svh,500px)] items-center justify-center md:order-2 md:h-[min(78svh,680px)]">
+        <div className="found-stack__stage relative z-10 flex h-[min(70svh,520px)] min-w-0 items-center justify-center md:h-[min(78svh,680px)]">
           <div
-            className="relative h-full w-full max-w-[560px]"
+            className="found-stack__deck relative h-full w-full max-w-[560px]"
             style={{ perspective: "1600px", perspectiveOrigin: "50% 40%" }}
           >
             {projects.map((project, i) => {
@@ -273,7 +277,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                     }
                     setIndex(i);
                   }}
-                  className="absolute left-1/2 top-[42%] w-[min(100%,480px)] origin-center overflow-hidden rounded-[26px] text-left shadow-[0_28px_70px_rgba(0,0,0,0.28)] outline-none focus-visible:ring-2 focus-visible:ring-black md:top-1/2"
+                  className="found-stack__card absolute left-1/2 top-1/2 w-[min(100%,480px)] origin-center overflow-hidden rounded-[18px] text-left shadow-[0_28px_70px_rgba(0,0,0,0.28)] outline-none focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
                   style={
                     {
                       transform: `translate(-50%, calc(-50% + ${y}px)) translateX(${x}px) translateZ(${z}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`,
@@ -288,31 +292,30 @@ export function FoundStack({ projects }: FoundStackProps) {
                     } as CSSProperties
                   }
                 >
-                  <div className="grid h-[min(42svh,320px)] grid-cols-[1.05fr_0.95fr] md:h-[360px]">
-                    {/* Left: name + location */}
-                    <div className="flex flex-col justify-between p-4 md:p-6">
-                      <div>
+                  <div className="found-stack__card-inner grid h-[min(38svh,280px)] grid-cols-[1.05fr_0.95fr] sm:h-[min(42svh,320px)] md:h-[360px]">
+                    <div className="flex min-w-0 flex-col justify-between p-2.5 sm:p-4 md:p-6">
+                      <div className="min-w-0">
                         <p
-                          className="font-mono text-[10px] uppercase tracking-[0.2em]"
+                          className="font-mono text-[8px] uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.2em]"
                           style={{ color: theme.muted }}
                         >
                           {cat}
                         </p>
-                        <p className="mt-3 font-display text-[clamp(1.25rem,2.4vw,1.85rem)] uppercase leading-[0.95] tracking-wide">
+                        <p className="mt-1.5 font-display text-[clamp(0.85rem,2.8vw,1.85rem)] uppercase leading-[0.95] tracking-wide sm:mt-3">
                           {project.title}
                         </p>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         {project.location && (
                           <p
-                            className="text-[11px] leading-snug md:text-xs"
+                            className="text-[9px] leading-snug sm:text-[11px] md:text-xs"
                             style={{ color: theme.muted }}
                           >
                             {project.location}
                           </p>
                         )}
                         <p
-                          className="mt-3 font-display text-4xl leading-none md:text-5xl"
+                          className="mt-1.5 font-display text-2xl leading-none sm:mt-3 sm:text-4xl md:text-5xl"
                           style={{ color: theme.accent }}
                         >
                           {String(i + 1)}
@@ -320,14 +323,13 @@ export function FoundStack({ projects }: FoundStackProps) {
                       </div>
                     </div>
 
-                    {/* Right: project visual */}
-                    <div className="relative m-3 overflow-hidden rounded-[18px] md:m-4">
+                    <div className="relative m-2 overflow-hidden rounded-[12px] sm:m-3 sm:rounded-[18px] md:m-4">
                       <Image
                         src={assetPath(project.cover)}
                         alt={project.title}
                         fill
                         className="object-cover object-top"
-                        sizes="240px"
+                        sizes="(max-width: 768px) 40vw, 240px"
                         priority={abs === 0}
                       />
                     </div>

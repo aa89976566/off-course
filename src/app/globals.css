@@ -233,6 +233,79 @@ h3::selection {
   --found-stage: #1a1b1e;
 }
 
+/* GET FOUND project stack — always two columns (incl. mobile) */
+/* GET FOUND project section — always two columns (incl. mobile) */
+.found-stack__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.found-stack__info {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  z-index: 20;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.found-stack__stage {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  z-index: 10;
+  min-width: 0;
+  max-width: 100%;
+  /* Allow cards to slightly bleed toward the info column without covering text */
+  margin-left: -6%;
+}
+
+@media (min-width: 768px) {
+  .found-stack__layout {
+    grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.5fr);
+  }
+
+  .found-stack__stage {
+    margin-left: 0;
+  }
+}
+
+/* Lock this section against column / full-width stacking overrides */
+.found-stack .found-stack__layout,
+.found-landing .found-stack__layout {
+  display: grid !important;
+  flex-direction: unset !important;
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr) !important;
+  width: 100% !important;
+}
+
+.found-stack .found-stack__info,
+.found-landing .found-stack__info {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+.found-stack .found-stack__stage,
+.found-landing .found-stack__stage {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+@media (min-width: 768px) {
+  .found-stack .found-stack__layout,
+  .found-landing .found-stack__layout {
+    grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.5fr) !important;
+  }
+}
+
 .found-landing-stage {
   animation: found-landing-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
