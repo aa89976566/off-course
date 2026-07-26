@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "Collapse the stack — websites, booking, and platforms that keep brands found.",
 };
 
-const FEATURED = ["ams-com", "freds-cafe", "crespidia-coffee"] as const;
+const FEATURED = ["ams-com", "jieshin-tseng", "crespidia-coffee"] as const;
 
 export default function GetFoundPage() {
   const found = getProjectsByStream("found");

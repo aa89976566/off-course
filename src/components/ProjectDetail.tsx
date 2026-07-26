@@ -50,9 +50,11 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
             {project.title}
           </h1>
           {project.summary && (
-            <p className="mb-4 max-w-2xl text-base leading-relaxed">
-              {project.summary}
-            </p>
+            <div className="mb-4 max-w-2xl space-y-3 text-base leading-relaxed">
+              {project.summary.split("\n\n").map((para) => (
+                <p key={para.slice(0, 48)}>{para}</p>
+              ))}
+            </div>
           )}
           <p className="font-bold">{project.year}</p>
           <p>{project.type}</p>

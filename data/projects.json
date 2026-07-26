@@ -127,6 +127,26 @@
       "liveUrl": "https://aa89976566.github.io/Ams.com/"
     },
     {
+      "slug": "jieshin-tseng",
+      "title": "JIESHIN TSENG",
+      "stream": "found",
+      "year": "2026",
+      "type": "Artist portfolio",
+      "materials": null,
+      "location": "London, UK / Taiwan",
+      "stack": "Next.js",
+      "client": "for Jieshin Tseng 曾潔心",
+      "accent": "#111111",
+      "cover": "/media/digital/jieshin-1.jpg",
+      "images": [
+        "/media/digital/jieshin-1.jpg",
+        "/media/digital/jieshin-2.jpg",
+        "/media/digital/jieshin-3.jpg"
+      ],
+      "summary": "Jieshin Tseng (曾潔心) is an artist working between London and Taiwan. The practice moves across sculpture, installation, painting and writing — not as separate disciplines, but as different ways of testing perception.\n\nDrawn to materials that are overlooked, unstable or in transition, the work reassembles paper scraps, found objects, tissue casting and site fragments into forms that carry damage, incompleteness and memory. The portfolio documents studio research, pop-up exhibitions, a Dilston Gallery residency, and the 2026 degree show — a living archive of making between cities.",
+      "liveUrl": "https://jieshin.vercel.app"
+    },
+    {
       "slug": "freds-cafe",
       "title": "FRED'S CAFE",
       "stream": "found",
