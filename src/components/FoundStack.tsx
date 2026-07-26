@@ -132,10 +132,10 @@ export function FoundStack({ projects }: FoundStackProps) {
           <AnimatePresence mode="wait">
             <motion.div
               key={active.slug}
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              initial={reduce ? false : { y: 12 }}
+              animate={{ y: 0 }}
+              exit={reduce ? undefined : { y: -8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-black/40">
                 {category}
