@@ -138,9 +138,9 @@ export function FoundStack({ projects }: FoundStackProps) {
   }
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
-  const yStep = narrow ? 56 : 88;
-  const xStep = narrow ? 10 : 18;
-  const zStep = narrow ? 90 : 120;
+  const yStep = narrow ? 48 : 88;
+  const xStep = narrow ? 6 : 18;
+  const zStep = narrow ? 80 : 120;
 
   return (
     <section
@@ -292,7 +292,7 @@ export function FoundStack({ projects }: FoundStackProps) {
                     }
                     setIndex(i);
                   }}
-                  className="found-stack__card absolute left-1/2 top-1/2 w-[min(100%,480px)] origin-center overflow-hidden rounded-[18px] text-left outline-none will-change-transform focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
+                  className="found-stack__card absolute left-1/2 top-1/2 origin-center overflow-hidden rounded-[18px] text-left outline-none will-change-transform focus-visible:ring-2 focus-visible:ring-black sm:rounded-[26px]"
                   style={{
                     zIndex: 30 - abs,
                     pointerEvents: visible ? "auto" : "none",

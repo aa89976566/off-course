@@ -239,9 +239,10 @@ h3::selection {
  * Always two columns; never collapse to flex-column / 1fr on mobile.
  */
 .found-stack {
-  --found-rail: 0.36fr;
-  --found-deck: 0.64fr;
+  --found-rail: 0.4fr;
+  --found-deck: 0.6fr;
   --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --found-card-max: 220px;
 }
 
 .found-stack__atmosphere {
@@ -281,13 +282,13 @@ h3::selection {
 .found-stack__rail::before {
   content: "";
   position: absolute;
-  inset: -8% -12% -8% -8%;
+  inset: -10% -18% -10% -10%;
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(233, 233, 233, 0.92) 0%,
-    rgba(233, 233, 233, 0.78) 55%,
+    rgba(233, 233, 233, 0.97) 0%,
+    rgba(233, 233, 233, 0.9) 62%,
     rgba(233, 233, 233, 0) 100%
   );
 }
@@ -302,20 +303,25 @@ h3::selection {
   min-width: 0;
   max-width: 100%;
   width: auto !important;
-  height: min(68svh, 480px);
-  /* Slight deck bleed toward rail — visual overlap without covering copy */
-  margin-left: -4%;
+  height: min(62svh, 420px);
+  margin-left: 0;
+  overflow: hidden;
   transform: translateZ(0);
 }
 
 .found-stack__perspective {
   height: 100%;
-  perspective: 1600px;
-  perspective-origin: 50% 40%;
+  width: 100%;
+  perspective: 1400px;
+  perspective-origin: 62% 42%;
   transform-style: preserve-3d;
+  /* Keep deck anchored to the right so cards only kiss the rail */
+  transform: scale(0.92);
+  transform-origin: 85% 50%;
 }
 
 .found-stack__card {
+  width: min(100%, var(--found-card-max)) !important;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   -webkit-tap-highlight-color: transparent;
@@ -331,6 +337,7 @@ h3::selection {
   .found-stack {
     --found-rail: minmax(220px, 0.85fr);
     --found-deck: minmax(0, 1.5fr);
+    --found-card-max: 480px;
   }
 
   .found-stack__shell,
@@ -343,7 +350,13 @@ h3::selection {
   .found-stack .found-stack__viewport,
   .found-landing .found-stack__viewport {
     height: min(78svh, 680px);
-    margin-left: 0;
+    overflow: visible;
+  }
+
+  .found-stack__perspective {
+    perspective: 1600px;
+    perspective-origin: 50% 40%;
+    transform: none;
   }
 
   .found-stack__rail::before {
