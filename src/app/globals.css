@@ -242,12 +242,17 @@ h3::selection {
   --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --found-rail: minmax(0, 0.36fr);
   --found-deck: minmax(0, 0.64fr);
-  --found-card-w: min(92%, 22rem);
-  --found-card-h: min(52svh, 22rem);
+  --found-card-w: min(94%, 24rem);
+  --found-card-h: min(56svh, 24rem);
+  position: fixed;
+  inset: 0;
+  z-index: 40;
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100svh;
   max-height: 100svh;
+  overflow: hidden;
 }
 
 .found-stack__atmosphere {
@@ -299,13 +304,16 @@ h3::selection {
   min-width: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   isolation: isolate;
+  perspective: 1400px;
+  perspective-origin: 50% 42%;
 }
 
 .found-stack__deck {
   position: absolute;
   inset: 0;
+  transform-style: preserve-3d;
 }
 
 .found-stack__card {
@@ -321,9 +329,12 @@ h3::selection {
   text-align: left;
   cursor: pointer;
   outline: none;
+  transform-style: preserve-3d;
+  transform-origin: 50% 60%;
+  backface-visibility: hidden;
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.16),
-    0 4px 10px rgba(0, 0, 0, 0.07);
+    0 22px 48px rgba(0, 0, 0, 0.18),
+    0 6px 14px rgba(0, 0, 0, 0.08);
   will-change: transform, opacity;
   -webkit-tap-highlight-color: transparent;
 }
@@ -562,10 +573,10 @@ h3::selection {
 
 @media (min-width: 768px) {
   .found-stack {
-    --found-rail: minmax(240px, 0.34fr);
-    --found-deck: minmax(0, 0.66fr);
-    --found-card-w: min(88%, 34rem);
-    --found-card-h: min(62svh, 28rem);
+    --found-rail: minmax(240px, 0.32fr);
+    --found-deck: minmax(0, 0.68fr);
+    --found-card-w: min(90%, 38rem);
+    --found-card-h: min(68svh, 32rem);
   }
 
   .found-stack__shell {

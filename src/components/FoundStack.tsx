@@ -69,12 +69,19 @@ const CARD_THEME: Record<
   },
 };
 
-/** Soft spring — calm settle, not chaotic. */
+/** Satto-like stack: snappy fly-off, soft cascade settle. */
 const STACK_SPRING: Transition = {
   type: "spring",
-  stiffness: 260,
-  damping: 28,
-  mass: 0.85,
+  stiffness: 170,
+  damping: 20,
+  mass: 0.9,
+};
+
+const EXIT_SPRING: Transition = {
+  type: "spring",
+  stiffness: 210,
+  damping: 24,
+  mass: 0.75,
 };
 
 const META_EASE: Transition = {
@@ -89,6 +96,47 @@ function stackOffset(i: number, index: number, total: number) {
   return d;
 }
 
+/** Pose relative to active — behind stack rises; previous flies off. */
+function cardPose(d: number, dir: 1 | -1, narrow: boolean) {
+  if (d === 0) {
+    return {
+      x: 0,
+      y: 0,
+      scale: 1,
+      rotateZ: 0,
+      rotateX: 4,
+      opacity: 1,
+    };
+  }
+
+  // Cards waiting behind the hero (stack depth)
+  if (d > 0) {
+    const stepY = narrow ? 26 : 38;
+    const stepX = narrow ? 10 : 16;
+    return {
+      x: d * stepX * dir,
+      y: d * stepY,
+      scale: Math.max(0.82, 1 - d * 0.055),
+      rotateZ: d * (narrow ? 2.4 : 3.2) * dir,
+      rotateX: 8 + d * 2,
+      opacity: d > 2 ? 0 : Math.max(0.55, 1 - d * 0.12),
+    };
+  }
+
+  // Previous hero flies off (satto Stack exit)
+  const t = Math.abs(d);
+  const flyY = narrow ? 110 : 150;
+  const flyX = narrow ? 36 : 56;
+  return {
+    x: -dir * t * flyX,
+    y: -t * flyY,
+    scale: 0.9 - t * 0.04,
+    rotateZ: -dir * t * (narrow ? 10 : 14),
+    rotateX: -10 - t * 4,
+    opacity: t > 1 ? 0 : 0.2,
+  };
+}
+
 /**
  * GET FOUND — calm two-zone composition:
  * left = papercuts poster intro; right = one hero card + quiet peeks.
@@ -97,6 +145,7 @@ export function FoundStack({ projects }: FoundStackProps) {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState<1 | -1>(1);
   const [narrow, setNarrow] = useState(false);
   const lock = useRef(false);
   const touchY = useRef<number | null>(null);
@@ -114,11 +163,13 @@ export function FoundStack({ projects }: FoundStackProps) {
   const go = useCallback(
     (delta: number) => {
       if (!total || lock.current) return;
+      const nextDir: 1 | -1 = delta > 0 ? 1 : -1;
       lock.current = true;
+      setDir(nextDir);
       setIndex((i) => (i + delta + total) % total);
       window.setTimeout(() => {
         lock.current = false;
-      }, reduce ? 100 : 380);
+      }, reduce ? 100 : 520);
     },
     [total, reduce]
   );
@@ -156,9 +207,6 @@ export function FoundStack({ projects }: FoundStackProps) {
 
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
   const poster = POSTER_ART[active.slug];
-  // Disciplined peeks — neighbors barely show, hero stays calm
-  const yStep = narrow ? 22 : 32;
-  const xStep = narrow ? 6 : 12;
 
   return (
     <section
@@ -282,7 +330,13 @@ export function FoundStack({ projects }: FoundStackProps) {
                 <li key={p.slug}>
                   <button
                     type="button"
-                    onClick={() => setIndex(i)}
+                    onClick={() => {
+                      if (i === index) return;
+                      let step = i - index;
+                      if (step > total / 2) step -= total;
+                      if (step < -total / 2) step += total;
+                      go(step);
+                    }}
                     className={`found-stack__index-item${on ? " is-active" : ""}`}
                   >
                     <span className="found-stack__index-num">
@@ -296,18 +350,21 @@ export function FoundStack({ projects }: FoundStackProps) {
           </ul>
         </aside>
 
-        {/* Right — one hero card, quiet neighbor peeks */}
+        {/* Right — satto-style stack: fly-off + cascade */}
         <div className="found-stack__stage" aria-label="Project cards">
           <div className="found-stack__deck">
             {projects.map((project, i) => {
               const d = stackOffset(i, index, total);
               const abs = Math.abs(d);
-              const visible = abs <= 1; // only hero + one peek each side
+              // Hero + 2 behind + 1 exiting above
+              const visible = d >= -1 && d <= 2;
               const theme =
                 CARD_THEME[project.slug] || CARD_THEME["jieshin-tseng"];
               const cat = CATEGORY_LABEL[project.slug] || project.type;
-              // Tiny tilt only — keeps the right column calm
-              const rotateZ = d === 0 ? 0 : d * (narrow ? 1.6 : 2.2);
+              const pose = cardPose(d, dir, narrow);
+              // Depth: hero on top, then behind stack; exiting sits above briefly
+              const z =
+                d < 0 ? 30 + abs : d === 0 ? 24 : Math.max(1, 18 - d);
 
               return (
                 <motion.button
@@ -329,27 +386,35 @@ export function FoundStack({ projects }: FoundStackProps) {
                       }
                       return;
                     }
-                    setIndex(i);
+                    if (d > 0) go(d);
+                    else if (d < 0) go(d);
                   }}
                   className="found-stack__card"
                   style={{
-                    zIndex: 20 - abs,
-                    pointerEvents: visible ? "auto" : "none",
+                    zIndex: z,
+                    pointerEvents: visible && d >= 0 ? "auto" : "none",
                     backgroundColor: theme.bg,
                     color: theme.fg,
                   }}
-                  transformTemplate={({ x: tx, y: ty, rotateZ: rz, scale }) =>
-                    `translate3d(calc(-50% + ${tx ?? 0}), calc(-50% + ${ty ?? 0}), 0) rotate(${rz ?? 0}) scale(${scale ?? 1})`
+                  transformTemplate={({
+                    x: tx,
+                    y: ty,
+                    rotateZ: rz,
+                    rotateX: rx,
+                    scale,
+                  }) =>
+                    `translate3d(calc(-50% + ${tx ?? 0}), calc(-50% + ${ty ?? 0}), 0) rotateX(${rx ?? 0}) rotateZ(${rz ?? 0}) scale(${scale ?? 1})`
                   }
                   initial={false}
-                  animate={{
-                    x: d * xStep,
-                    y: d * yStep,
-                    rotateZ,
-                    scale: d === 0 ? 1 : 0.94 - abs * 0.02,
-                    opacity: visible ? (d === 0 ? 1 : 0.88) : 0,
-                  }}
-                  transition={reduce ? { duration: 0 } : STACK_SPRING}
+                  animate={pose}
+                  transition={
+                    reduce
+                      ? { duration: 0 }
+                      : {
+                          ...(d < 0 ? EXIT_SPRING : STACK_SPRING),
+                          delay: d > 0 ? d * 0.045 : 0,
+                        }
+                  }
                 >
                   <div className="found-stack__card-inner">
                     <div className="found-stack__card-copy">
