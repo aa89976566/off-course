@@ -157,12 +157,12 @@ export function FoundStack({ projects }: FoundStackProps) {
   const category = CATEGORY_LABEL[active.slug] || active.type || "Project";
   const poster = POSTER_ART[active.slug];
   // Disciplined peeks — neighbors barely show, hero stays calm
-  const yStep = narrow ? 28 : 36;
-  const xStep = narrow ? 10 : 14;
+  const yStep = narrow ? 22 : 32;
+  const xStep = narrow ? 6 : 12;
 
   return (
     <section
-      className="found-stack found-landing relative h-svh min-h-svh overflow-hidden bg-[#ebebeb] text-black"
+      className="found-stack found-landing relative overflow-hidden bg-[#ebebeb] text-black"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
       }}

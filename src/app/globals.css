@@ -234,36 +234,46 @@ h3::selection {
 }
 
 /*
- * GET FOUND — calm two-zone frame.
- * Left: papercuts poster intro. Right: one hero card + quiet peeks.
- * Always side-by-side (never column-stack intro above cards).
+ * GET FOUND — full-viewport two-zone frame.
+ * Left: papercuts poster. Right: hero card + quiet peeks.
+ * Edge-to-edge, no max-width cage.
  */
 .found-stack {
   --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --found-rail: minmax(0, 0.36fr);
   --found-deck: minmax(0, 0.64fr);
-  --found-card-w: min(100%, 17.5rem);
-  --found-card-h: min(36svh, 15.5rem);
+  --found-card-w: min(92%, 22rem);
+  --found-card-h: min(52svh, 22rem);
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  max-height: 100svh;
 }
 
 .found-stack__atmosphere {
   background:
-    radial-gradient(ellipse 60% 50% at 68% 48%, #fff 0%, transparent 70%),
-    linear-gradient(180deg, #f2f2f2 0%, #e0e0e0 100%);
+    radial-gradient(ellipse 70% 55% at 66% 50%, #fff 0%, transparent 72%),
+    linear-gradient(180deg, #f2f2f2 0%, #dedede 100%);
+}
+
+.found-stack__header {
+  flex-shrink: 0;
 }
 
 .found-stack__shell {
   position: relative;
   z-index: 10;
   display: grid !important;
+  flex: 1 1 auto;
   grid-template-columns: var(--found-rail) var(--found-deck) !important;
-  align-items: center;
-  column-gap: clamp(0.5rem, 2vw, 1.75rem);
+  align-items: stretch;
+  column-gap: clamp(0.4rem, 1.8vw, 1.5rem);
   width: 100%;
-  max-width: 1240px;
-  min-height: calc(100svh - 56px);
-  margin: 0 auto;
-  padding: 0 0.85rem 1rem;
+  max-width: none;
+  min-height: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0.25rem 0.65rem 0.75rem;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -273,9 +283,12 @@ h3::selection {
   grid-row: 1;
   position: relative;
   z-index: 20;
+  display: flex;
   min-width: 0;
   max-width: 100%;
-  align-self: center;
+  height: 100%;
+  align-items: center;
+  padding-right: 0.1rem;
 }
 
 .found-stack__stage {
@@ -284,8 +297,10 @@ h3::selection {
   position: relative;
   z-index: 10;
   min-width: 0;
-  height: min(62svh, 420px);
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .found-stack__deck {
@@ -301,21 +316,21 @@ h3::selection {
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
   text-align: left;
   cursor: pointer;
   outline: none;
   box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.14),
-    0 3px 8px rgba(0, 0, 0, 0.06);
+    0 16px 40px rgba(0, 0, 0, 0.16),
+    0 4px 10px rgba(0, 0, 0, 0.07);
   will-change: transform, opacity;
   -webkit-tap-highlight-color: transparent;
 }
 
 .found-stack__card:focus-visible {
   box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.14),
+    0 16px 40px rgba(0, 0, 0, 0.16),
     0 0 0 2px #111;
 }
 
@@ -375,6 +390,7 @@ h3::selection {
 .found-stack__poster {
   position: relative;
   display: flex;
+  width: 100%;
   flex-direction: column;
   gap: 0.15rem;
   padding: 0.4rem 0.35rem 0.5rem;
@@ -405,8 +421,8 @@ h3::selection {
 .found-stack__poster-figure {
   position: relative;
   z-index: 1;
-  width: 78%;
-  margin: -0.15rem auto 0;
+  width: 86%;
+  margin: -0.1rem auto 0;
 }
 
 .found-stack__poster-title {
@@ -546,26 +562,21 @@ h3::selection {
 
 @media (min-width: 768px) {
   .found-stack {
-    --found-rail: minmax(220px, 0.38fr);
-    --found-deck: minmax(0, 0.62fr);
-    --found-card-w: min(92%, 28rem);
-    --found-card-h: min(44svh, 22rem);
+    --found-rail: minmax(240px, 0.34fr);
+    --found-deck: minmax(0, 0.66fr);
+    --found-card-w: min(88%, 34rem);
+    --found-card-h: min(62svh, 28rem);
   }
 
   .found-stack__shell {
-    min-height: calc(100svh - 64px);
-    padding: 0 2rem 1.5rem;
-    column-gap: clamp(1.25rem, 3vw, 2.5rem);
-  }
-
-  .found-stack__stage {
-    height: min(70svh, 560px);
+    padding: 0.35rem 1.5rem 1rem;
+    column-gap: clamp(1rem, 2.5vw, 2.25rem);
   }
 
   .found-stack__card {
     border-radius: 26px;
     box-shadow:
-      0 20px 48px rgba(0, 0, 0, 0.16),
+      0 22px 52px rgba(0, 0, 0, 0.16),
       0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
