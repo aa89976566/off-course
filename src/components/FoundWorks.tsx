@@ -157,7 +157,8 @@ export function FoundWorks({ projects }: FoundWorksProps) {
                   narrow
                     ? { flexGrow: 1, filter: "grayscale(0%)" }
                     : {
-                        flexGrow: on ? 4.2 : 0.55,
+                        // Keep capsules upright like ZeroFrame (active wider, still tall)
+                        flexGrow: on ? 2.6 : 0.72,
                         filter: on ? "grayscale(0%)" : "grayscale(100%)",
                       }
                 }
