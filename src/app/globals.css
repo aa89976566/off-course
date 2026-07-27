@@ -1047,16 +1047,16 @@ h3::selection {
 
 .found-zf__capsule-meta {
   position: absolute;
-  left: 1.35rem;
-  right: 1.35rem;
-  bottom: 1.5rem;
-  z-index: 2;
-  padding: 0.85rem 1rem;
-  border-radius: 1.25rem;
-  background: rgba(20, 12, 10, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.35rem;
+  z-index: 3;
+  padding: 0.9rem 1.05rem;
+  border-radius: 1.35rem;
+  background: rgba(12, 10, 10, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   text-align: left;
 }
 

@@ -4,12 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type Transition,
-} from "framer-motion";
+import { motion, useReducedMotion, type Transition } from "framer-motion";
 import type { Project } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
 
@@ -177,22 +172,24 @@ export function FoundWorks({ projects }: FoundWorksProps) {
                   priority={i < 2}
                 />
                 <div className="found-zf__capsule-veil" aria-hidden />
-                <AnimatePresence mode="wait">
-                  {on && (
-                    <motion.div
-                      key={`${project.slug}-meta`}
-                      className="found-zf__capsule-meta"
-                      initial={reduce ? false : { opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduce ? undefined : { opacity: 0, y: 8 }}
-                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <p className="found-zf__capsule-title">{project.title}</p>
-                      <p className="found-zf__capsule-type">{project.type}</p>
-                      <p className="found-zf__capsule-year">{project.year}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  className="found-zf__capsule-meta"
+                  initial={false}
+                  animate={{
+                    opacity: on ? 1 : 0,
+                    y: on ? 0 : 10,
+                    pointerEvents: on ? "auto" : "none",
+                  }}
+                  transition={
+                    reduce
+                      ? { duration: 0 }
+                      : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }
+                  }
+                >
+                  <p className="found-zf__capsule-title">{project.title}</p>
+                  <p className="found-zf__capsule-type">{project.type}</p>
+                  <p className="found-zf__capsule-year">{project.year}</p>
+                </motion.div>
               </motion.button>
             );
           })}
