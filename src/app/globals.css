@@ -234,64 +234,88 @@ h3::selection {
 }
 
 /*
- * GET FOUND — staggered overlapping deck (reference layout).
- * Flat-facing cards with organic rotate + vertical overlap;
- * left open margin = short project intro.
+ * GET FOUND — calm two-zone frame.
+ * Left: papercuts poster intro. Right: one hero card + quiet peeks.
+ * Always side-by-side (never column-stack intro above cards).
  */
 .found-stack {
   --found-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --found-card-w: min(62vw, 20rem);
-  --found-card-h: min(38svh, 16.5rem);
+  --found-rail: minmax(0, 0.36fr);
+  --found-deck: minmax(0, 0.64fr);
+  --found-card-w: min(100%, 17.5rem);
+  --found-card-h: min(36svh, 15.5rem);
 }
 
 .found-stack__atmosphere {
   background:
-    radial-gradient(ellipse 70% 55% at 58% 45%, #fff 0%, transparent 68%),
-    linear-gradient(180deg, #f0f0f0 0%, #dbdbdb 100%);
+    radial-gradient(ellipse 60% 50% at 68% 48%, #fff 0%, transparent 70%),
+    linear-gradient(180deg, #f2f2f2 0%, #e0e0e0 100%);
+}
+
+.found-stack__shell {
+  position: relative;
+  z-index: 10;
+  display: grid !important;
+  grid-template-columns: var(--found-rail) var(--found-deck) !important;
+  align-items: center;
+  column-gap: clamp(0.5rem, 2vw, 1.75rem);
+  width: 100%;
+  max-width: 1240px;
+  min-height: calc(100svh - 56px);
+  margin: 0 auto;
+  padding: 0 0.85rem 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.found-stack__intro {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  z-index: 20;
+  min-width: 0;
+  max-width: 100%;
+  align-self: center;
 }
 
 .found-stack__stage {
-  position: absolute;
-  inset: 0;
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
   z-index: 10;
+  min-width: 0;
+  height: min(62svh, 420px);
   overflow: hidden;
-  pointer-events: none;
 }
 
 .found-stack__deck {
   position: absolute;
-  /* Deck sits mid-right — open left for papercuts poster intro */
-  left: 36%;
-  right: -2%;
-  top: 8%;
-  bottom: 4%;
-  pointer-events: auto;
+  inset: 0;
 }
 
 .found-stack__card {
   position: absolute;
-  left: 56%;
-  top: 48%;
+  left: 50%;
+  top: 50%;
   width: var(--found-card-w);
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 22px;
+  border-radius: 20px;
   overflow: hidden;
   text-align: left;
   cursor: pointer;
   outline: none;
-  /* Soft layered shadow — floating deck feel */
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.16),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+    0 14px 32px rgba(0, 0, 0, 0.14),
+    0 3px 8px rgba(0, 0, 0, 0.06);
   will-change: transform, opacity;
   -webkit-tap-highlight-color: transparent;
 }
 
 .found-stack__card:focus-visible {
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.16),
+    0 14px 32px rgba(0, 0, 0, 0.14),
     0 0 0 2px #111;
 }
 
@@ -347,32 +371,16 @@ h3::selection {
   border-radius: 14px;
 }
 
-.found-stack__intro {
-  position: absolute;
-  z-index: 30;
-  left: 0.55rem;
-  top: 50%;
-  transform: translateY(-48%);
-  width: min(34vw, 11.5rem);
-  max-height: calc(100svh - 5.5rem);
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.found-stack__intro * {
-  pointer-events: auto;
-}
-
 /* Papercuts poster composition */
 .found-stack__poster {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.35rem 0.3rem 0.45rem;
-  border-radius: 4px;
+  gap: 0.15rem;
+  padding: 0.4rem 0.35rem 0.5rem;
+  border-radius: 6px;
   background:
-    linear-gradient(180deg, rgba(250, 248, 242, 0.92) 0%, rgba(242, 238, 228, 0.88) 100%);
+    linear-gradient(180deg, #faf8f2 0%, #f3efe6 100%);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
@@ -538,23 +546,27 @@ h3::selection {
 
 @media (min-width: 768px) {
   .found-stack {
-    --found-card-w: min(48vw, 28rem);
+    --found-rail: minmax(220px, 0.38fr);
+    --found-deck: minmax(0, 0.62fr);
+    --found-card-w: min(92%, 28rem);
     --found-card-h: min(44svh, 22rem);
   }
 
-  .found-stack__deck {
-    left: 34%;
-    right: 2%;
-    top: 4%;
-    bottom: 2%;
+  .found-stack__shell {
+    min-height: calc(100svh - 64px);
+    padding: 0 2rem 1.5rem;
+    column-gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .found-stack__stage {
+    height: min(70svh, 560px);
   }
 
   .found-stack__card {
-    left: 50%;
     border-radius: 26px;
     box-shadow:
-      0 24px 56px rgba(0, 0, 0, 0.18),
-      0 6px 16px rgba(0, 0, 0, 0.08);
+      0 20px 48px rgba(0, 0, 0, 0.16),
+      0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   .found-stack__card-copy {
@@ -575,32 +587,25 @@ h3::selection {
     border-radius: 18px;
   }
 
-  .found-stack__intro {
-    left: clamp(1.25rem, 3.5vw, 2.75rem);
-    width: min(28vw, 17.5rem);
-    max-height: none;
-    overflow: visible;
-  }
-
   .found-stack__poster {
     gap: 0.35rem;
-    padding: 0.65rem 0.7rem 0.8rem;
+    padding: 0.75rem 0.85rem 0.9rem;
   }
 
   .found-stack__poster-figure {
-    width: 72%;
+    width: 70%;
   }
 
   .found-stack__address {
-    margin-top: 0.55rem;
+    margin-top: 0.65rem;
     max-width: 18rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     line-height: 1.45;
   }
 
   .found-stack__index {
     display: block;
-    margin-top: 2.25rem;
+    margin-top: 1.75rem;
   }
 
   .found-stack__eyebrow {
@@ -614,19 +619,12 @@ h3::selection {
     font-size: clamp(2.2rem, 4.5vw, 3.6rem);
   }
 
-  .found-stack__address {
-    margin-top: 1rem;
-    max-width: 18rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
   .found-stack__cta {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
     width: auto;
   }
 
