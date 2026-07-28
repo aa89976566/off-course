@@ -1244,3 +1244,275 @@ h3::selection {
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   GET FOUND — satto 3D Carusel S4 recreation
+   Vertical perspective stack: rotateX + translateZ + scale
+   ========================================================================== */
+.found-c3d {
+  --c3d-bg: #e6e6e6;
+  --c3d-ink: #111;
+  --c3d-mute: rgba(17, 17, 17, 0.48);
+  --c3d-card-w: min(88vw, 22rem);
+  --c3d-card-h: min(58svh, 28rem);
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 42%, #f4f4f4 0%, transparent 70%),
+    linear-gradient(180deg, #ececec 0%, #dcdcdc 100%);
+  color: var(--c3d-ink);
+}
+
+.found-c3d__chrome {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 0.85rem 1rem;
+}
+
+.found-c3d__brand {
+  display: inline-flex;
+  align-items: baseline;
+  min-height: 44px;
+  font-family: var(--font-archivo-black), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.found-c3d__label {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c3d-mute);
+}
+
+.found-c3d__count {
+  margin: 0;
+  min-width: 4.5rem;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--c3d-mute);
+}
+
+.found-c3d__stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  perspective: 1400px;
+  perspective-origin: 50% 38%;
+}
+
+.found-c3d__deck {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.found-c3d__card {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: var(--c3d-card-w);
+  height: var(--c3d-card-h);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform, opacity;
+}
+
+.found-c3d__card:focus-visible .found-c3d__card-face {
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.28),
+    0 0 0 2px #111;
+}
+
+.found-c3d__card-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2.4rem;
+  background: linear-gradient(135deg, #c4876a 0%, #6a5a3a 48%, #2c2a1f 100%);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.28),
+    0 8px 18px rgba(0, 0, 0, 0.12);
+  transform: translateZ(0);
+}
+
+.found-c3d__card-img {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.found-c3d__card-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(180, 90, 50, 0.28) 0%, transparent 42%),
+    linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+}
+
+.found-c3d__card-code {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.2rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: clamp(1.35rem, 4.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  /* Approximate satto LED/dot feel without custom font */
+  -webkit-text-stroke: 0.4px rgba(255, 255, 255, 0.25);
+}
+
+.found-c3d__meta {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-shrink: 0;
+  padding: 0.5rem 1rem 1.25rem;
+}
+
+.found-c3d__meta-inner {
+  min-height: 4.5rem;
+}
+
+.found-c3d__meta-type {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c3d-mute);
+}
+
+.found-c3d__meta-title {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-archivo-black), sans-serif;
+  font-size: clamp(1.5rem, 5.5vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.found-c3d__meta-place {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--c3d-mute);
+}
+
+.found-c3d__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.found-c3d__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0;
+  border: 1px solid rgba(17, 17, 17, 0.18);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+}
+
+.found-c3d__btn--ghost {
+  width: 44px;
+  padding: 0;
+}
+
+.found-c3d__btn--ghost:hover {
+  background: rgba(17, 17, 17, 0.06);
+}
+
+.found-c3d__btn--solid {
+  padding: 0 1.25rem;
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.found-c3d__btn--solid:hover {
+  background: #ff3829;
+  border-color: #ff3829;
+}
+
+@media (min-width: 768px) {
+  .found-c3d {
+    --c3d-card-w: min(46vw, 30rem);
+    --c3d-card-h: min(62svh, 34rem);
+  }
+
+  .found-c3d__chrome {
+    padding: 1.1rem 2rem;
+  }
+
+  .found-c3d__brand {
+    font-size: 0.95rem;
+  }
+
+  .found-c3d__meta {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0.75rem 2rem 1.75rem;
+  }
+
+  .found-c3d__meta-inner {
+    min-height: 0;
+  }
+
+  .found-c3d__card-face {
+    border-radius: 2.85rem;
+  }
+
+  .found-c3d__card-code {
+    top: 1.4rem;
+    right: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .found-c3d__card {
+    transition: none !important;
+  }
+}

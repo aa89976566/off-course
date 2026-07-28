@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { FoundWorks } from "@/components/FoundWorks";
+import { FoundCarousel3D } from "@/components/FoundCarousel3D";
 import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
   description:
-    "Website and system cases — coffee shops, portfolios, booking platforms.",
+    "3D carousel of website and system cases — scroll to rotate the stack.",
 };
 
-/** Featured first, then remaining found cases (ZeroFrame works order). */
+/** Featured website / system cases for the 3D Carusel S4 stage. */
 const FEATURED = [
   "freds-cafe",
   "jieshin-tseng",
@@ -23,9 +23,7 @@ export default function GetFoundPage() {
   const featured = FEATURED.map((slug) =>
     found.find((p) => p.slug === slug)
   ).filter(Boolean) as typeof found;
-  const featuredSlugs = new Set(featured.map((p) => p.slug));
-  const rest = found.filter((p) => !featuredSlugs.has(p.slug));
-  const projects = [...featured, ...rest];
+  const projects = featured.length >= 3 ? featured : found.slice(0, 6);
 
-  return <FoundWorks projects={projects} />;
+  return <FoundCarousel3D projects={projects} />;
 }
