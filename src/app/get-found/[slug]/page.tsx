@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FoundCase } from "@/components/FoundCase";
-import { getProject, getProjectsByStream } from "@/lib/projects";
+import {
+  getAdjacentProjects,
+  getProject,
+  getProjectsByStream,
+} from "@/lib/projects";
 
 type Props = {
   params: { slug: string };
@@ -23,5 +27,8 @@ export default function GetFoundProjectPage({ params }: Props) {
   const others = getProjectsByStream("found").filter(
     (p) => p.slug !== project.slug
   );
-  return <FoundCase project={project} others={others} />;
+  const { prev, next } = getAdjacentProjects("found", project.slug);
+  return (
+    <FoundCase project={project} others={others} prev={prev} next={next} />
+  );
 }
