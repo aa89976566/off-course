@@ -1843,7 +1843,7 @@ h3::selection {
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem;
+  gap: 1.15rem;
 }
 
 .zf-works__card {
@@ -1851,21 +1851,96 @@ h3::selection {
   height: 100%;
 }
 
+/* Aimed Lift + Beveled Glass frame */
 .zf-works__card-media {
+  --zf-lift:
+    0 1px 0 rgba(255, 255, 255, 0.16),
+    0 22px 48px rgba(0, 0, 0, 0.62),
+    0 8px 18px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  --zf-bevel-in:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    inset 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset -1px 0 0 rgba(0, 0, 0, 0.28);
   position: relative;
   overflow: hidden;
   border-radius: 2rem;
   aspect-ratio: 4 / 5;
-  background: #151515;
-  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.08), transparent 42%),
+    rgba(18, 18, 18, 0.72);
+  box-shadow: var(--zf-bevel-in), var(--zf-lift);
+  isolation: isolate;
+  transform: translateZ(0);
+  transition:
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zf-works__card-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  padding: 1.25px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.12) 28%,
+    rgba(255, 255, 255, 0.03) 55%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.zf-works__card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      125deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.03) 26%,
+      transparent 48%
+    ),
+    radial-gradient(
+      120% 80% at 18% 0%,
+      rgba(255, 255, 255, 0.1),
+      transparent 46%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 .zf-works__card:hover .zf-works__card-media {
-  transform: scale(0.985);
+  transform: translateY(-5px) scale(1.012);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset -1px 0 0 rgba(0, 0, 0, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.2),
+    0 28px 60px rgba(0, 0, 0, 0.7),
+    0 12px 24px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .zf-works__card:hover img {
-  transform: scale(1.04);
+  transform: scale(1.035);
 }
 
 .zf-works__card-media img {
@@ -1875,6 +1950,7 @@ h3::selection {
 .zf-works__card-veil {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(
     180deg,
     transparent 48%,
@@ -1888,7 +1964,7 @@ h3::selection {
   left: 1.1rem;
   right: 1.1rem;
   bottom: 1.1rem;
-  z-index: 2;
+  z-index: 5;
 }
 
 .zf-works__card-name {
@@ -1947,11 +2023,23 @@ h3::selection {
 
 .zf-case__panel {
   border-radius: 1.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08))
+      padding-box,
+    linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.45),
+        rgba(255, 255, 255, 0.08) 40%,
+        rgba(0, 0, 0, 0.35)
+      )
+      border-box;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
 .zf-case__panel--main {
@@ -2053,8 +2141,41 @@ h3::selection {
   overflow: hidden;
   border-radius: 2rem;
   aspect-ratio: 4 / 5;
-  background: #151515;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.07), transparent 42%),
+    #151515;
   min-height: 16rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.12),
+    0 18px 42px rgba(0, 0, 0, 0.5),
+    0 6px 14px rgba(0, 0, 0, 0.32);
+  isolation: isolate;
+}
+
+.zf-case__shot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.2px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.38),
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .zf-case__shot.is-board {
@@ -2118,6 +2239,35 @@ h3::selection {
   border-radius: 1.5rem;
   aspect-ratio: 4 / 5;
   background: #151515;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    0 14px 32px rgba(0, 0, 0, 0.45);
+}
+
+.zf-case__other::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.32),
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(0, 0, 0, 0.28)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .zf-case__other-meta {
@@ -2125,7 +2275,7 @@ h3::selection {
   left: 0.8rem;
   right: 0.8rem;
   bottom: 0.8rem;
-  z-index: 2;
+  z-index: 4;
 }
 
 .zf-case__other-meta p {
@@ -2149,6 +2299,7 @@ h3::selection {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
 }
 
@@ -2226,6 +2377,16 @@ html.lenis {
   scroll-behavior: auto !important;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .zf-works__card-media,
+  .zf-works__card:hover .zf-works__card-media,
+  .zf-works__card-media img,
+  .zf-works__card:hover img {
+    transition: none;
+    transform: none;
+  }
+}
+
 @media (min-width: 768px) {
   .zf-nav {
     gap: 1.15rem;
@@ -2258,7 +2419,7 @@ html.lenis {
 
   .zf-works__grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.85rem;
+    gap: 1.1rem;
   }
 
   .zf-works__card-media {
