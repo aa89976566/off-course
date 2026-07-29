@@ -119,8 +119,11 @@
       "stack": "HTML, CSS",
       "client": "for AMS",
       "accent": "#B8D170",
-      "cover": "/media/digital/ams-1.jpg",
+      "cover": "/media/digital/pitch/ams-com-cover.webp",
       "images": [
+        "/media/digital/pitch/ams-com-hero.webp",
+        "/media/digital/pitch/ams-com-wide.webp",
+        "/media/digital/pitch/ams-com-board-2.webp",
         "/media/digital/ams-1.jpg"
       ],
       "summary": "Live brand site for AMS — featured in the GET FOUND product stage.",
@@ -137,11 +140,13 @@
       "stack": "Next.js",
       "client": "for Jieshin Tseng 曾潔心",
       "accent": "#111111",
-      "cover": "/media/digital/jieshin-1.jpg",
+      "cover": "/media/digital/pitch/jieshin-tseng-cover.webp",
       "images": [
+        "/media/digital/pitch/jieshin-tseng-hero.webp",
+        "/media/digital/pitch/jieshin-tseng-wide.webp",
+        "/media/digital/pitch/jieshin-tseng-board-2.webp",
         "/media/digital/jieshin-1.jpg",
-        "/media/digital/jieshin-2.jpg",
-        "/media/digital/jieshin-3.jpg"
+        "/media/digital/jieshin-2.jpg"
       ],
       "summary": "Jieshin Tseng (曾潔心) is an artist working between London and Taiwan. The practice moves across sculpture, installation, painting and writing — not as separate disciplines, but as different ways of testing perception.\n\nDrawn to materials that are overlooked, unstable or in transition, the work reassembles paper scraps, found objects, tissue casting and site fragments into forms that carry damage, incompleteness and memory. The portfolio documents studio research, pop-up exhibitions, a Dilston Gallery residency, and the 2026 degree show — a living archive of making between cities.",
       "liveUrl": "https://jieshin.vercel.app"
@@ -157,12 +162,13 @@
       "stack": "Next.js",
       "client": "for Fred's Community Cafe",
       "accent": "#E85A2A",
-      "cover": "/media/digital/freds-live-1.jpg",
+      "cover": "/media/digital/pitch/freds-cafe-cover.webp",
       "images": [
+        "/media/digital/pitch/freds-cafe-hero.webp",
+        "/media/digital/pitch/freds-cafe-wide.webp",
+        "/media/digital/pitch/freds-cafe-board-2.webp",
         "/media/digital/freds-live-1.jpg",
-        "/media/digital/freds-1.jpg",
-        "/media/digital/freds-2.jpg",
-        "/media/digital/freds-3.jpg"
+        "/media/digital/freds-1.jpg"
       ],
       "summary": "Neighbourhood website for Fred's Community Cafe in Crofton Park — Allpress coffee, garden suntrap, events and local gatherings opposite the station.",
       "liveUrl": "https://aa89976566.github.io/fred-s-cafe/"
@@ -178,8 +184,11 @@
       "stack": "HTML, CSS",
       "client": "for Crespidia",
       "accent": "#C4A484",
-      "cover": "/media/digital/crespidia-1.jpg",
+      "cover": "/media/digital/pitch/crespidia-coffee-cover.webp",
       "images": [
+        "/media/digital/pitch/crespidia-coffee-hero.webp",
+        "/media/digital/pitch/crespidia-coffee-wide.webp",
+        "/media/digital/pitch/crespidia-coffee-board-2.webp",
         "/media/digital/crespidia-1.jpg"
       ],
       "summary": "Cafe website for Crespidia in Crystal Palace.",
@@ -196,8 +205,10 @@
       "stack": "Next.js",
       "client": "for Kings Health & Fitness",
       "accent": "#E10600",
-      "cover": "/media/digital/boxing-1.jpg",
+      "cover": "/media/digital/pitch/boxing-training-cover.webp",
       "images": [
+        "/media/digital/pitch/boxing-training-wide.webp",
+        "/media/digital/pitch/boxing-training-board-2.webp",
         "/media/digital/boxing-1.jpg",
         "/media/digital/boxing-2.jpg",
         "/media/digital/boxing-3.jpg"
@@ -215,8 +226,10 @@
       "stack": "Next.js, Stripe",
       "client": "for Shop X",
       "accent": "#FF3829",
-      "cover": "/media/digital/shopx-1.jpg",
+      "cover": "/media/digital/pitch/shop-x-booking-cover.webp",
       "images": [
+        "/media/digital/pitch/shop-x-booking-wide.webp",
+        "/media/digital/pitch/shop-x-booking-board-2.webp",
         "/media/digital/shopx-1.jpg",
         "/media/digital/shopx-2.jpg",
         "/media/digital/shopx-3.jpg"
@@ -233,8 +246,10 @@
       "stack": "Next.js, Sanity",
       "client": "for Atelier North",
       "accent": "#4848ED",
-      "cover": "/media/digital/atelier-1.jpg",
+      "cover": "/media/digital/pitch/atelier-north-cover.webp",
       "images": [
+        "/media/digital/pitch/atelier-north-wide.webp",
+        "/media/digital/pitch/atelier-north-board-2.webp",
         "/media/digital/atelier-1.jpg",
         "/media/digital/atelier-2.jpg",
         "/media/digital/atelier-3.jpg"
@@ -251,8 +266,10 @@
       "stack": "Shopify, custom app",
       "client": "for Green Lane Market",
       "accent": "#008B8E",
-      "cover": "/media/digital/greenlane-1.jpg",
+      "cover": "/media/digital/pitch/green-lane-market-cover.webp",
       "images": [
+        "/media/digital/pitch/green-lane-market-wide.webp",
+        "/media/digital/pitch/green-lane-market-board-2.webp",
         "/media/digital/greenlane-1.jpg",
         "/media/digital/greenlane-2.jpg",
         "/media/digital/greenlane-3.jpg"
@@ -269,8 +286,10 @@
       "stack": "Next.js, Postgres",
       "client": "for Ledger House",
       "accent": "#4848ED",
-      "cover": "/media/digital/ledger-1.jpg",
+      "cover": "/media/digital/pitch/ledger-house-cover.webp",
       "images": [
+        "/media/digital/pitch/ledger-house-wide.webp",
+        "/media/digital/pitch/ledger-house-board-2.webp",
         "/media/digital/ledger-1.jpg",
         "/media/digital/ledger-2.jpg",
         "/media/digital/ledger-3.jpg"
@@ -287,8 +306,10 @@
       "stack": "Next.js, Postgres",
       "client": "for Noon Studio",
       "accent": "#FF3829",
-      "cover": "/media/digital/noon-1.jpg",
+      "cover": "/media/digital/pitch/noon-crm-cover.webp",
       "images": [
+        "/media/digital/pitch/noon-crm-wide.webp",
+        "/media/digital/pitch/noon-crm-board-2.webp",
         "/media/digital/noon-1.jpg",
         "/media/digital/noon-2.jpg",
         "/media/digital/noon-3.jpg"
@@ -305,8 +326,10 @@
       "stack": "Next.js, custom integrations",
       "client": "for Kiln Ceramics",
       "accent": "#F7A80D",
-      "cover": "/media/digital/kiln-1.jpg",
+      "cover": "/media/digital/pitch/kiln-automation-cover.webp",
       "images": [
+        "/media/digital/pitch/kiln-automation-wide.webp",
+        "/media/digital/pitch/kiln-automation-board-2.webp",
         "/media/digital/kiln-1.jpg",
         "/media/digital/kiln-2.jpg",
         "/media/digital/kiln-3.jpg"

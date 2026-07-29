@@ -2057,8 +2057,18 @@ h3::selection {
   min-height: 16rem;
 }
 
-.zf-case__shot.is-wide {
+.zf-case__shot.is-board {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, #1a1a1a 0%, #0a0a0a 100%);
+  aspect-ratio: 4 / 5;
+}
+
+.zf-case__shot.is-board.is-wide {
   aspect-ratio: 16 / 10;
+}
+
+.zf-case__shot.is-board img {
+  padding: 0.65rem;
 }
 
 .zf-case__others {

@@ -19,7 +19,13 @@ type FoundCaseProps = {
  */
 export function FoundCase({ project, others }: FoundCaseProps) {
   const reduce = useReducedMotion();
-  const gallery = project.images.length ? project.images : [project.cover];
+  // Pitch boards first — website screenshots framed for presentation.
+  const gallery = (project.images.length ? project.images : [project.cover]).filter(
+    (src, i, arr) => arr.indexOf(src) === i
+  );
+  const heroSrc =
+    gallery.find((src) => src.includes("-hero.")) || project.cover;
+  const boardGallery = gallery.filter((src) => src !== heroSrc);
   const blurb =
     project.summary?.split("\n\n")[0] ||
     `${project.type} — crafted so the brand gets found.`;
@@ -30,7 +36,7 @@ export function FoundCase({ project, others }: FoundCaseProps) {
 
       <header className="zf-case__hero">
         <Image
-          src={assetPath(project.cover)}
+          src={assetPath(heroSrc)}
           alt=""
           fill
           priority
@@ -105,23 +111,22 @@ export function FoundCase({ project, others }: FoundCaseProps) {
         </section>
       )}
 
-      <section className="zf-case__gallery" aria-label="Project media">
-        {gallery.map((src, i) => {
-          const wide = i === 0 || i % 3 === 0;
+      <section className="zf-case__gallery" aria-label="Website pitch boards">
+        {boardGallery.map((src, i) => {
+          const wide = src.includes("-wide.") || i === 0;
+          const board = src.includes("/pitch/");
           return (
             <div
               key={`${src}-${i}`}
-              className={`zf-case__shot${wide ? " is-wide" : ""}`}
+              className={`zf-case__shot${wide ? " is-wide" : ""}${board ? " is-board" : ""}`}
             >
               <Image
                 src={assetPath(src)}
                 alt=""
                 fill
-                className="object-cover"
+                className={board ? "object-contain" : "object-cover"}
                 sizes={
-                  wide
-                    ? "100vw"
-                    : "(max-width: 768px) 100vw, 50vw"
+                  wide ? "100vw" : "(max-width: 768px) 100vw, 50vw"
                 }
               />
             </div>
