@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ProjectDetail } from "@/components/ProjectDetail";
+import { FoundCase } from "@/components/FoundCase";
 import { getProject, getProjectsByStream } from "@/lib/projects";
 
 type Props = {
@@ -14,11 +14,14 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: Props): Metadata {
   const project = getProject("found", params.slug);
   if (!project) return { title: "GET FOUND" };
-  return { title: project.title };
+  return { title: `${project.title} — GET FOUND` };
 }
 
 export default function GetFoundProjectPage({ params }: Props) {
   const project = getProject("found", params.slug);
   if (!project) notFound();
-  return <ProjectDetail project={project} stream="found" />;
+  const others = getProjectsByStream("found").filter(
+    (p) => p.slug !== project.slug
+  );
+  return <FoundCase project={project} others={others} />;
 }

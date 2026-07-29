@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { FoundCardStack } from "@/components/FoundCardStack";
+import { FoundWorksIndex } from "@/components/FoundWorksIndex";
 import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
   description:
-    "Website and system cases in a Framer CardStack — drag or tap to cycle.",
+    "Website and system cases — browse the works, open a case.",
 };
 
+/** Prefer live / featured cases first, then the rest. */
 const FEATURED = [
   "freds-cafe",
   "jieshin-tseng",
@@ -22,7 +23,9 @@ export default function GetFoundPage() {
   const featured = FEATURED.map((slug) =>
     found.find((p) => p.slug === slug)
   ).filter(Boolean) as typeof found;
-  const projects = featured.length >= 3 ? featured : found.slice(0, 6);
+  const featuredSlugs = new Set(featured.map((p) => p.slug));
+  const rest = found.filter((p) => !featuredSlugs.has(p.slug));
+  const projects = [...featured, ...rest];
 
-  return <FoundCardStack projects={projects} />;
+  return <FoundWorksIndex projects={projects} />;
 }

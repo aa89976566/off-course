@@ -6,8 +6,12 @@ import { usePathname } from "next/navigation";
 /** Ultra-minimal Walala footer */
 export function Footer() {
   const pathname = usePathname();
-  // Immersive design browser — keep the stage clear.
-  if (pathname === "/get-found" || pathname === "/get-found/") {
+  // Immersive GET FOUND — keep the stage clear.
+  if (
+    pathname === "/get-found" ||
+    pathname === "/get-found/" ||
+    pathname.startsWith("/get-found/")
+  ) {
     return null;
   }
 

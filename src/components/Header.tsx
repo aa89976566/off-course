@@ -27,10 +27,12 @@ export function Header() {
     return () => window.clearTimeout(t);
   }, [isHome]);
 
-  // Landing owns its own chrome — hide the global header.
-  const onFoundLanding =
-    pathname === "/get-found" || pathname === "/get-found/";
-  if (onFoundLanding) return null;
+  // GET FOUND owns its own ZeroFrame-style chrome.
+  const onFound =
+    pathname === "/get-found" ||
+    pathname === "/get-found/" ||
+    pathname.startsWith("/get-found/");
+  if (onFound) return null;
 
   return (
     <header
