@@ -1854,21 +1854,21 @@ h3::selection {
 /* Aimed Lift + Beveled Glass frame */
 .zf-works__card-media {
   --zf-lift:
-    0 1px 0 rgba(255, 255, 255, 0.16),
-    0 22px 48px rgba(0, 0, 0, 0.62),
-    0 8px 18px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+    0 1px 0 rgba(255, 255, 255, 0.2),
+    0 28px 56px rgba(0, 0, 0, 0.72),
+    0 10px 22px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
   --zf-bevel-in:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
-    inset 1px 0 0 rgba(255, 255, 255, 0.08),
-    inset -1px 0 0 rgba(0, 0, 0, 0.28);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.12),
+    inset -1px 0 0 rgba(0, 0, 0, 0.35);
   position: relative;
   overflow: hidden;
   border-radius: 2rem;
   aspect-ratio: 4 / 5;
   background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.08), transparent 42%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.1), transparent 42%),
     rgba(18, 18, 18, 0.72);
   box-shadow: var(--zf-bevel-in), var(--zf-lift);
   isolation: isolate;
@@ -1884,13 +1884,13 @@ h3::selection {
   inset: 0;
   z-index: 4;
   border-radius: inherit;
-  padding: 1.25px;
+  padding: 1.5px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.12) 28%,
-    rgba(255, 255, 255, 0.03) 55%,
-    rgba(0, 0, 0, 0.35) 100%
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.18) 24%,
+    rgba(255, 255, 255, 0.04) 52%,
+    rgba(0, 0, 0, 0.42) 100%
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -1912,31 +1912,31 @@ h3::selection {
   background:
     linear-gradient(
       125deg,
-      rgba(255, 255, 255, 0.14) 0%,
-      rgba(255, 255, 255, 0.03) 26%,
-      transparent 48%
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.04) 24%,
+      transparent 46%
     ),
     radial-gradient(
-      120% 80% at 18% 0%,
-      rgba(255, 255, 255, 0.1),
-      transparent 46%
+      120% 80% at 16% 0%,
+      rgba(255, 255, 255, 0.14),
+      transparent 48%
     );
   mix-blend-mode: screen;
-  opacity: 0.85;
+  opacity: 0.9;
   pointer-events: none;
 }
 
 .zf-works__card:hover .zf-works__card-media {
-  transform: translateY(-5px) scale(1.012);
+  transform: translateY(-6px) scale(1.014);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
-    inset 1px 0 0 rgba(255, 255, 255, 0.1),
-    inset -1px 0 0 rgba(0, 0, 0, 0.25),
-    0 1px 0 rgba(255, 255, 255, 0.2),
-    0 28px 60px rgba(0, 0, 0, 0.7),
-    0 12px 24px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.48),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.14),
+    inset -1px 0 0 rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.24),
+    0 34px 70px rgba(0, 0, 0, 0.78),
+    0 14px 28px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .zf-works__card:hover img {
@@ -1991,119 +1991,120 @@ h3::selection {
 }
 
 .zf-case__hero {
+  padding: 4.8rem 0.85rem 0.75rem;
+}
+
+.zf-case__hero-frame {
   position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: flex-end;
-  padding: 5.5rem 0.85rem 1rem;
   overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  min-height: 16.5rem;
+  border-radius: 1.7rem;
+  background: #111;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    0 24px 50px rgba(0, 0, 0, 0.55),
+    0 8px 18px rgba(0, 0, 0, 0.35);
+  isolation: isolate;
+}
+
+.zf-case__hero-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.48),
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .zf-case__hero-img {
   object-fit: cover;
-  object-position: center;
-  transform: scale(1.04);
+  object-position: center top;
 }
 
-.zf-case__hero-veil {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 35%, rgba(0, 0, 0, 0.55) 100%);
-}
-
-.zf-case__panels {
-  position: relative;
-  z-index: 2;
+.zf-case__intro {
   display: grid;
-  gap: 0.65rem;
-  width: 100%;
+  gap: 1.5rem;
+  padding: 1.6rem 1rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.zf-case__panel {
-  border-radius: 1.6rem;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08))
-      padding-box,
-    linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.45),
-        rgba(255, 255, 255, 0.08) 40%,
-        rgba(0, 0, 0, 0.35)
-      )
-      border-box;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 18px 40px rgba(0, 0, 0, 0.28);
-}
-
-.zf-case__panel--main {
-  padding: 1.25rem 1.2rem 1.15rem;
-}
-
-.zf-case__panel--meta {
-  padding: 1.05rem 1.15rem;
-  display: grid;
-  gap: 0.7rem;
+.zf-case__kicker {
+  margin: 0 0 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
 }
 
 .zf-case__name {
   margin: 0;
   font-family: var(--font-archivo-black), sans-serif;
-  font-size: clamp(2rem, 9vw, 4.2rem);
+  font-size: clamp(2.1rem, 10vw, 4.4rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 
 .zf-case__blurb {
-  margin: 1rem 0 0;
-  max-width: 28rem;
-  font-size: 0.7rem;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  margin: 0.95rem 0 0;
+  max-width: 34rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 400;
 }
 
-.zf-case__live {
-  display: inline-flex;
-  margin-top: 1.1rem;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-  padding-bottom: 0.12rem;
-}
-
-.zf-case__live:hover {
-  border-color: #fff;
-}
-
-.zf-case__meta-row {
+.zf-case__facts {
+  margin: 0;
   display: grid;
-  gap: 0.15rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.95rem 1rem;
 }
 
-.zf-case__meta-row span {
-  font-size: 0.62rem;
+.zf-case__fact {
+  display: grid;
+  gap: 0.22rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.zf-case__fact dt {
+  margin: 0;
+  font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.42);
 }
 
-.zf-case__meta-row strong {
+.zf-case__fact dd {
+  margin: 0;
   font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .zf-case__about {
@@ -2132,24 +2133,22 @@ h3::selection {
 .zf-case__gallery {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.7rem;
-  padding: 0.5rem 0.85rem 2rem;
+  gap: 1rem;
+  padding: 1.35rem 0.85rem 2.25rem;
 }
 
 .zf-case__shot {
   position: relative;
   overflow: hidden;
-  border-radius: 2rem;
+  border-radius: 1.7rem;
   aspect-ratio: 4 / 5;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.07), transparent 42%),
-    #151515;
+  background: #121212;
   min-height: 16rem;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     inset 0 -1px 0 rgba(0, 0, 0, 0.42),
     0 1px 0 rgba(255, 255, 255, 0.12),
-    0 18px 42px rgba(0, 0, 0, 0.5),
+    0 20px 44px rgba(0, 0, 0, 0.52),
     0 6px 14px rgba(0, 0, 0, 0.32);
   isolation: isolate;
 }
@@ -2160,10 +2159,10 @@ h3::selection {
   inset: 0;
   z-index: 2;
   border-radius: inherit;
-  padding: 1.2px;
+  padding: 1.3px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.38),
+    rgba(255, 255, 255, 0.42),
     rgba(255, 255, 255, 0.08) 40%,
     rgba(0, 0, 0, 0.3) 100%
   );
@@ -2180,7 +2179,7 @@ h3::selection {
 
 .zf-case__shot.is-board {
   background:
-    radial-gradient(ellipse 60% 50% at 50% 40%, #1a1a1a 0%, #0a0a0a 100%);
+    radial-gradient(ellipse 70% 55% at 50% 40%, #1c1c1c 0%, #0b0b0b 100%);
   aspect-ratio: 4 / 5;
 }
 
@@ -2189,7 +2188,7 @@ h3::selection {
 }
 
 .zf-case__shot.is-board img {
-  padding: 0.65rem;
+  padding: 0.75rem;
 }
 
 .zf-case__others {
@@ -2419,7 +2418,7 @@ html.lenis {
 
   .zf-works__grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.1rem;
+    gap: 1.35rem;
   }
 
   .zf-works__card-media {
@@ -2428,20 +2427,25 @@ html.lenis {
   }
 
   .zf-case__hero {
-    padding: 6rem 1.35rem 1.35rem;
+    padding: 5.8rem 1.5rem 1rem;
   }
 
-  .zf-case__panels {
-    grid-template-columns: minmax(0, 1.7fr) minmax(14rem, 0.7fr);
-    gap: 0.85rem;
+  .zf-case__hero-frame {
+    aspect-ratio: 21 / 10;
+    min-height: 28rem;
+    border-radius: 2.4rem;
   }
 
-  .zf-case__panel {
-    border-radius: 2rem;
+  .zf-case__intro {
+    grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.7fr);
+    align-items: end;
+    gap: 2rem;
+    padding: 2.1rem 1.5rem 1.6rem;
   }
 
-  .zf-case__panel--main {
-    padding: 1.6rem 1.7rem 1.4rem;
+  .zf-case__facts {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.2rem;
   }
 
   .zf-case__about {
@@ -2451,23 +2455,23 @@ html.lenis {
 
   .zf-case__gallery {
     grid-template-columns: 1fr 1fr;
-    gap: 0.85rem;
-    padding: 0.75rem 1.35rem 2.5rem;
+    gap: 1.1rem;
+    padding: 1.6rem 1.5rem 2.8rem;
   }
 
   .zf-case__shot.is-wide {
     grid-column: 1 / -1;
     aspect-ratio: 21 / 10;
-    border-radius: 2.6rem;
+    border-radius: 2.4rem;
   }
 
   .zf-case__shot {
-    border-radius: 2.4rem;
+    border-radius: 2.2rem;
     min-height: 22rem;
   }
 
   .zf-case__others {
-    padding: 1.5rem 1.35rem 7rem;
+    padding: 1.5rem 1.5rem 7rem;
   }
 
   .zf-case__dock {
