@@ -17,12 +17,27 @@ type FoundCarousel3DProps = {
   projects: Project[];
 };
 
-/** Soft AE-like settle — matches satto 3D Carusel S4 pacing. */
-const CAROUSEL_SPRING: Transition = {
-  type: "spring",
-  stiffness: 160,
-  damping: 22,
-  mass: 0.95,
+/**
+ * After Effects–style ease (ease-out expo / quint hybrid).
+ * Long settle, no bounce — satto 3D Carusel S4 silky feel.
+ */
+const AE_EASE = [0.16, 1, 0.3, 1] as const;
+const AE_DURATION = 0.92;
+const AE_LOCK_MS = 780;
+
+const MOVE: Transition = {
+  duration: AE_DURATION,
+  ease: AE_EASE,
+};
+
+const FADE: Transition = {
+  duration: AE_DURATION * 0.72,
+  ease: AE_EASE,
+};
+
+const META: Transition = {
+  duration: 0.55,
+  ease: AE_EASE,
 };
 
 function wrapOffset(i: number, index: number, total: number) {
@@ -34,39 +49,55 @@ function wrapOffset(i: number, index: number, total: number) {
 
 /**
  * Pose for satto 3D Carusel S4:
- * front card nearest (slight rotateX), stack recedes upward into depth.
+ * front card nearest (rotateX), stack recedes upward into depth.
  */
 function cardPose(d: number, narrow: boolean) {
-  const yUnit = narrow ? 78 : 108;
-  const zUnit = narrow ? 70 : 110;
+  const yUnit = narrow ? 72 : 98;
+  const zUnit = narrow ? 90 : 140;
+  const tilt = narrow ? 34 : 40;
 
-  // Exiting toward camera / down
   if (d < 0) {
     const t = Math.abs(d);
     return {
       x: 0,
-      y: t * (narrow ? 160 : 210),
-      z: 120 + t * 80,
-      rotateX: 34 + t * 6,
-      scale: 1.04 + t * 0.04,
-      opacity: t > 1 ? 0 : 0.15,
+      y: t * (narrow ? 170 : 220),
+      z: 160 + t * 90,
+      rotateX: tilt + 8 + t * 4,
+      scale: 1.06 + t * 0.05,
+      opacity: t > 1 ? 0 : 0.12,
+      filter: "blur(0px)",
     };
   }
 
-  // Active + depth stack (up / away)
   return {
     x: 0,
     y: -d * yUnit,
-    z: 90 - d * zUnit,
-    rotateX: narrow ? 26 : 30,
-    scale: Math.max(0.72, 1 - d * 0.07),
-    opacity: d > 3 ? 0 : Math.max(0.35, 1 - d * 0.12),
+    z: 110 - d * zUnit,
+    rotateX: tilt,
+    scale: Math.max(0.7, 1 - d * 0.075),
+    opacity: d > 3 ? 0 : Math.max(0.42, 1 - d * 0.1),
+    // Soft depth-of-field like AE camera blur
+    filter: d === 0 ? "blur(0px)" : `blur(${Math.min(2.4, d * 0.55)}px)`,
+  };
+}
+
+function cardTransition(d: number, reduce: boolean | null): Transition {
+  if (reduce) return { duration: 0 };
+  // Depth cards lag a hair — cascade like AE layer offsets
+  const delay = d > 0 ? d * 0.045 : d < 0 ? 0 : 0.02;
+  return {
+    x: { ...MOVE, delay },
+    y: { ...MOVE, delay },
+    z: { ...MOVE, delay },
+    rotateX: { ...MOVE, delay },
+    scale: { ...MOVE, delay },
+    opacity: { ...FADE, delay: delay * 0.6 },
+    filter: { ...FADE, delay: delay * 0.6 },
   };
 }
 
 /**
- * GET FOUND — satto 3D Carusel S4 CSS recreation:
- * perspective stage, rotateX stack, depth translateZ, cover slides.
+ * GET FOUND — satto 3D Carusel S4 with AE silky motion.
  */
 export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
   const reduce = useReducedMotion();
@@ -74,7 +105,10 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
   const [index, setIndex] = useState(0);
   const [narrow, setNarrow] = useState(false);
   const lock = useRef(false);
+  const wheelAcc = useRef(0);
+  const wheelTimer = useRef<number | null>(null);
   const touchY = useRef<number | null>(null);
+  const touchT = useRef(0);
   const total = projects.length;
   const active = projects[index];
 
@@ -88,22 +122,41 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
 
   const go = useCallback(
     (delta: number) => {
-      if (!total || lock.current) return;
+      if (!total || lock.current || delta === 0) return;
       lock.current = true;
       setIndex((i) => (i + delta + total) % total);
-      window.setTimeout(() => {
-        lock.current = false;
-      }, reduce ? 120 : 520);
+      window.setTimeout(
+        () => {
+          lock.current = false;
+        },
+        reduce ? 100 : AE_LOCK_MS
+      );
     },
     [total, reduce]
   );
 
   useEffect(() => {
-    const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) < 12) return;
-      e.preventDefault();
-      go(e.deltaY > 0 ? 1 : -1);
+    const flushWheel = () => {
+      const acc = wheelAcc.current;
+      wheelAcc.current = 0;
+      if (Math.abs(acc) < 28) return;
+      go(acc > 0 ? 1 : -1);
     };
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      // Normalize trackpad + mouse wheel into one silky step
+      const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      wheelAcc.current += dy;
+      if (wheelTimer.current != null) window.clearTimeout(wheelTimer.current);
+      // Fire on gesture settle — feels AE scrubbed, not jittery
+      if (Math.abs(wheelAcc.current) > 64 && !lock.current) {
+        flushWheel();
+        return;
+      }
+      wheelTimer.current = window.setTimeout(flushWheel, 90);
+    };
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
         e.preventDefault();
@@ -113,11 +166,13 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
         go(-1);
       }
     };
+
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
+      if (wheelTimer.current != null) window.clearTimeout(wheelTimer.current);
     };
   }, [go]);
 
@@ -143,14 +198,18 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
       className="found-c3d"
       onTouchStart={(e) => {
         touchY.current = e.touches[0]?.clientY ?? null;
+        touchT.current = performance.now();
       }}
       onTouchEnd={(e) => {
         if (touchY.current == null) return;
         const y = e.changedTouches[0]?.clientY ?? touchY.current;
         const dy = touchY.current - y;
+        const dt = Math.max(16, performance.now() - touchT.current);
+        const velocity = dy / dt;
         touchY.current = null;
-        if (Math.abs(dy) < 36) return;
-        go(dy > 0 ? 1 : -1);
+        // Distance or flick velocity — silky mobile scrub
+        if (Math.abs(dy) < 28 && Math.abs(velocity) < 0.35) return;
+        go(dy > 0 || velocity > 0 ? 1 : -1);
       }}
     >
       <header className="found-c3d__chrome">
@@ -193,25 +252,17 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
                   rotateX: rx,
                   scale,
                 }) =>
-                  `translate(-50%, -50%) translate3d(${tx ?? 0}, ${ty ?? 0}, ${tz ?? 0}) rotateX(${rx ?? 0}) scale(${scale ?? 1})`
+                  `translate(-50%, -50%) translate3d(${tx ?? 0}px, ${ty ?? 0}px, ${tz ?? 0}px) rotateX(${rx ?? 0}deg) scale(${scale ?? 1})`
                 }
                 initial={false}
                 animate={pose}
-                transition={
-                  reduce
-                    ? { duration: 0 }
-                    : {
-                        ...CAROUSEL_SPRING,
-                        delay: d > 0 ? d * 0.03 : 0,
-                      }
-                }
+                transition={cardTransition(d, reduce)}
                 onClick={() => {
                   if (d === 0) {
                     openActive();
                     return;
                   }
-                  if (d > 0) go(d);
-                  else go(d);
+                  go(d);
                 }}
               >
                 <div className="found-c3d__card-face">
@@ -240,10 +291,10 @@ export function FoundCarousel3D({ projects }: FoundCarousel3DProps) {
           <motion.div
             key={active.slug}
             className="found-c3d__meta-inner"
-            initial={reduce ? false : { opacity: 0, y: 10 }}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? undefined : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            exit={reduce ? undefined : { opacity: 0, y: -12 }}
+            transition={reduce ? { duration: 0 } : META}
           >
             <p className="found-c3d__meta-type">{active.type}</p>
             <h1 className="found-c3d__meta-title">{active.title}</h1>

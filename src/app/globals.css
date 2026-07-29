@@ -1312,8 +1312,8 @@ h3::selection {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  perspective: 1400px;
-  perspective-origin: 50% 38%;
+  perspective: 1100px;
+  perspective-origin: 50% 55%;
 }
 
 .found-c3d__deck {
@@ -1337,7 +1337,9 @@ h3::selection {
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
   -webkit-tap-highlight-color: transparent;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .found-c3d__card:focus-visible .found-c3d__card-face {
@@ -1357,6 +1359,8 @@ h3::selection {
     0 28px 60px rgba(0, 0, 0, 0.28),
     0 8px 18px rgba(0, 0, 0, 0.12);
   transform: translateZ(0);
+  /* Smooth shadow settle while parent transforms */
+  transition: box-shadow 0.92s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .found-c3d__card-img {
