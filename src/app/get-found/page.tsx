@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { FoundCarousel3D } from "@/components/FoundCarousel3D";
+import { FoundCardStack } from "@/components/FoundCardStack";
 import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
   description:
-    "3D carousel of website and system cases — scroll to rotate the stack.",
+    "Website and system cases in a Framer CardStack — drag or tap to cycle.",
 };
 
-/** Featured website / system cases for the 3D Carusel S4 stage. */
 const FEATURED = [
   "freds-cafe",
   "jieshin-tseng",
@@ -25,5 +24,5 @@ export default function GetFoundPage() {
   ).filter(Boolean) as typeof found;
   const projects = featured.length >= 3 ? featured : found.slice(0, 6);
 
-  return <FoundCarousel3D projects={projects} />;
+  return <FoundCardStack projects={projects} />;
 }
