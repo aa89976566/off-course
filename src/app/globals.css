@@ -2107,6 +2107,99 @@ h3::selection {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.zf-case__section-label {
+  margin: 0 0 0.65rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.zf-case__story {
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.8rem 1rem 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.zf-case__story-block p:last-child {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.zf-case__features {
+  padding: 1.9rem 1rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.zf-case__features-head h2,
+.zf-case__gallery-head h2,
+.zf-case__outcomes h2 {
+  margin: 0;
+  font-family: var(--font-archivo-black), sans-serif;
+  font-size: clamp(1.35rem, 4.8vw, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.zf-case__feature-list {
+  list-style: none;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.zf-case__feature-list li {
+  position: relative;
+  padding: 0.85rem 0.95rem 0.85rem 2.1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.zf-case__feature-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.95rem;
+  top: 1.15rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.zf-case__outcomes {
+  padding: 2rem 1rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.zf-case__outcomes ul {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.zf-case__outcomes li {
+  padding-left: 1rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.28);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+
 .zf-case__about {
   display: grid;
   gap: 0.85rem;
@@ -2133,8 +2226,13 @@ h3::selection {
 .zf-case__gallery {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
-  padding: 1.35rem 0.85rem 2.25rem;
+  gap: 1.25rem;
+  padding: 1.6rem 0.85rem 2.25rem;
+}
+
+.zf-case__gallery-head {
+  grid-column: 1 / -1;
+  margin-bottom: 0.15rem;
 }
 
 .zf-case__shot {
@@ -2188,7 +2286,33 @@ h3::selection {
 }
 
 .zf-case__shot.is-board img {
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem 3.4rem;
+}
+
+.zf-case__shot-cap {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.85rem;
+  z-index: 3;
+  display: grid;
+  gap: 0.2rem;
+  pointer-events: none;
+}
+
+.zf-case__shot-cap span {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.zf-case__shot-cap p {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .zf-case__others {
@@ -2448,6 +2572,30 @@ html.lenis {
     gap: 1rem 1.2rem;
   }
 
+  .zf-case__story {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    padding: 2.4rem 1.5rem 1.4rem;
+  }
+
+  .zf-case__features {
+    padding: 2.4rem 1.5rem 1.2rem;
+  }
+
+  .zf-case__feature-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+
+  .zf-case__outcomes {
+    padding: 2.5rem 1.5rem 1.3rem;
+  }
+
+  .zf-case__outcomes ul {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem 1.4rem;
+  }
+
   .zf-case__about {
     grid-template-columns: 7rem 1fr;
     padding: 3.5rem 1.5rem 1.5rem;
@@ -2456,7 +2604,7 @@ html.lenis {
   .zf-case__gallery {
     grid-template-columns: 1fr 1fr;
     gap: 1.1rem;
-    padding: 1.6rem 1.5rem 2.8rem;
+    padding: 1.8rem 1.5rem 2.8rem;
   }
 
   .zf-case__shot.is-wide {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { FoundPillNav } from "@/components/FoundPillNav";
 import { FoundSmoothScroll } from "@/components/FoundSmoothScroll";
-import type { Project } from "@/lib/projects";
+import type { Project, ProjectPitchBoard } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
 
 type FoundCaseProps = {
@@ -21,41 +21,41 @@ const BLUR =
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
- * GET FOUND case — clean editorial structure for website pitch boards.
- * Hero media → intro/facts → gallery → optional about → other works → dock.
+ * GET FOUND case — agency-style pitch:
+ * media → snapshot → challenge/influence → features → labeled boards → outcomes.
  */
 export function FoundCase({ project, others, prev, next }: FoundCaseProps) {
   const reduce = useReducedMotion();
-  const gallery = (project.images.length ? project.images : [project.cover]).filter(
-    (src, i, arr) => arr.indexOf(src) === i
-  );
+  const pitch = project.pitch;
+
+  const fallbackGallery = (
+    project.images.length ? project.images : [project.cover]
+  ).filter((src, i, arr) => arr.indexOf(src) === i);
 
   const heroSrc =
-    gallery.find((src) => src.includes("-hero.")) ||
-    gallery.find((src) => src.includes("-wide.")) ||
+    pitch?.boards?.[0]?.src ||
+    fallbackGallery.find((src) => src.includes("-hero.")) ||
+    fallbackGallery.find((src) => src.includes("-wide.")) ||
     project.cover;
 
-  // Prefer pitch boards in a deliberate rhythm; keep one non-pitch as closer.
-  const boards = gallery.filter(
-    (src) => src.includes("/pitch/") && src !== heroSrc
-  );
-  const extras = gallery.filter(
-    (src) => !src.includes("/pitch/") && src !== heroSrc
-  );
-  const ordered = [
-    ...boards.filter((s) => s.includes("-wide.")),
-    ...boards.filter((s) => s.includes("-cover.")),
-    ...boards.filter((s) => !s.includes("-wide.") && !s.includes("-cover.")),
-    ...extras.slice(0, 1),
-  ];
+  const boards: ProjectPitchBoard[] =
+    pitch?.boards?.filter((b) => b.src !== heroSrc) ||
+    fallbackGallery
+      .filter((src) => src !== heroSrc)
+      .map((src, i) => ({
+        src,
+        label: `0${i + 1}`,
+        caption: undefined,
+      }));
 
   const paragraphs = (project.summary || "")
     .split("\n\n")
     .map((p) => p.trim())
     .filter(Boolean);
   const blurb =
-    paragraphs[0] || `${project.type} — crafted so the brand gets found.`;
-  const aboutCopy = paragraphs.slice(1);
+    pitch?.hook ||
+    paragraphs[0] ||
+    `${project.type} — crafted so the brand gets found.`;
   const client = project.client?.replace(/^for\s+/i, "") || null;
 
   const facts = [
@@ -63,7 +63,12 @@ export function FoundCase({ project, others, prev, next }: FoundCaseProps) {
     { label: "Year", value: project.year },
     { label: "Service", value: project.type },
     project.stack ? { label: "Stack", value: project.stack } : null,
+    project.location ? { label: "Locale", value: project.location } : null,
   ].filter(Boolean) as { label: string; value: string }[];
+
+  const hasStory = Boolean(
+    pitch?.challenge || pitch?.influence || pitch?.features?.length
+  );
 
   return (
     <FoundSmoothScroll>
@@ -112,39 +117,96 @@ export function FoundCase({ project, others, prev, next }: FoundCaseProps) {
           </motion.dl>
         </section>
 
+        {hasStory && (
+          <section className="zf-case__story" aria-label="Project narrative">
+            {pitch?.challenge && (
+              <div className="zf-case__story-block">
+                <p className="zf-case__section-label">Challenge</p>
+                <p>{pitch.challenge}</p>
+              </div>
+            )}
+            {pitch?.influence && (
+              <div className="zf-case__story-block">
+                <p className="zf-case__section-label">Client influence</p>
+                <p>{pitch.influence}</p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {pitch?.features && pitch.features.length > 0 && (
+          <section className="zf-case__features" aria-label="Platform functions">
+            <div className="zf-case__features-head">
+              <p className="zf-case__section-label">What the site does</p>
+              <h2>Functions built into the platform</h2>
+            </div>
+            <ul className="zf-case__feature-list">
+              {pitch.features.map((feature) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <section className="zf-case__gallery" aria-label="Project visuals">
-          {ordered.map((src, i) => {
-            const wide = src.includes("-wide.") || i === 0;
-            const board = src.includes("/pitch/");
+          <div className="zf-case__gallery-head">
+            <p className="zf-case__section-label">Visual proof</p>
+            <h2>Different surfaces, different jobs</h2>
+          </div>
+          {boards.map((board, i) => {
+            const wide =
+              board.src.includes("-wide.") ||
+              board.src.includes("-about.") ||
+              board.src.includes("-detail.") ||
+              i === 0;
+            const framed = board.src.includes("/pitch/");
             return (
-              <motion.div
-                key={`${src}-${i}`}
-                className={`zf-case__shot${wide ? " is-wide" : ""}${board ? " is-board" : ""}`}
+              <motion.figure
+                key={`${board.src}-${i}`}
+                className={`zf-case__shot${wide ? " is-wide" : ""}${framed ? " is-board" : ""}`}
                 initial={reduce ? false : { opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.18 }}
                 transition={{ duration: 0.65, ease }}
               >
                 <Image
-                  src={assetPath(src)}
-                  alt=""
+                  src={assetPath(board.src)}
+                  alt={board.caption || board.label}
                   fill
                   loading="lazy"
                   placeholder="blur"
                   blurDataURL={BLUR}
-                  className={board ? "object-contain" : "object-cover"}
+                  className={framed ? "object-contain" : "object-cover"}
                   sizes={wide ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
                 />
-              </motion.div>
+                {(board.label || board.caption) && (
+                  <figcaption className="zf-case__shot-cap">
+                    {board.label && <span>{board.label}</span>}
+                    {board.caption && <p>{board.caption}</p>}
+                  </figcaption>
+                )}
+              </motion.figure>
             );
           })}
         </section>
 
-        {aboutCopy.length > 0 && (
+        {pitch?.outcomes && pitch.outcomes.length > 0 && (
+          <section className="zf-case__outcomes" aria-label="Outcomes">
+            <p className="zf-case__section-label">After effect</p>
+            <h2>What changed for the client</h2>
+            <ul>
+              {pitch.outcomes.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {!pitch && paragraphs.length > 1 && (
           <section className="zf-case__about">
             <p className="zf-case__about-label">About</p>
             <div className="zf-case__about-copy">
-              {aboutCopy.map((para) => (
+              {paragraphs.slice(1).map((para) => (
                 <p key={para.slice(0, 48)}>{para}</p>
               ))}
             </div>

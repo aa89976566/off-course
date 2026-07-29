@@ -145,11 +145,64 @@
         "/media/digital/pitch/jieshin-tseng-hero.webp",
         "/media/digital/pitch/jieshin-tseng-wide.webp",
         "/media/digital/pitch/jieshin-tseng-board-2.webp",
-        "/media/digital/jieshin-1.jpg",
-        "/media/digital/jieshin-2.jpg"
+        "/media/digital/pitch/jieshin-tseng-detail.webp",
+        "/media/digital/pitch/jieshin-tseng-about.webp",
+        "/media/digital/pitch/jieshin-tseng-process.webp"
       ],
-      "summary": "Jieshin Tseng (曾潔心) is an artist working between London and Taiwan. The practice moves across sculpture, installation, painting and writing — not as separate disciplines, but as different ways of testing perception.\n\nDrawn to materials that are overlooked, unstable or in transition, the work reassembles paper scraps, found objects, tissue casting and site fragments into forms that carry damage, incompleteness and memory. The portfolio documents studio research, pop-up exhibitions, a Dilston Gallery residency, and the 2026 degree show — a living archive of making between cities.",
-      "liveUrl": "https://jieshin.vercel.app"
+      "summary": "A bilingual living archive that turns studio research into a discoverable public practice — so curators, tutors and collaborators can find the work, the process, and a clear path to contact.",
+      "liveUrl": "https://jieshin.vercel.app",
+      "pitch": {
+        "hook": "From private studio notes to a public artist presence that institutions can actually navigate.",
+        "challenge": "Jieshin’s practice spans sculpture, installation, painting and writing between London and Taiwan — but the work lived as scattered folders, Instagram fragments and closed studio notes. For a degree-show year and residency cycle, that made the practice hard to brief, hard to cite, and hard to commission.",
+        "influence": "The website positions 曾潔心 as the hero of the story. Instead of a generic gallery template, we built an indexed archive that makes material research legible: titles, years, process writing and installation images sit in one bilingual system. Email and Instagram stay one tap away, so interest converts into conversation — for tutors, curators, pop-up hosts and future residencies.",
+        "features": [
+          "Split archive: numbered works list + live media stage",
+          "Bilingual artist identity (EN / 中文) from the first viewport",
+          "Project pages with process writing and image sequences",
+          "About as a living studio statement, not a static bio block",
+          "Direct enquiry paths: Email + Instagram CTAs",
+          "Mobile-first index for fast scanning at shows and studio visits",
+          "Image-heavy Next.js delivery tuned for portfolio performance"
+        ],
+        "outcomes": [
+          "20+ works (2020–2026) organised as a navigable archive",
+          "Degree show, Dilston residency and pop-ups documented as chapters",
+          "Clear bilingual brand surface for international discovery",
+          "A durable home for process — not only finished installation shots"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-hero.webp",
+            "label": "01 · Work detail",
+            "caption": "Process writing beside installation imagery — research becomes readable."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-wide.webp",
+            "label": "02 · Archive index",
+            "caption": "Chronological works list with live preview — curators can scan in seconds."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-board-2.webp",
+            "label": "03 · About + contact",
+            "caption": "Artist statement opens the practice; Email / IG close the loop."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-detail.webp",
+            "label": "04 · Material chapter",
+            "caption": "Tissue-paper casting documented as a narrative, not a single hero shot."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-process.webp",
+            "label": "05 · Studio to phone",
+            "caption": "Desktop depth and mobile clarity for visits, critiques and share-outs."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-about.webp",
+            "label": "06 · Influence surface",
+            "caption": "A quiet page that still carries location, language and professional contact."
+          }
+        ]
+      }
     },
     {
       "slug": "freds-cafe",

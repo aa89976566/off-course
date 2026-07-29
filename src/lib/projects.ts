@@ -2,6 +2,23 @@ import projectsData from "../../data/projects.json";
 
 export type ProjectStream = "lost" | "found";
 
+export type ProjectPitchBoard = {
+  src: string;
+  label: string;
+  caption?: string;
+};
+
+export type ProjectPitch = {
+  /** Outcome-led one-liner shown under the title */
+  hook?: string;
+  challenge?: string;
+  /** How the website amplifies the client's presence / influence */
+  influence?: string;
+  features?: string[];
+  outcomes?: string[];
+  boards?: ProjectPitchBoard[];
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -17,6 +34,7 @@ export type Project = {
   images: string[];
   summary?: string | null;
   liveUrl?: string | null;
+  pitch?: ProjectPitch | null;
 };
 
 export const STREAM_META: Record<
