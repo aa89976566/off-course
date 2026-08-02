@@ -38,8 +38,19 @@ Every project should have its own world.
 
 ## Two worlds
 
-Every Off Course project belongs to one of these two worlds,
-or intentionally bridges both.
+A good creation can stay in GET LOST, or move toward GET FOUND.
+
+```
+A project never needs to become both worlds.
+
+GET LOST can exist independently.
+
+GET FOUND can exist independently.
+
+Only bridge them when it creates meaningful value.
+
+Never force integration for branding purposes.
+```
 
 ### GET LOST
 
@@ -76,8 +87,31 @@ Purpose: discovery.
 
 Ideas become accessible.
 
-When a project bridges both, make the bridge visible in the story —
-do not flatten it into a generic "full service" claim.
+### Bridge is metadata, not navigation
+
+Every project belongs primarily to one world: Lost or Found.
+
+Bridge is an attribute on the project, never a third top-level category.
+
+Examples:
+
+- GET LOST / Mural — optional badge: Bridge to Found
+- GET FOUND / Artist Website — optional badge: Originated from Lost
+- Case header may show: Bridge Project · Lost → Found
+
+Do not create a standalone Work index that duplicates projects
+already living inside GET LOST and GET FOUND.
+
+Homepage may feature 2–3 selected projects per world.
+Full cases live inside their primary world.
+
+Site navigation is only:
+
+- Index
+- GET LOST
+- GET FOUND
+- About
+- Contact
 
 ---
 
