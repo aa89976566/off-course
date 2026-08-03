@@ -407,13 +407,33 @@ body {
   }
 }
 
+.home-radio__bleed {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.home-radio__bleed-img {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  object-fit: cover;
+  object-position: 47% 42%;
+  filter: blur(18px) saturate(0.92) brightness(0.78);
+  transform: scale(1.04);
+}
+
 .home-radio__plate {
+  z-index: 2;
   filter: contrast(1.02) saturate(0.98);
 }
 
 .home-radio__road-canvas {
-  mix-blend-mode: multiply;
-  opacity: 0.92;
+  mix-blend-mode: normal;
+  opacity: 0.95;
 }
 
 .home-radio__haze {

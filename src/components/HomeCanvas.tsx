@@ -31,8 +31,8 @@ const ROAD_Y0 = 0.335;
 /** Road end just above dashboard lip. */
 const ROAD_Y1 = 0.448;
 /** Centre-line dash half-widths (image-normalized). */
-const DASH_HALF_FAR = 0.0042;
-const DASH_HALF_NEAR = 0.0165;
+const DASH_HALF_FAR = 0.0032;
+const DASH_HALF_NEAR = 0.034;
 /** Full road edge half-widths — clip mask only. */
 const ROAD_EDGE_FAR = 0.048;
 const ROAD_EDGE_NEAR = 0.318;
@@ -77,14 +77,19 @@ type Layout = {
   dh: number;
   vw: number;
   vh: number;
+  /** Wide viewports fit full illustration height so mirror + radio stay framed. */
+  wideFit: boolean;
 };
 
 function coverLayout(vw: number, vh: number): Layout {
-  const scale = Math.max(vw / IW, vh / IH);
+  const wideFit = vw / vh > 1.05;
+  // Landscape: nearly full illustration height (tiny crop) so mirror + radio
+  // stay framed while the plate reads larger than pure contain.
+  const scale = wideFit ? vh / (IH * 0.92) : Math.max(vw / IW, vh / IH);
   const dw = IW * scale;
   const dh = IH * scale;
   const dx = vw / 2 - SCENE_CX * dw;
-  const dy = (vh - dh) / 2;
+  const dy = wideFit ? (vh - dh) / 2 : (vh - dh) / 2;
 
   const box = (x0: number, y0: number, x1: number, y1: number): Box => ({
     left: `${(((dx + x0 * dw) / vw) * 100).toFixed(3)}%`,
@@ -125,6 +130,7 @@ function coverLayout(vw: number, vh: number): Layout {
     dh,
     vw,
     vh,
+    wideFit,
   };
 }
 
@@ -144,73 +150,88 @@ function paintRoad(
 
   // Mask markings strictly inside the asphalt trapezoid
   ctx.beginPath();
-  ctx.moveTo(cx - edgeFar, y0);
-  ctx.lineTo(cx + edgeFar, y0);
-  ctx.lineTo(cx + edgeNear, y1);
-  ctx.lineTo(cx - edgeNear, y1);
+  ctx.moveTo(cx - edgeFar * 0.55, y0);
+  ctx.lineTo(cx + edgeFar * 0.55, y0);
+  ctx.lineTo(cx + edgeNear * 0.42, y1);
+  ctx.lineTo(cx - edgeNear * 0.42, y1);
   ctx.closePath();
   ctx.clip();
 
-  const sample = (t: number) => {
-    // Inverse-depth feel: denser + smaller toward horizon
+  const project = (t: number) => {
     const clamped = Math.min(1, Math.max(0, t));
-    const p = Math.pow(clamped, 1.62);
-    const y = y0 + h * p;
-    const half = halfFar + (halfNear - halfFar) * Math.pow(p, 1.28);
-    return { y, half, p };
+    // Strong foreshortening — size grows late, packs near horizon
+    const screen = Math.pow(clamped, 2.45);
+    const y = y0 + h * screen;
+    const half = halfFar + (halfNear - halfFar) * Math.pow(screen, 0.92);
+    return { y, half, screen };
   };
 
-  const count = 16;
+  const count = 11;
   const gap = 1 / count;
-  const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.15;
+  const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.18;
 
   for (let i = -2; i < count + 2; i++) {
     const tA = i * gap + offset;
-    const tB = tA + gap * 0.42;
-    if (tB <= 0.02 || tA >= 0.98) continue;
+    const tB = tA + gap * 0.58;
+    if (tB <= 0.02 || tA >= 0.985) continue;
 
-    const a = sample(Math.max(0.02, tA));
-    const b = sample(Math.min(0.98, tB));
-    if (b.y - a.y < 0.7) continue;
+    const a = project(Math.max(0.02, tA));
+    const b = project(Math.min(0.985, tB));
+    if (b.y - a.y < 0.8) continue;
 
-    // Deterministic edge wear — painted, not vector-clean
-    const wearL = 0.82 + ((i * 13) % 9) * 0.018;
-    const wearR = 0.82 + ((i * 29) % 9) * 0.018;
-    const taper = 0.1 + a.p * 0.1;
+    // Deterministic asphalt wear / broken paint edges
+    const jig = (n: number) => ((n * 17) % 9) * 0.012 - 0.048;
+    const wearL = 0.72 + ((i * 13) % 11) * 0.022;
+    const wearR = 0.72 + ((i * 29) % 11) * 0.022;
 
-    const ax0 = cx - a.half * wearL;
-    const ax1 = cx + a.half * wearR;
-    const bx0 = cx - b.half * wearL;
-    const bx1 = cx + b.half * wearR;
+    const ax0 = cx - a.half * wearL + a.half * jig(i);
+    const ax1 = cx + a.half * wearR + a.half * jig(i + 3);
+    const bx0 = cx - b.half * wearL + b.half * jig(i + 5);
+    const bx1 = cx + b.half * wearR + b.half * jig(i + 7);
 
-    // Desaturate + fade toward horizon (atmospheric)
-    const alpha = 0.18 + a.p * 0.62;
-    const r = Math.round(155 + a.p * 55);
-    const g = Math.round(105 + a.p * 35);
-    const bl = Math.round(18 + a.p * 8);
-    ctx.fillStyle = `rgba(${r}, ${g}, ${bl}, ${alpha})`;
+    // Body — warm paint, quieter at distance
+    const alpha = 0.22 + a.screen * 0.58;
+    const r = Math.round(150 + a.screen * 58);
+    const g = Math.round(108 + a.screen * 42);
+    const bl = Math.round(18 + a.screen * 12);
+
+    const body = ctx.createLinearGradient(ax0, a.y, ax1, a.y);
+    body.addColorStop(0, `rgba(${r - 25}, ${g - 18}, ${bl}, ${alpha * 0.75})`);
+    body.addColorStop(0.5, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
+    body.addColorStop(1, `rgba(${r - 25}, ${g - 18}, ${bl}, ${alpha * 0.75})`);
+    ctx.fillStyle = body;
 
     ctx.beginPath();
-    ctx.moveTo(ax0 + a.half * taper, a.y);
-    ctx.lineTo(ax1 - a.half * taper, a.y);
-    ctx.lineTo(bx1 - b.half * taper * 0.55, b.y);
-    ctx.lineTo(bx0 + b.half * taper * 0.55, b.y);
+    ctx.moveTo(ax0, a.y);
+    ctx.lineTo(ax1, a.y);
+    ctx.lineTo(bx1, b.y);
+    ctx.lineTo(bx0, b.y);
     ctx.closePath();
     ctx.fill();
 
-    // Soft worn edge into asphalt
-    ctx.strokeStyle = `rgba(70, 48, 14, ${0.1 + a.p * 0.22})`;
-    ctx.lineWidth = 0.55 + a.p * 0.9;
+    // Worn lip
+    ctx.strokeStyle = `rgba(48, 34, 10, ${0.14 + a.screen * 0.3})`;
+    ctx.lineWidth = 0.45 + a.screen * 1.25;
     ctx.stroke();
+
+    // Thin centre scuff so it reads as paint, not a sticker
+    if (a.screen > 0.2) {
+      ctx.strokeStyle = `rgba(90, 65, 20, ${0.08 + a.screen * 0.12})`;
+      ctx.lineWidth = Math.max(0.4, a.half * 0.15);
+      ctx.beginPath();
+      ctx.moveTo(cx, a.y + 0.5);
+      ctx.lineTo(cx, b.y - 0.5);
+      ctx.stroke();
+    }
   }
 
-  // Horizon haze over far asphalt
-  const grad = ctx.createLinearGradient(0, y0, 0, y0 + h * 0.5);
-  grad.addColorStop(0, "rgba(205, 185, 155, 0.32)");
-  grad.addColorStop(0.55, "rgba(205, 185, 155, 0.08)");
-  grad.addColorStop(1, "rgba(205, 185, 155, 0)");
+  // Atmospheric veil on far asphalt
+  const grad = ctx.createLinearGradient(0, y0, 0, y0 + h * 0.55);
+  grad.addColorStop(0, "rgba(200, 182, 155, 0.34)");
+  grad.addColorStop(0.5, "rgba(200, 182, 155, 0.1)");
+  grad.addColorStop(1, "rgba(200, 182, 155, 0)");
   ctx.fillStyle = grad;
-  ctx.fillRect(cx - edgeNear, y0, edgeNear * 2, h * 0.5);
+  ctx.fillRect(cx - edgeNear * 0.5, y0, edgeNear, h * 0.55);
 
   ctx.restore();
 }
@@ -465,7 +486,24 @@ export function HomeCanvas() {
       }${roadMoving && !reduceMotion ? " is-travelling" : ""}`}
       onKeyDown={onKeyNav}
     >
-      <div className={`home-radio__scene${ready ? " is-live" : ""}`}>
+      <div
+        className={`home-radio__scene${ready ? " is-live" : ""}${
+          layout?.wideFit ? " is-wide" : ""
+        }`}
+      >
+        {/* Side bleed for landscape height-fit — keeps full-bleed atmosphere */}
+        {layout?.wideFit && (
+          <div className="home-radio__bleed" aria-hidden>
+            <img
+              src={`${BASE}/hero-car-road.jpg?v=14`}
+              alt=""
+              className="home-radio__bleed-img"
+              draggable={false}
+              decoding="async"
+            />
+          </div>
+        )}
+
         <picture>
           <source srcSet={`${BASE}/hero-car-road.webp?v=14`} type="image/webp" />
           <img
