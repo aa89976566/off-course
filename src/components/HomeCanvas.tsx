@@ -737,7 +737,10 @@ export function HomeCanvas() {
           aria-hidden
         />
 
-        {/* Hierarchy: dim periphery so the radio carries the story */}
+        {/* Soft lift over the radio / centre console */}
+        <div className="home-radio__radio-lift" aria-hidden />
+
+        {/* Hierarchy: gentle periphery shade — radio stays readable */}
         <div className="home-radio__focus" aria-hidden />
 
         <div className="home-radio__haze" aria-hidden />
