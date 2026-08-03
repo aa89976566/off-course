@@ -22,6 +22,9 @@ We are closer to an independent design magazine.
 
 Everything we create should feel thoughtful, calm and contemporary.
 
+Canonical design system: `docs/design-system.md`  
+Canonical IA: `docs/information-architecture.md`
+
 ---
 
 ## Philosophy
@@ -38,85 +41,45 @@ Every project should have its own world.
 
 ## Two worlds
 
-A good creation can stay in GET LOST, or move toward GET FOUND.
-
 ```
 A project never needs to become both worlds.
-
 GET LOST can exist independently.
-
 GET FOUND can exist independently.
-
 Only bridge them when it creates meaningful value.
-
-Never force integration for branding purposes.
 ```
 
-### GET LOST
+### GET LOST — Expression · Ideas become physical
 
-The artistic side of Off Course.
+Murals · Illustration · Brand Identity · Installations · Creative Direction · Experimental Visual
 
-Includes:
+Case behaviour: place, scale, texture, paint, process, imperfect crops — never open on device mockups.
 
-- Murals
-- Illustration
-- Brand Identity
-- Physical Installations
-- Creative Direction
-- Experimental Visual Work
+### GET FOUND — Discovery · Ideas become accessible
 
-Purpose: expression.
+Websites · Systems · Applications · CMS · Automation · AI · Internal Tools
 
-Ideas become physical.
-
-### GET FOUND
-
-The digital side of Off Course.
-
-Includes:
-
-- Websites
-- Systems
-- Applications
-- CMS
-- Automation
-- AI
-- Internal Tools
-
-Purpose: discovery.
-
-Ideas become accessible.
+Case behaviour: clarity, structure, access — artwork/story before screens when the work is cultural.
 
 ### Bridge is metadata, not navigation
 
-Every project belongs primarily to one world: Lost or Found.
+Never a third nav category. Never a Bridge archive page.
 
-Bridge is an attribute on the project, never a third top-level category.
+---
 
-Examples:
+## Quiet navigation (locked)
 
-- GET LOST / Mural — optional badge: Bridge to Found
-- GET FOUND / Artist Website — optional badge: Originated from Lost
-- Case header may show: Bridge Project · Lost → Found
-
-Do not create a standalone Work index that duplicates projects
-already living inside GET LOST and GET FOUND.
-
-Homepage may feature 2–3 selected projects per world.
-Full cases live inside their primary world.
-
-Site navigation (quiet, permanent):
+Permanent header only:
 
 - Brand → Index
 - About
 - Archive
 - Contact
-- Grid menu (editorial overlay)
+- Grid → editorial full-screen menu
 
-GET LOST and GET FOUND are discovered through the homepage
-experience — not listed as permanent nav labels.
+Do NOT put GET LOST / GET FOUND in the permanent header.
 
-The menu overlay may include world destinations as secondary entries.
+Worlds are discovered via homepage radio + editorial body.
+Menu may list them as secondary destinations (not chrome).
 
 ---
 
@@ -126,59 +89,35 @@ Editorial before interface.
 
 Typography before decoration.
 
-Photography before illustration.
-
-Concept before animation.
-
-Story before technology.
-
 Whitespace before components.
 
-Reduce instead of adding.
+One purpose per viewport.
+
+Journey words (signal, frequency, coordinates, route, arrival, mileage…)
+are sparse metadata — never a game HUD.
 
 ---
 
-## Emotional tone
+## Never generate / never restore
 
-Independent
+- SaaS UI · glassmorphism · neon · crypto · startup landings
+- Large floating pill navigation
+- All-black rounded card walls (ZeroFrame / zf-* patterns)
+- Framer CardStack / 3D carousel portfolio toys as the Found system
+- Walala marquee tile grids as the Lost system
+- Duplicate navigation systems
+- Invented awards, metrics, clients, locations, or outcomes
 
-Calm
+If a previous experiment (`FoundPillNav`, `FoundWorksIndex`, `zf-*`,
+`ProjectTile`, card-stack stages) appears in git history, do not revive it.
 
-Young
+Active system components:
 
-International
-
-Curious
-
-Human
-
-Confident
-
-Never loud.
-
-Never corporate.
-
-Never trendy just because it is trendy.
-
----
-
-## Never generate
-
-SaaS UI
-
-Glassmorphism
-
-Neon gradients
-
-Crypto aesthetics
-
-Startup landing pages
-
-Random floating cards
-
-AI-looking interfaces
-
-Template-style layouts
+- `SiteHeader` / `SiteMenu`
+- `HomeCanvas` / `HomeEditorial`
+- `LostIndex` / `LostCaseStudy`
+- `FoundIndex` / `FoundCaseStudy`
+- `ArchiveIndex`
 
 ---
 
@@ -198,12 +137,10 @@ Only after answering these questions should implementation begin.
 
 Keep components modular.
 
-Avoid unnecessary complexity.
-
-Accessibility comes first.
+Accessibility first.
 
 Performance is part of the design.
 
-Animations should communicate meaning.
+Animations communicate meaning — no bounce / elastic.
 
 Prefer maintainable solutions over impressive solutions.

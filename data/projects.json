@@ -11,12 +11,20 @@
       "stack": null,
       "client": "for East Street Market",
       "accent": "#FF3829",
+      "code": "LOST 001",
       "cover": "/media/murals/shoreditch-1.jpg",
       "images": [
         "/media/murals/shoreditch-1.jpg",
         "/media/murals/shoreditch-2.jpg",
         "/media/murals/shoreditch-3.jpg"
-      ]
+      ],
+      "lost": {
+        "proposition": "A storefront mural where colour and gesture meet a Shoreditch façade.",
+        "place": "Shoreditch, London — a street-facing wall at East Street Market.",
+        "process": null,
+        "relationship": "Commissioned with East Street Market for a public-facing storefront surface.",
+        "outcome": null
+      }
     },
     {
       "slug": "borough-market-wall",

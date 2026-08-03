@@ -19,6 +19,15 @@ export type ProjectPitch = {
   boards?: ProjectPitchBoard[];
 };
 
+/** GET LOST narrative — physical / place first. Null = missing, do not invent. */
+export type LostNarrative = {
+  proposition?: string;
+  place?: string;
+  process?: string | null;
+  relationship?: string;
+  outcome?: string | null;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -35,6 +44,7 @@ export type Project = {
   summary?: string | null;
   liveUrl?: string | null;
   pitch?: ProjectPitch | null;
+  lost?: LostNarrative | null;
   /** Optional editorial code override e.g. FOUND 001 */
   code?: string | null;
   /** Opening artwork paths (non-mockup) for case studies */

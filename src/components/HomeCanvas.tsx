@@ -114,6 +114,7 @@ export function HomeCanvas() {
   const [phase, setPhase] = useState<Phase>("boot");
   const [lcdText, setLcdText] = useState<string>(HOME.radio.boot);
   const [statement, setStatement] = useState<string | null>(null);
+  const [worldLabel, setWorldLabel] = useState<string | null>(null);
   const [brandLine, setBrandLine] = useState(false);
   const [seeking, setSeeking] = useState(false);
   const [interactive, setInteractive] = useState(false);
@@ -157,6 +158,7 @@ export function HomeCanvas() {
     if (reduce) {
       setLcdText(HOME.radio.settled);
       setStatement(null);
+      setWorldLabel(null);
       setBrandLine(true);
       setPhase("settle");
       setInteractive(true);
@@ -169,62 +171,67 @@ export function HomeCanvas() {
       timers.push(window.setTimeout(fn, ms));
     };
 
-    // 1. OFF_COURSE
+    // 1. OFF_COURSE + Concrete & Code
     setPhase("boot");
     setLcdText(HOME.radio.boot);
     setBrandLine(true);
+    setWorldLabel(null);
 
     // 2. Static / tuning
-    at(1400, () => {
+    at(1100, () => {
       if (touchedRef.current) return;
       setPhase("static");
       setSeeking(true);
       setLcdText(HOME.radio.static);
     });
-    at(2400, () => {
+    at(2000, () => {
       if (touchedRef.current) return;
       setLcdText(HOME.radio.tuning);
     });
 
     // 3–4. Lock GET LOST
-    at(3400, () => {
+    at(2800, () => {
       if (touchedRef.current) return;
       setPhase("seek-lost");
       setLcdText(HOME.radio.seek);
     });
-    at(4200, () => {
+    at(3600, () => {
       if (touchedRef.current) return;
       setPhase("lock-lost");
       setSeeking(false);
       setLcdText(HOME.radio.lockLost);
+      setWorldLabel(WORLDS.lost.label);
       setStatement(WORLDS.lost.statement);
     });
 
     // 5–7. Continue → lock GET FOUND
-    at(7000, () => {
+    at(6200, () => {
       if (touchedRef.current) return;
       setPhase("seek-found");
       setSeeking(true);
       setStatement(null);
+      setWorldLabel(null);
       setLcdText(HOME.radio.seek);
     });
-    at(8200, () => {
+    at(7200, () => {
       if (touchedRef.current) return;
       setLcdText(HOME.radio.static);
     });
-    at(9000, () => {
+    at(8000, () => {
       if (touchedRef.current) return;
       setPhase("lock-found");
       setSeeking(false);
       setLcdText(HOME.radio.lockFound);
+      setWorldLabel(WORLDS.found.label);
       setStatement(WORLDS.found.statement);
     });
 
-    // 8. Settle
-    at(11800, () => {
+    // 8. Settle — keep dual reminder briefly then calm
+    at(11000, () => {
       if (touchedRef.current) return;
       setPhase("settle");
       setLcdText(HOME.radio.settled);
+      setWorldLabel(null);
       setStatement(null);
       setInteractive(true);
       setSeeking(false);
@@ -239,9 +246,16 @@ export function HomeCanvas() {
     setInteractive(true);
     setPhase("settle");
     setLcdText(station);
-    if (station === "GET LOST") setStatement(WORLDS.lost.statement);
-    else if (station === "GET FOUND") setStatement(WORLDS.found.statement);
-    else setStatement(null);
+    if (station === "GET LOST") {
+      setWorldLabel(WORLDS.lost.label);
+      setStatement(WORLDS.lost.statement);
+    } else if (station === "GET FOUND") {
+      setWorldLabel(WORLDS.found.label);
+      setStatement(WORLDS.found.statement);
+    } else {
+      setWorldLabel(null);
+      setStatement(null);
+    }
   };
 
   const onKeyNav = (e: KeyboardEvent<HTMLElement>) => {
@@ -333,6 +347,11 @@ export function HomeCanvas() {
           <p className="home-radio__brand">
             <span>OFF_COURSE</span>
             <span className="home-radio__tag">Concrete &amp; Code</span>
+          </p>
+        )}
+        {worldLabel && (
+          <p className="home-radio__world" key={`w-${worldLabel}`}>
+            {worldLabel}
           </p>
         )}
         {statement && (
