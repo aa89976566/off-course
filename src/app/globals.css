@@ -513,27 +513,25 @@ body {
 .home-radio__mirror-brand {
   margin: 0;
   font-family: var(--font-archivo-black), sans-serif;
-  font-size: clamp(0.55rem, 1.15vw, 0.95rem);
-  letter-spacing: 0.14em;
+  font-size: clamp(0.5rem, 1.05vw, 0.88rem);
+  letter-spacing: 0.12em;
   line-height: 1;
   text-transform: uppercase;
-  color: rgba(248, 244, 236, 0.92);
+  color: rgba(236, 232, 224, 0.82);
   text-shadow:
-    0 0 1px rgba(10, 8, 6, 0.85),
-    0 1px 2px rgba(10, 8, 6, 0.55),
-    0 0 12px rgba(30, 24, 18, 0.35);
+    0 0 0.5px rgba(8, 10, 14, 0.9),
+    0 1px 3px rgba(12, 14, 20, 0.55);
+  opacity: 0.92;
 }
 
 .home-radio__mirror-tag {
   margin: 0;
-  font-size: clamp(0.42rem, 0.85vw, 0.62rem);
-  letter-spacing: 0.2em;
+  font-size: clamp(0.38rem, 0.78vw, 0.58rem);
+  letter-spacing: 0.18em;
   line-height: 1.15;
   text-transform: uppercase;
-  color: rgba(235, 228, 214, 0.78);
-  text-shadow:
-    0 0 1px rgba(10, 8, 6, 0.75),
-    0 1px 2px rgba(10, 8, 6, 0.4);
+  color: rgba(210, 198, 178, 0.62);
+  text-shadow: 0 0 0.5px rgba(8, 10, 14, 0.8);
 }
 
 .home-radio.is-travelling .home-radio__mirror.is-on {
@@ -558,7 +556,7 @@ body {
   width: min(22rem, 78vw);
   margin: 0;
   padding: 0;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) perspective(600px) rotateX(8deg);
   text-align: center;
   pointer-events: none;
   font-family: var(--font-archivo-black), sans-serif;
@@ -566,11 +564,11 @@ body {
   line-height: 1.2;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(255, 250, 242, 0.78);
+  color: rgba(255, 252, 245, 0.42);
   background: none;
   text-shadow:
-    0 0 1px rgba(20, 14, 8, 0.55),
-    0 1px 8px rgba(30, 22, 12, 0.35);
+    0 0 1px rgba(255, 255, 255, 0.25),
+    0 1px 10px rgba(20, 16, 10, 0.2);
   mix-blend-mode: soft-light;
   animation: ghost-in 1.2s ease both;
 }
@@ -587,12 +585,12 @@ body {
   from {
     opacity: 0;
     letter-spacing: 0.14em;
-    filter: blur(1.2px);
+    filter: blur(1.4px);
   }
   to {
     opacity: 1;
     letter-spacing: 0.06em;
-    filter: none;
+    filter: blur(0.35px);
   }
 }
 
@@ -648,11 +646,12 @@ body {
     top: 33%;
     width: min(18rem, 86vw);
     font-size: clamp(0.78rem, 3.6vw, 1.05rem);
-    mix-blend-mode: normal;
-    color: rgba(255, 250, 242, 0.88);
+    mix-blend-mode: soft-light;
+    color: rgba(255, 250, 242, 0.55);
+    filter: blur(0.2px);
     text-shadow:
-      0 0 2px rgba(20, 14, 8, 0.7),
-      0 1px 10px rgba(20, 14, 8, 0.45);
+      0 0 1px rgba(255, 255, 255, 0.2),
+      0 1px 8px rgba(20, 14, 8, 0.35);
   }
 
   .home-radio__ghost.is-lost,

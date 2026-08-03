@@ -27,12 +27,12 @@ const PRESETS = [
 /** Road / scene axis in image space (vanishing point x). */
 const SCENE_CX = 0.467;
 /** Horizon / asphalt start in image-normalized Y. */
-const ROAD_Y0 = 0.335;
-/** Road end just above dashboard lip. */
-const ROAD_Y1 = 0.448;
+const ROAD_Y0 = 0.338;
+/** Road end just above dashboard / wiper lip. */
+const ROAD_Y1 = 0.455;
 /** Centre-line dash half-widths (image-normalized). */
-const DASH_HALF_FAR = 0.0032;
-const DASH_HALF_NEAR = 0.034;
+const DASH_HALF_FAR = 0.0028;
+const DASH_HALF_NEAR = 0.038;
 /** Full road edge half-widths — clip mask only. */
 const ROAD_EDGE_FAR = 0.048;
 const ROAD_EDGE_NEAR = 0.318;
@@ -148,86 +148,83 @@ function paintRoad(
   ctx.clearRect(0, 0, layout.vw, layout.vh);
   ctx.save();
 
+  // Vanishing point slightly above the asphalt start
+  const vpY = y0 - Math.max(6, h * 0.08);
+
   // Mask markings strictly inside the asphalt trapezoid
   ctx.beginPath();
-  ctx.moveTo(cx - edgeFar * 0.55, y0);
-  ctx.lineTo(cx + edgeFar * 0.55, y0);
-  ctx.lineTo(cx + edgeNear * 0.42, y1);
-  ctx.lineTo(cx - edgeNear * 0.42, y1);
+  ctx.moveTo(cx - edgeFar * 0.5, y0);
+  ctx.lineTo(cx + edgeFar * 0.5, y0);
+  ctx.lineTo(cx + edgeNear * 0.4, y1);
+  ctx.lineTo(cx - edgeNear * 0.4, y1);
   ctx.closePath();
   ctx.clip();
 
-  const project = (t: number) => {
-    const clamped = Math.min(1, Math.max(0, t));
-    // Strong foreshortening — size grows late, packs near horizon
-    const screen = Math.pow(clamped, 2.45);
-    const y = y0 + h * screen;
-    const half = halfFar + (halfNear - halfFar) * Math.pow(screen, 0.92);
-    return { y, half, screen };
+  /** Half-width on the road plane at screen y — edges aim at the VP. */
+  const halfAt = (y: number) => {
+    const t = (y - vpY) / (y1 - vpY);
+    // Blend toward a small far width so the line doesn't vanish to a point too early
+    const raw = halfNear * t;
+    return Math.max(halfFar * 0.85, raw);
   };
 
-  const count = 11;
+  const count = 10;
+  const span = y1 - y0;
+  // Space dashes in *depth* (more packing near horizon) via quadratic samples
+  const yOf = (u: number) => y0 + span * Math.pow(Math.min(1, Math.max(0, u)), 2.2);
   const gap = 1 / count;
-  const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.18;
+  const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.2;
 
   for (let i = -2; i < count + 2; i++) {
-    const tA = i * gap + offset;
-    const tB = tA + gap * 0.58;
-    if (tB <= 0.02 || tA >= 0.985) continue;
+    const uA = i * gap + offset;
+    const uB = uA + gap * 0.55;
+    if (uB <= 0.02 || uA >= 0.98) continue;
 
-    const a = project(Math.max(0.02, tA));
-    const b = project(Math.min(0.985, tB));
-    if (b.y - a.y < 0.8) continue;
+    const yA = yOf(Math.max(0.02, uA));
+    const yB = yOf(Math.min(0.98, uB));
+    if (yB - yA < 0.9) continue;
 
-    // Deterministic asphalt wear / broken paint edges
-    const jig = (n: number) => ((n * 17) % 9) * 0.012 - 0.048;
-    const wearL = 0.72 + ((i * 13) % 11) * 0.022;
-    const wearR = 0.72 + ((i * 29) % 11) * 0.022;
+    const hA = halfAt(yA);
+    const hB = halfAt(yB);
+    const depth = (yA - y0) / span;
 
-    const ax0 = cx - a.half * wearL + a.half * jig(i);
-    const ax1 = cx + a.half * wearR + a.half * jig(i + 3);
-    const bx0 = cx - b.half * wearL + b.half * jig(i + 5);
-    const bx1 = cx + b.half * wearR + b.half * jig(i + 7);
+    // Deterministic paint wear
+    const wearL = 0.7 + ((i * 13) % 11) * 0.025;
+    const wearR = 0.7 + ((i * 29) % 11) * 0.025;
+    const jig = (((i * 17) % 7) - 3) * 0.015;
 
-    // Body — warm paint, quieter at distance
-    const alpha = 0.22 + a.screen * 0.58;
-    const r = Math.round(150 + a.screen * 58);
-    const g = Math.round(108 + a.screen * 42);
-    const bl = Math.round(18 + a.screen * 12);
+    const ax0 = cx - hA * wearL + hA * jig;
+    const ax1 = cx + hA * wearR - hA * jig * 0.5;
+    const bx0 = cx - hB * wearL + hB * jig;
+    const bx1 = cx + hB * wearR - hB * jig * 0.5;
 
-    const body = ctx.createLinearGradient(ax0, a.y, ax1, a.y);
-    body.addColorStop(0, `rgba(${r - 25}, ${g - 18}, ${bl}, ${alpha * 0.75})`);
-    body.addColorStop(0.5, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
-    body.addColorStop(1, `rgba(${r - 25}, ${g - 18}, ${bl}, ${alpha * 0.75})`);
+    const alpha = 0.2 + depth * 0.62;
+    const r = Math.round(148 + depth * 60);
+    const g = Math.round(105 + depth * 45);
+    const bl = Math.round(16 + depth * 14);
+
+    const body = ctx.createLinearGradient(ax0, yA, ax1, yA);
+    body.addColorStop(0, `rgba(${r - 28}, ${g - 20}, ${bl}, ${alpha * 0.7})`);
+    body.addColorStop(0.45, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
+    body.addColorStop(1, `rgba(${r - 28}, ${g - 20}, ${bl}, ${alpha * 0.7})`);
     ctx.fillStyle = body;
 
     ctx.beginPath();
-    ctx.moveTo(ax0, a.y);
-    ctx.lineTo(ax1, a.y);
-    ctx.lineTo(bx1, b.y);
-    ctx.lineTo(bx0, b.y);
+    ctx.moveTo(ax0, yA);
+    ctx.lineTo(ax1, yA);
+    ctx.lineTo(bx1, yB);
+    ctx.lineTo(bx0, yB);
     ctx.closePath();
     ctx.fill();
 
-    // Worn lip
-    ctx.strokeStyle = `rgba(48, 34, 10, ${0.14 + a.screen * 0.3})`;
-    ctx.lineWidth = 0.45 + a.screen * 1.25;
+    ctx.strokeStyle = `rgba(45, 32, 10, ${0.12 + depth * 0.28})`;
+    ctx.lineWidth = 0.4 + depth * 1.3;
     ctx.stroke();
-
-    // Thin centre scuff so it reads as paint, not a sticker
-    if (a.screen > 0.2) {
-      ctx.strokeStyle = `rgba(90, 65, 20, ${0.08 + a.screen * 0.12})`;
-      ctx.lineWidth = Math.max(0.4, a.half * 0.15);
-      ctx.beginPath();
-      ctx.moveTo(cx, a.y + 0.5);
-      ctx.lineTo(cx, b.y - 0.5);
-      ctx.stroke();
-    }
   }
 
   // Atmospheric veil on far asphalt
   const grad = ctx.createLinearGradient(0, y0, 0, y0 + h * 0.55);
-  grad.addColorStop(0, "rgba(200, 182, 155, 0.34)");
+  grad.addColorStop(0, "rgba(200, 182, 155, 0.36)");
   grad.addColorStop(0.5, "rgba(200, 182, 155, 0.1)");
   grad.addColorStop(1, "rgba(200, 182, 155, 0)");
   ctx.fillStyle = grad;
