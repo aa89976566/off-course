@@ -29,10 +29,18 @@ const PRESETS = [
 const SCENE_CX = 0.467;
 const ROAD_Y0 = 0.338;
 const ROAD_Y1 = 0.455;
-const DASH_HALF_FAR = 0.0028;
-const DASH_HALF_NEAR = 0.038;
+/** Screen half-width of centre dash at the near lip (image-normalized). */
+const DASH_HALF_NEAR = 0.028;
+/** Full road edge half-widths — clip mask only. */
 const ROAD_EDGE_FAR = 0.048;
 const ROAD_EDGE_NEAR = 0.318;
+
+/** Pseudo-3D camera: world Z grows away from the cabin. */
+const ROAD_Z_NEAR = 1;
+const ROAD_Z_FAR = 9;
+/** World-space dash length and gap (constant on the asphalt plane). */
+const ROAD_DASH_LEN = 0.42;
+const ROAD_DASH_GAP = 0.58;
 
 const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
 const BUTTON_CX = [0.346, 0.394, 0.441, 0.49, 0.533, 0.584];
@@ -77,7 +85,6 @@ type Layout = {
     cx: number;
     y0: number;
     y1: number;
-    halfFar: number;
     halfNear: number;
     edgeFar: number;
     edgeNear: number;
@@ -132,7 +139,6 @@ function coverLayout(vw: number, vh: number): Layout {
       cx: dx + dw * SCENE_CX,
       y0: dy + dh * ROAD_Y0,
       y1: dy + dh * ROAD_Y1,
-      halfFar: dw * DASH_HALF_FAR,
       halfNear: dw * DASH_HALF_NEAR,
       edgeFar: dw * ROAD_EDGE_FAR,
       edgeNear: dw * ROAD_EDGE_NEAR,
@@ -147,90 +153,114 @@ function coverLayout(vw: number, vh: number): Layout {
   };
 }
 
+/**
+ * Pseudo-3D centre line (Lou / Jake Gordon style).
+ * Dashes live in world Z; screen size = worldWidth / Z so marks
+ * converge cleanly to the vanishing point — not stacked screen trapezoids.
+ */
 function paintRoad(
   ctx: CanvasRenderingContext2D,
   layout: Layout,
   scroll: number,
   moving: boolean
 ) {
-  const { cx, y0, y1, halfFar, halfNear, edgeFar, edgeNear } = layout.road;
-  const h = y1 - y0;
-  if (h < 4) return;
+  const { cx, y0, y1, halfNear, edgeFar, edgeNear } = layout.road;
+  const band = y1 - y0;
+  if (band < 4) return;
 
   ctx.clearRect(0, 0, layout.vw, layout.vh);
   ctx.save();
 
-  const vpY = y0 - Math.max(6, h * 0.08);
+  // Slightly above asphalt start = optical vanishing point
+  const vpY = y0 - Math.max(4, band * 0.06);
 
   ctx.beginPath();
   ctx.moveTo(cx - edgeFar * 0.5, y0);
   ctx.lineTo(cx + edgeFar * 0.5, y0);
-  ctx.lineTo(cx + edgeNear * 0.4, y1);
-  ctx.lineTo(cx - edgeNear * 0.4, y1);
+  ctx.lineTo(cx + edgeNear * 0.42, y1);
+  ctx.lineTo(cx - edgeNear * 0.42, y1);
   ctx.closePath();
   ctx.clip();
 
-  const halfAt = (y: number) => {
-    const t = (y - vpY) / (y1 - vpY);
-    return Math.max(halfFar * 0.85, halfNear * t);
+  const invNear = 1 / ROAD_Z_NEAR;
+  const invFar = 1 / ROAD_Z_FAR;
+  // World half-width chosen so the near lip matches layout.halfNear
+  const worldHalf = halfNear * ROAD_Z_NEAR;
+
+  const project = (z: number) => {
+    const zz = Math.max(ROAD_Z_NEAR * 0.85, z);
+    const inv = 1 / zz;
+    // t=0 at near cabin, t=1 at horizon
+    const t = (inv - invNear) / (invFar - invNear);
+    const y = y1 + (vpY - y1) * Math.min(1.05, Math.max(-0.05, t));
+    const half = worldHalf * inv;
+    return { y, half, t, inv };
   };
 
-  const count = 10;
-  const span = y1 - y0;
-  const yOf = (u: number) => y0 + span * Math.pow(Math.min(1, Math.max(0, u)), 2.2);
-  const gap = 1 / count;
-  const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.2;
+  const period = ROAD_DASH_LEN + ROAD_DASH_GAP;
+  // scroll advances in world-Z units; dashes rush toward the camera
+  const offset = moving ? ((scroll % period) + period) % period : period * 0.15;
 
-  for (let i = -2; i < count + 2; i++) {
-    const uA = i * gap + offset;
-    const uB = uA + gap * 0.55;
-    if (uB <= 0.02 || uA >= 0.98) continue;
+  // Draw far → near so nearer paint sits on top
+  const zStart = ROAD_Z_FAR + period;
+  const zEnd = ROAD_Z_NEAR - period;
 
-    const yA = yOf(Math.max(0.02, uA));
-    const yB = yOf(Math.min(0.98, uB));
-    if (yB - yA < 0.9) continue;
+  let idx = 0;
+  for (let z = zStart; z > zEnd; z -= period, idx++) {
+    const zFarDash = z - offset;
+    const zNearDash = zFarDash - ROAD_DASH_LEN;
+    if (zNearDash >= ROAD_Z_FAR || zFarDash <= ROAD_Z_NEAR * 0.9) continue;
 
-    const hA = halfAt(yA);
-    const hB = halfAt(yB);
-    const depth = (yA - y0) / span;
-    const wearL = 0.7 + ((i * 13) % 11) * 0.025;
-    const wearR = 0.7 + ((i * 29) % 11) * 0.025;
-    const jig = (((i * 17) % 7) - 3) * 0.015;
+    const zA = Math.min(ROAD_Z_FAR, Math.max(ROAD_Z_NEAR, zFarDash));
+    const zB = Math.min(ROAD_Z_FAR, Math.max(ROAD_Z_NEAR, zNearDash));
+    if (zA - zB < 0.04) continue;
 
-    const ax0 = cx - hA * wearL + hA * jig;
-    const ax1 = cx + hA * wearR - hA * jig * 0.5;
-    const bx0 = cx - hB * wearL + hB * jig;
-    const bx1 = cx + hB * wearR - hB * jig * 0.5;
+    const a = project(zA); // farther
+    const b = project(zB); // nearer
+    if (b.y - a.y < 0.7) continue;
 
-    const alpha = 0.2 + depth * 0.62;
-    const r = Math.round(148 + depth * 60);
-    const g = Math.round(105 + depth * 45);
-    const bl = Math.round(16 + depth * 14);
+    // Deterministic asphalt wear (still on the plane — not jittering off-axis)
+    const wearL = 0.78 + ((idx * 13) % 9) * 0.02;
+    const wearR = 0.78 + ((idx * 29) % 9) * 0.02;
 
-    const body = ctx.createLinearGradient(ax0, yA, ax1, yA);
-    body.addColorStop(0, `rgba(${r - 28}, ${g - 20}, ${bl}, ${alpha * 0.7})`);
-    body.addColorStop(0.45, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
-    body.addColorStop(1, `rgba(${r - 28}, ${g - 20}, ${bl}, ${alpha * 0.7})`);
+    const ax0 = cx - a.half * wearL;
+    const ax1 = cx + a.half * wearR;
+    const bx0 = cx - b.half * wearL;
+    const bx1 = cx + b.half * wearR;
+
+    // Depth cue: desaturate + fade toward horizon
+    const depth = Math.min(1, Math.max(0, 1 - a.t));
+    const alpha = 0.18 + depth * 0.7;
+    const r = Math.round(142 + depth * 68);
+    const g = Math.round(100 + depth * 48);
+    const bl = Math.round(14 + depth * 16);
+
+    const body = ctx.createLinearGradient(ax0, a.y, ax1, a.y);
+    body.addColorStop(0, `rgba(${r - 30}, ${g - 22}, ${bl}, ${alpha * 0.65})`);
+    body.addColorStop(0.5, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
+    body.addColorStop(1, `rgba(${r - 30}, ${g - 22}, ${bl}, ${alpha * 0.65})`);
     ctx.fillStyle = body;
+
     ctx.beginPath();
-    ctx.moveTo(ax0, yA);
-    ctx.lineTo(ax1, yA);
-    ctx.lineTo(bx1, yB);
-    ctx.lineTo(bx0, yB);
+    ctx.moveTo(ax0, a.y);
+    ctx.lineTo(ax1, a.y);
+    ctx.lineTo(bx1, b.y);
+    ctx.lineTo(bx0, b.y);
     ctx.closePath();
     ctx.fill();
 
-    ctx.strokeStyle = `rgba(45, 32, 10, ${0.12 + depth * 0.28})`;
-    ctx.lineWidth = 0.4 + depth * 1.3;
+    ctx.strokeStyle = `rgba(42, 30, 10, ${0.1 + depth * 0.32})`;
+    ctx.lineWidth = 0.35 + depth * 1.4;
     ctx.stroke();
   }
 
-  const grad = ctx.createLinearGradient(0, y0, 0, y0 + h * 0.55);
-  grad.addColorStop(0, "rgba(200, 182, 155, 0.36)");
-  grad.addColorStop(0.5, "rgba(200, 182, 155, 0.1)");
-  grad.addColorStop(1, "rgba(200, 182, 155, 0)");
-  ctx.fillStyle = grad;
-  ctx.fillRect(cx - edgeNear * 0.5, y0, edgeNear, h * 0.55);
+  // Horizon atmosphere over far asphalt
+  const haze = ctx.createLinearGradient(0, y0, 0, y0 + band * 0.55);
+  haze.addColorStop(0, "rgba(200, 182, 155, 0.38)");
+  haze.addColorStop(0.55, "rgba(200, 182, 155, 0.1)");
+  haze.addColorStop(1, "rgba(200, 182, 155, 0)");
+  ctx.fillStyle = haze;
+  ctx.fillRect(cx - edgeNear * 0.5, y0, edgeNear, band * 0.55);
 
   ctx.restore();
 }
@@ -446,7 +476,7 @@ export function HomeCanvas() {
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      scrollRef.current += dt * 0.2;
+      scrollRef.current += dt * 1.35;
       const canvas = roadCanvasRef.current;
       const lay = layoutRef.current;
       if (canvas && lay) {
@@ -734,7 +764,7 @@ export function HomeCanvas() {
 
         <canvas
           ref={mirageCanvasRef}
-          className="pointer-events-none absolute inset-0 z-[6] home-radio__mirage-canvas"
+          className="pointer-events-none absolute inset-0 z-[8] home-radio__mirage-canvas"
           aria-hidden
         />
 
