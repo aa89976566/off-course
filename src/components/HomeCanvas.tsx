@@ -48,8 +48,8 @@ const BUTTON_CY = 0.664;
 const BUTTON_W = 0.04;
 const BUTTON_H = 0.03;
 
-/** SCAN button — right of LCD, where the hand presses. */
-const SCAN = { x0: 0.618, y0: 0.592, x1: 0.702, y1: 0.652 };
+/** SCAN button — generous hit over the printed SCAN + fingertip. */
+const SCAN = { x0: 0.598, y0: 0.575, x1: 0.745, y1: 0.685 };
 
 const MIRROR = { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 };
 
@@ -342,25 +342,26 @@ function paintMirage(
     }
   }
 
-  const tw = Math.max(8, Math.floor(Math.min(bw * 0.92, vw * 0.42)));
-  const th = Math.max(36, Math.floor(bh * 0.42));
+  const tw = Math.max(8, Math.floor(Math.min(bw * 1.15, vw * 0.5, Math.max(160, bh * 2.2))));
+  const th = Math.max(28, Math.floor(Math.max(bh * 0.55, Math.min(56, vw * 0.04))));
   mirageTextOff = ensureCanvas(mirageTextOff, tw, th);
   const tctx = mirageTextOff.getContext("2d");
   if (!tctx) return;
 
   tctx.clearRect(0, 0, tw, th);
-  tctx.fillStyle = `rgba(245, 236, 220, ${0.55 + readable * 0.35})`;
+  tctx.fillStyle = `rgba(248, 240, 225, ${0.62 + readable * 0.32})`;
   const family =
     getComputedStyle(document.documentElement)
       .getPropertyValue("--font-archivo-black")
       .trim() || "sans-serif";
-  tctx.font = `700 ${Math.max(11, tw * 0.055)}px ${family}, sans-serif`;
+  const fontPx = Math.max(13, Math.min(tw * 0.072, th * 0.42));
+  tctx.font = `700 ${fontPx}px ${family}, sans-serif`;
   tctx.textAlign = "center";
   tctx.textBaseline = "middle";
   tctx.fillText(line.toUpperCase(), tw / 2, th / 2);
 
   const tx = cx - tw / 2;
-  const ty = y0 + (y1 - y0) * 0.28;
+  const ty = y0 + (y1 - y0) * 0.22;
 
   ctx.save();
   ctx.globalAlpha = opacity;
@@ -414,6 +415,11 @@ export function HomeCanvas() {
   const [reduceMotion, setReduceMotion] = useState(false);
   const touchedRef = useRef(false);
   const scannedRef = useRef(false);
+  const awaitingScanRef = useRef(false);
+
+  useEffect(() => {
+    awaitingScanRef.current = awaitingScan;
+  }, [awaitingScan]);
 
   useEffect(() => {
     setReduceMotion(
@@ -551,6 +557,7 @@ export function HomeCanvas() {
     scannedRef.current = true;
     touchedRef.current = true;
     setAwaitingScan(false);
+    awaitingScanRef.current = false;
     clearPostScan();
 
     const at = (ms: number, fn: () => void) => {
@@ -591,7 +598,10 @@ export function HomeCanvas() {
     });
   }, [finishToSettle, reduceMotion]);
 
-  // Opening sequence — stops at PRESS SCAN until the visitor acts
+  const runAfterScanRef = useRef(runAfterScan);
+  runAfterScanRef.current = runAfterScan;
+
+  // Opening sequence — SEARCHING → PRESS SCAN, then wait for SCAN (or auto-continue)
   useEffect(() => {
     if (!ready) return;
 
@@ -601,6 +611,7 @@ export function HomeCanvas() {
       setPhase("settle");
       setInteractive(true);
       setAwaitingScan(false);
+      awaitingScanRef.current = false;
       setRoadMoving(false);
       return;
     }
@@ -612,6 +623,7 @@ export function HomeCanvas() {
 
     scannedRef.current = false;
     touchedRef.current = false;
+    awaitingScanRef.current = false;
     setPhase("boot");
     setLcdText("");
     setMirrorOn(false);
@@ -631,49 +643,49 @@ export function HomeCanvas() {
       setSeekingVisual(true);
       setRoadMoving(true);
     });
+    // After 3s of SEARCHING → PRESS SCAN
     at(3900, () => {
       if (touchedRef.current || scannedRef.current) return;
       setPhase("await-scan");
       setLcdText(HOME.radio.pressScan);
       setSeekingVisual(false);
       setAwaitingScan(true);
+      awaitingScanRef.current = true;
+    });
+    // Auto-continue if the visitor does not press SCAN — mirage must still play
+    at(3900 + 4500, () => {
+      if (scannedRef.current || touchedRef.current) return;
+      if (!awaitingScanRef.current) return;
+      runAfterScanRef.current();
     });
 
     return () => {
       timers.forEach((id) => window.clearTimeout(id));
-      clearPostScan();
     };
   }, [ready, reduceMotion]);
 
-  // Skip without trapping
+  // Escape skips; accidental trackpad wheel must NOT abort the radio story
   useEffect(() => {
     if (!ready || reduceMotion || interactive) return;
-    const skip = () => {
+    const onKey = (e: Event) => {
+      if ((e as globalThis.KeyboardEvent).key !== "Escape") return;
       if (interactive) return;
       touchedRef.current = true;
       scannedRef.current = true;
       clearPostScan();
       setMirrorOn(true);
       setAwaitingScan(false);
+      awaitingScanRef.current = false;
       setMirageOn(false);
       setSeekingVisual(false);
       finishToSettle();
     };
-    const onWheel = () => skip();
-    const onKey = (e: Event) => {
-      const key = (e as globalThis.KeyboardEvent).key;
-      if (key === "Escape") skip();
-    };
-    window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("keydown", onKey);
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [ready, reduceMotion, interactive, finishToSettle]);
 
   const onScan = () => {
-    if (!awaitingScan || scannedRef.current) return;
+    if (!awaitingScanRef.current || scannedRef.current) return;
     runAfterScan();
   };
 
@@ -807,15 +819,24 @@ export function HomeCanvas() {
           </div>
         )}
 
-        {/* Diegetic SCAN — the radio teaches the interaction */}
+        {/* Diegetic SCAN — printed SCAN control (+ LCD as secondary hit while prompting) */}
         {layout && awaitingScan && (
-          <button
-            type="button"
-            className="radio-scan-hit absolute z-[14] cursor-pointer rounded-[2px]"
-            style={layout.scan}
-            aria-label="Press SCAN on the radio"
-            onClick={onScan}
-          />
+          <>
+            <button
+              type="button"
+              className="radio-scan-hit absolute z-[14] cursor-pointer rounded-[2px]"
+              style={layout.scan}
+              aria-label="Press SCAN on the radio"
+              onClick={onScan}
+            />
+            <button
+              type="button"
+              className="radio-scan-hit radio-scan-hit--lcd absolute z-[14] cursor-pointer"
+              style={layout.display}
+              aria-label="Press SCAN — radio is waiting"
+              onClick={onScan}
+            />
+          </>
         )}
 
         {layout && (
@@ -859,8 +880,9 @@ export function HomeCanvas() {
         Off Course. Concrete and Code. The rear-view mirror shows the studio
         name. The car radio searches, then asks you to press SCAN. After tuning,
         GET LOST locks and a desert heat mirage reveals Ideas become physical.
-        Later GET FOUND appears on the display. Use SCAN, presets 1 to 6, or the
-        text links. Reduced motion skips the sequence.
+        If you do not press SCAN, the radio continues on its own. Later GET FOUND
+        appears on the display. Use SCAN, Enter, presets 1 to 6, or the text
+        links. Escape skips. Reduced motion skips the sequence.
       </p>
 
       <div
