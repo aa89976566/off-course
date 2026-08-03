@@ -46,11 +46,12 @@ const SCAN = { x0: 0.618, y0: 0.592, x1: 0.702, y1: 0.652 };
 const MIRROR = { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 };
 
 /**
- * Crop bias — dashboard is the protagonist.
- * Move dash ~20% higher in the viewport and enlarge it so radio / SCAN / dials lead.
+ * Crop bias — radio is the story.
+ * Keep rear-view mirror in frame, weight the LCD, leave road as environment.
+ * (Not a naked scale of the radio alone.)
  */
-const FOCUS_IMG_Y = 0.655;
-const FOCUS_VIEW_Y = 0.51;
+const FOCUS_IMG_Y = 0.62;
+const FOCUS_VIEW_Y = 0.64;
 
 type Box = { left: string; top: string; width: string; height: string };
 
@@ -92,10 +93,10 @@ type Layout = {
 
 function coverLayout(vw: number, vh: number): Layout {
   const wideFit = vw / vh > 1.05;
-  // Tighter fit = more dashboard in-frame (instruments become the weight).
+  // Fit mirror → radio → road. Slightly tighter than contain so the LCD reads first.
   const scale = wideFit
-    ? vh / (IH * 0.78)
-    : Math.max(vw / IW, vh / IH) * 1.14;
+    ? vh / (IH * 0.9)
+    : Math.max(vw / IW, vh / IH) * 1.08;
   const dw = IW * scale;
   const dh = IH * scale;
   const dx = vw / 2 - SCENE_CX * dw;
