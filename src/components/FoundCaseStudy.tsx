@@ -37,23 +37,22 @@ export function FoundCaseStudy({
     (project.images.length ? project.images : [project.cover])
   ).filter((src, i, arr) => arr.indexOf(src) === i);
 
-  // Prefer non-mockup / detail imagery for opening
-  const artworkSrc =
-    allSrc.find((s) => ARTWORK_HINT.test(s) && !/cover|hero|wide|board-2/i.test(s)) ||
-    (project.slug === "jieshin-tseng"
-      ? "/media/digital/jieshin-1.jpg"
-      : allSrc[0]) ||
-    project.cover;
+  const artworkList =
+    project.artwork && project.artwork.length > 0
+      ? project.artwork
+      : allSrc.filter(
+          (s) =>
+            ARTWORK_HINT.test(s) &&
+            !/cover|hero|wide|board|pitch/i.test(s)
+        );
 
-  const secondaryArt =
-    project.slug === "jieshin-tseng"
-      ? ["/media/digital/jieshin-2.jpg", "/media/digital/jieshin-3.jpg"]
-      : allSrc.filter((s) => s !== artworkSrc && ARTWORK_HINT.test(s)).slice(0, 2);
+  const artworkSrc = artworkList[0] || allSrc[0] || project.cover;
+  const secondaryArt = artworkList.slice(1, 3);
 
   const systemBoards: ProjectPitchBoard[] =
-    pitch?.boards?.filter((b) => b.src !== artworkSrc) ||
+    pitch?.boards?.filter((b) => !artworkList.includes(b.src)) ||
     allSrc
-      .filter((s) => s !== artworkSrc && SYSTEM_HINT.test(s))
+      .filter((s) => !artworkList.includes(s))
       .map((src, i) => ({
         src,
         label: `System ${String(i + 1).padStart(2, "0")}`,

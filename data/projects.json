@@ -140,6 +140,11 @@
       "stack": "Next.js",
       "client": "for Jieshin Tseng 曾潔心",
       "accent": "#111111",
+      "code": "FOUND 001",
+      "artwork": [
+        "/media/digital/artwork/jieshin-sculpture-1.jpg",
+        "/media/digital/artwork/jieshin-sculpture-2.jpg"
+      ],
       "cover": "/media/digital/pitch/jieshin-tseng-cover.webp",
       "images": [
         "/media/digital/pitch/jieshin-tseng-hero.webp",

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { HOME, STUDIO, WORLDS } from "@/lib/content";
+import { STUDIO, WORLDS } from "@/lib/content";
 import {
   getProjectCode,
   getProjectsByStream,

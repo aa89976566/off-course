@@ -359,7 +359,7 @@ body {
 /* —— Home radio overlays —— */
 .home-radio__overlay {
   position: absolute;
-  inset: auto 0 18%;
+  inset: 12% 0 auto;
   z-index: 14;
   display: flex;
   flex-direction: column;

@@ -35,6 +35,10 @@ export type Project = {
   summary?: string | null;
   liveUrl?: string | null;
   pitch?: ProjectPitch | null;
+  /** Optional editorial code override e.g. FOUND 001 */
+  code?: string | null;
+  /** Opening artwork paths (non-mockup) for case studies */
+  artwork?: string[] | null;
 };
 
 export const STREAM_META: Record<
@@ -59,6 +63,7 @@ export const STREAM_META: Record<
 
 /** Editorial project code — LOST 001 / FOUND 001 from stream order. */
 export function getProjectCode(project: Project): string {
+  if (project.code) return project.code;
   const list = getProjectsByStream(project.stream);
   const index = list.findIndex((p) => p.slug === project.slug);
   const n = String(Math.max(index, 0) + 1).padStart(3, "0");

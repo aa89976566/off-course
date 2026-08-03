@@ -37,7 +37,9 @@ export function FoundIndex({ projects }: FoundIndexProps) {
               >
                 <div className="found-spread__media">
                   <Image
-                    src={assetPath(project.cover)}
+                    src={assetPath(
+                      project.artwork?.[0] || project.cover
+                    )}
                     alt=""
                     fill
                     className="object-cover"
