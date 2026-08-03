@@ -362,7 +362,7 @@ body {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform-origin: 50% 64%;
+  transform-origin: 50% 52%;
   will-change: transform;
 }
 
@@ -421,7 +421,7 @@ body {
   width: 116%;
   height: 116%;
   object-fit: cover;
-  object-position: 47% 62%;
+  object-position: 47% 68%;
   filter: blur(18px) saturate(0.92) brightness(0.72);
   transform: scale(1.04);
 }
@@ -450,34 +450,34 @@ body {
   pointer-events: none;
   background:
     radial-gradient(
-      ellipse 58% 42% at 50% 64%,
+      ellipse 62% 48% at 50% 52%,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0) 42%,
-      rgba(8, 6, 4, 0.28) 100%
+      rgba(0, 0, 0, 0) 40%,
+      rgba(8, 6, 4, 0.3) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(10, 8, 6, 0.22) 0%,
-      transparent 18%,
-      transparent 52%,
-      rgba(10, 8, 6, 0.35) 88%
+      rgba(10, 8, 6, 0.28) 0%,
+      transparent 14%,
+      transparent 58%,
+      rgba(10, 8, 6, 0.28) 92%
     );
 }
 
 .home-radio.is-awaiting-scan .home-radio__focus {
   background:
     radial-gradient(
-      ellipse 48% 36% at 50% 66%,
+      ellipse 55% 42% at 50% 52%,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0) 38%,
-      rgba(8, 6, 4, 0.38) 100%
+      rgba(0, 0, 0, 0) 36%,
+      rgba(8, 6, 4, 0.36) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(10, 8, 6, 0.28) 0%,
-      transparent 16%,
-      transparent 50%,
-      rgba(10, 8, 6, 0.4) 90%
+      rgba(10, 8, 6, 0.3) 0%,
+      transparent 12%,
+      transparent 62%,
+      rgba(10, 8, 6, 0.32) 94%
     );
 }
 

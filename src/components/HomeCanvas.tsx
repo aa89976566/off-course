@@ -45,9 +45,12 @@ const SCAN = { x0: 0.618, y0: 0.592, x1: 0.702, y1: 0.652 };
 
 const MIRROR = { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 };
 
-/** Bias crop so the radio LCD sits as the optical weight of the frame. */
-const FOCUS_IMG_Y = 0.618;
-const FOCUS_VIEW_Y = 0.64;
+/**
+ * Crop bias — dashboard is the protagonist.
+ * Move dash ~20% higher in the viewport and enlarge it so radio / SCAN / dials lead.
+ */
+const FOCUS_IMG_Y = 0.655;
+const FOCUS_VIEW_Y = 0.51;
 
 type Box = { left: string; top: string; width: string; height: string };
 
@@ -89,10 +92,10 @@ type Layout = {
 
 function coverLayout(vw: number, vh: number): Layout {
   const wideFit = vw / vh > 1.05;
-  // Tighter fit enlarges the radio in-frame without a naked CSS scale.
+  // Tighter fit = more dashboard in-frame (instruments become the weight).
   const scale = wideFit
-    ? vh / (IH * 0.86)
-    : Math.max(vw / IW, vh / IH) * 1.06;
+    ? vh / (IH * 0.78)
+    : Math.max(vw / IW, vh / IH) * 1.14;
   const dw = IW * scale;
   const dh = IH * scale;
   const dx = vw / 2 - SCENE_CX * dw;
