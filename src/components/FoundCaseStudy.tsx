@@ -15,8 +15,7 @@ type FoundCaseStudyProps = {
   next: Project | null;
 };
 
-const ARTWORK_HINT = /detail|process|about|jieshin-[123]|sculpture|work/i;
-const SYSTEM_HINT = /cover|hero|wide|board|pitch|mock/i;
+const ARTWORK_HINT = /detail|process|about|jieshin-|sculpture|work/i;
 
 /**
  * GET FOUND case — artist / place first, system later.
