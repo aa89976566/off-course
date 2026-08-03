@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { FoundWorksIndex } from "@/components/FoundWorksIndex";
+import { FoundIndex } from "@/components/FoundIndex";
 import { getProjectsByStream } from "@/lib/projects";
+import { WORLDS } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
-  description:
-    "Website and system cases — browse the works, open a case.",
+  description: WORLDS.found.blurb,
 };
 
-/** Prefer live / featured cases first, then the rest. */
 const FEATURED = [
-  "freds-cafe",
   "jieshin-tseng",
+  "freds-cafe",
   "boxing-training",
   "ams-com",
   "crespidia-coffee",
@@ -27,5 +26,5 @@ export default function GetFoundPage() {
   const rest = found.filter((p) => !featuredSlugs.has(p.slug));
   const projects = [...featured, ...rest];
 
-  return <FoundWorksIndex projects={projects} />;
+  return <FoundIndex projects={projects} />;
 }

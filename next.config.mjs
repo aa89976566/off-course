@@ -22,22 +22,24 @@ const nextConfig = {
     ? {
         async redirects() {
           return [
-            { source: "/contact", destination: "/start", permanent: false },
-            { source: "/logbook", destination: "/projects", permanent: false },
-            { source: "/work", destination: "/projects", permanent: false },
+            { source: "/projects", destination: "/archive", permanent: false },
+            { source: "/projects/:path*", destination: "/archive", permanent: false },
+            { source: "/start", destination: "/contact", permanent: false },
+            { source: "/logbook", destination: "/archive", permanent: false },
+            { source: "/work", destination: "/archive", permanent: false },
             {
               source: "/work/:path*",
-              destination: "/projects",
+              destination: "/archive",
               permanent: false,
             },
             {
               source: "/playground",
-              destination: "/projects",
+              destination: "/archive",
               permanent: false,
             },
             {
               source: "/playground/:path*",
-              destination: "/projects",
+              destination: "/archive",
               permanent: false,
             },
             { source: "/murals", destination: "/get-lost", permanent: false },

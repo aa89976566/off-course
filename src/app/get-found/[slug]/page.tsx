@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { FoundCase } from "@/components/FoundCase";
+import { FoundCaseStudy } from "@/components/FoundCaseStudy";
 import {
   getAdjacentProjects,
   getProject,
@@ -29,6 +29,11 @@ export default function GetFoundProjectPage({ params }: Props) {
   );
   const { prev, next } = getAdjacentProjects("found", project.slug);
   return (
-    <FoundCase project={project} others={others} prev={prev} next={next} />
+    <FoundCaseStudy
+      project={project}
+      others={others}
+      prev={prev}
+      next={next}
+    />
   );
 }

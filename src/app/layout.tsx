@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo_Black, Space_Grotesk } from "next/font/google";
-import { Header } from "@/components/Header";
+import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
 import { MainShell } from "@/components/MainShell";
 import "./globals.css";
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s — OFF_COURSE",
   },
   description:
-    "GO OFF COURSE. Sometimes getting lost is how brands get found.",
+    "Concrete & Code. GET LOST — ideas become physical. GET FOUND — ideas become accessible.",
 };
 
 export default function RootLayout({
@@ -32,8 +32,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}>
-      <body className="flex min-h-screen flex-col bg-white font-sans text-black antialiased">
-        <Header />
+      <body className="flex min-h-screen flex-col bg-[var(--ed-paper)] font-sans text-[var(--ed-ink)] antialiased">
+        <SiteHeader />
         <MainShell>{children}</MainShell>
         <Footer />
       </body>

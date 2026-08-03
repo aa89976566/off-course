@@ -45,17 +45,25 @@ export const STREAM_META: Record<
     href: "/get-lost",
     label: "GET LOST",
     title: "GET LOST",
-    line: "We left the route on purpose.",
-    sub: "Some ideas don't belong on screens.",
+    line: "Ideas become physical.",
+    sub: "Murals, illustration, identity and installations.",
   },
   found: {
     href: "/get-found",
     label: "GET FOUND",
     title: "GET FOUND",
-    line: "Collapse the stack.",
-    sub: "Websites, booking, and platforms after discovery.",
+    line: "Ideas become accessible.",
+    sub: "Digital places, systems and tools for discovery.",
   },
 };
+
+/** Editorial project code — LOST 001 / FOUND 001 from stream order. */
+export function getProjectCode(project: Project): string {
+  const list = getProjectsByStream(project.stream);
+  const index = list.findIndex((p) => p.slug === project.slug);
+  const n = String(Math.max(index, 0) + 1).padStart(3, "0");
+  return `${project.stream === "lost" ? "LOST" : "FOUND"} ${n}`;
+}
 
 export function getAllProjects(): Project[] {
   return projectsData.projects as Project[];

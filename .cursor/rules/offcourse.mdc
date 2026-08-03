@@ -105,13 +105,18 @@ already living inside GET LOST and GET FOUND.
 Homepage may feature 2–3 selected projects per world.
 Full cases live inside their primary world.
 
-Site navigation is only:
+Site navigation (quiet, permanent):
 
-- Index
-- GET LOST
-- GET FOUND
+- Brand → Index
 - About
+- Archive
 - Contact
+- Grid menu (editorial overlay)
+
+GET LOST and GET FOUND are discovered through the homepage
+experience — not listed as permanent nav labels.
+
+The menu overlay may include world destinations as secondary entries.
 
 ---
 

@@ -10,9 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#000000",
-        paper: "#FFFFFF",
-        mute: "#6B6B6B",
+        ink: "var(--ed-ink)",
+        paper: "var(--ed-paper)",
+        mute: "var(--ed-mute)",
         brand: "var(--brand)",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

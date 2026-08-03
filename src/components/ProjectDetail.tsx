@@ -36,10 +36,10 @@ export function ProjectDetail({ project, stream }: ProjectDetailProps) {
           </Link>
         ) : (
           <Link
-            href="/projects"
+            href="/archive"
             className="font-bold uppercase hover:text-[var(--walala-lilac)]"
           >
-            All Projects →
+            Archive →
           </Link>
         )}
       </div>

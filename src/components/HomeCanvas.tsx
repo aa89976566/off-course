@@ -6,34 +6,30 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type KeyboardEvent,
 } from "react";
+import { HOME, WORLDS } from "@/lib/content";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-/** Portrait hero art (radio-centered). */
 const IW = 1024;
 const IH = 1536;
 
-/** Radio presets → site menu. Channel 1 opens GET LOST. */
-const CHANNELS = [
-  { id: 1, label: "GET LOST", href: "/get-lost" },
-  { id: 2, label: "GET FOUND", href: "/get-found" },
-  { id: 3, label: "PROJECTS", href: "/projects" },
-  { id: 4, label: "ABOUT", href: "/about" },
-  { id: 5, label: "START", href: "/start" },
-  { id: 6, label: "HELLO", href: "mailto:hello@offcourse.studio" },
+/**
+ * Physical preset keys — destinations exist, but labels are NOT painted
+ * on the buttons. The LCD reveals stations through a search narrative.
+ */
+const PRESETS = [
+  { id: 1, href: "/get-lost", station: "GET LOST" },
+  { id: 2, href: "/get-found", station: "GET FOUND" },
+  { id: 3, href: "/archive", station: "ARCHIVE" },
+  { id: 4, href: "/about", station: "ABOUT" },
+  { id: 5, href: "/contact", station: "CONTACT" },
+  { id: 6, href: "mailto:hello@offcourse.studio", station: "HELLO" },
 ] as const;
 
-/**
- * Scene axis in the art (LCD / logo / road). Pinned to the viewport
- * midline so the radio sits in the exact screen center.
- */
 const SCENE_CX = 0.466;
-
-/** Amber LCD panel in image-normalized coords. */
 const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
-
-/** Image-normalized button centres under the LCD (aligned to printed 1–6). */
 const BUTTON_CX = [0.346, 0.394, 0.441, 0.49, 0.533, 0.584];
 const BUTTON_CY = 0.664;
 const BUTTON_W = 0.04;
@@ -41,11 +37,19 @@ const BUTTON_H = 0.03;
 
 type Box = { left: string; top: string; width: string; height: string };
 
+type Phase =
+  | "boot"
+  | "static"
+  | "seek-lost"
+  | "lock-lost"
+  | "seek-found"
+  | "lock-found"
+  | "settle";
+
 function coverLayout(vw: number, vh: number) {
   const scale = Math.max(vw / IW, vh / IH);
   const dw = IW * scale;
   const dh = IH * scale;
-  // Pin the scene axis to the viewport center (moves radio left into place).
   const dx = vw / 2 - SCENE_CX * dw;
   const dy = (vh - dh) / 2;
 
@@ -56,12 +60,11 @@ function coverLayout(vw: number, vh: number) {
     height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
   });
 
-  // Road dashes: only on asphalt inside the windshield (never over dash/pillars)
-  const roadY0 = dy + dh * 0.31; // near horizon
-  const roadY1 = dy + dh * 0.438; // stop above dashboard hood / wipers
+  const roadY0 = dy + dh * 0.31;
+  const roadY1 = dy + dh * 0.438;
   const cx = dx + dw * SCENE_CX;
   const halfFar = dw * 0.007;
-  const halfNear = dw * 0.028; // keep centerline slim so marks stay on asphalt
+  const halfNear = dw * 0.028;
   const pct = (x: number, y: number) =>
     `${((x / vw) * 100).toFixed(3)}% ${((y / vh) * 100).toFixed(3)}%`;
   const roadClip = `polygon(${[
@@ -71,19 +74,13 @@ function coverLayout(vw: number, vh: number) {
     pct(cx - halfNear, roadY1),
   ].join(", ")})`;
 
-  // Stage box = trapezoid AABB (dashes scroll inside, clipped to road)
-  const stageLeft = cx - halfNear;
-  const stageTop = roadY0;
-  const stageW = halfNear * 2;
-  const stageH = roadY1 - roadY0;
-
   return {
     roadClip,
     roadStage: {
-      left: `${stageLeft}px`,
-      top: `${stageTop}px`,
-      width: `${stageW}px`,
-      height: `${stageH}px`,
+      left: `${cx - halfNear}px`,
+      top: `${roadY0}px`,
+      width: `${halfNear * 2}px`,
+      height: `${roadY1 - roadY0}px`,
     },
     image: {
       left: `${dx}px`,
@@ -104,8 +101,8 @@ function coverLayout(vw: number, vh: number) {
 }
 
 /**
- * Car-interior hero: centered radio is the site menu.
- * Channel 1 = GET LOST; the LCD coaches the first interaction in-radio.
+ * Car-radio entrance — frequency search narrative.
+ * Worlds emerge as locked stations; presets stay unlabeled.
  */
 export function HomeCanvas() {
   const roadRef = useRef<HTMLDivElement>(null);
@@ -114,10 +111,12 @@ export function HomeCanvas() {
   const [layout, setLayout] = useState<ReturnType<typeof coverLayout> | null>(
     null
   );
-  const [channel, setChannel] = useState(0);
-  const [lcdText, setLcdText] = useState("GET LOST");
-  const [seekPulse, setSeekPulse] = useState(false);
-  const [hinting, setHinting] = useState(true);
+  const [phase, setPhase] = useState<Phase>("boot");
+  const [lcdText, setLcdText] = useState<string>(HOME.radio.boot);
+  const [statement, setStatement] = useState<string | null>(null);
+  const [brandLine, setBrandLine] = useState(false);
+  const [seeking, setSeeking] = useState(false);
+  const [interactive, setInteractive] = useState(false);
   const touchedRef = useRef(false);
 
   useEffect(() => {
@@ -139,9 +138,7 @@ export function HomeCanvas() {
     const ro = new ResizeObserver(sync);
     ro.observe(section);
     window.addEventListener("orientationchange", sync);
-    // Fallback if image onLoad never fires (cached / decode quirks).
-    const t = window.setTimeout(() => setReady(true), 2400);
-
+    const t = window.setTimeout(() => setReady(true), 2200);
     return () => {
       ro.disconnect();
       window.removeEventListener("orientationchange", sync);
@@ -149,81 +146,118 @@ export function HomeCanvas() {
     };
   }, []);
 
-  // Diegetic coach: LCD copy + one "station seek" pulse across presets.
+  // Narrative sequence — inevitable pacing, skipped for reduced motion.
   useEffect(() => {
-    if (!ready || !hinting) return;
+    if (!ready) return;
 
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduce) {
-      setLcdText("GET LOST");
-      setHinting(false);
+      setLcdText(HOME.radio.settled);
+      setStatement(null);
+      setBrandLine(true);
+      setPhase("settle");
+      setInteractive(true);
+      setSeeking(false);
       return;
     }
 
-    const script = ["TUNE IN", "SEEK 1–6", "GET LOST"] as const;
-    let i = 0;
-    setLcdText(script[0]);
-    setSeekPulse(true);
-
-    const iv = window.setInterval(() => {
-      i += 1;
-      if (i >= script.length) {
-        window.clearInterval(iv);
-        setSeekPulse(false);
-        setHinting(false);
-        if (!touchedRef.current) {
-          setChannel(0);
-          setLcdText(CHANNELS[0].label);
-        }
-        return;
-      }
-      setLcdText(script[i]);
-    }, 1400);
-
-    const stopPulse = window.setTimeout(() => setSeekPulse(false), 4200);
-
-    return () => {
-      window.clearInterval(iv);
-      window.clearTimeout(stopPulse);
+    const timers: number[] = [];
+    const at = (ms: number, fn: () => void) => {
+      timers.push(window.setTimeout(fn, ms));
     };
-  }, [ready, hinting]);
 
-  // If idle too long, whisper once more through the LCD.
-  useEffect(() => {
-    if (!ready || hinting) return;
-    let backTimer = 0;
-    const idle = window.setTimeout(() => {
+    // 1. OFF_COURSE
+    setPhase("boot");
+    setLcdText(HOME.radio.boot);
+    setBrandLine(true);
+
+    // 2. Static / tuning
+    at(1400, () => {
       if (touchedRef.current) return;
-      setLcdText("PRESS 1–6");
-      setSeekPulse(true);
-      backTimer = window.setTimeout(() => {
-        setSeekPulse(false);
-        if (!touchedRef.current) {
-          setLcdText(CHANNELS[channel].label);
-        }
-      }, 2200);
-    }, 9000);
-    return () => {
-      window.clearTimeout(idle);
-      window.clearTimeout(backTimer);
-    };
-  }, [ready, hinting, channel]);
+      setPhase("static");
+      setSeeking(true);
+      setLcdText(HOME.radio.static);
+    });
+    at(2400, () => {
+      if (touchedRef.current) return;
+      setLcdText(HOME.radio.tuning);
+    });
 
-  const markTouched = (i: number) => {
+    // 3–4. Lock GET LOST
+    at(3400, () => {
+      if (touchedRef.current) return;
+      setPhase("seek-lost");
+      setLcdText(HOME.radio.seek);
+    });
+    at(4200, () => {
+      if (touchedRef.current) return;
+      setPhase("lock-lost");
+      setSeeking(false);
+      setLcdText(HOME.radio.lockLost);
+      setStatement(WORLDS.lost.statement);
+    });
+
+    // 5–7. Continue → lock GET FOUND
+    at(7000, () => {
+      if (touchedRef.current) return;
+      setPhase("seek-found");
+      setSeeking(true);
+      setStatement(null);
+      setLcdText(HOME.radio.seek);
+    });
+    at(8200, () => {
+      if (touchedRef.current) return;
+      setLcdText(HOME.radio.static);
+    });
+    at(9000, () => {
+      if (touchedRef.current) return;
+      setPhase("lock-found");
+      setSeeking(false);
+      setLcdText(HOME.radio.lockFound);
+      setStatement(WORLDS.found.statement);
+    });
+
+    // 8. Settle
+    at(11800, () => {
+      if (touchedRef.current) return;
+      setPhase("settle");
+      setLcdText(HOME.radio.settled);
+      setStatement(null);
+      setInteractive(true);
+      setSeeking(false);
+    });
+
+    return () => timers.forEach((id) => window.clearTimeout(id));
+  }, [ready]);
+
+  const markTouched = (station: string) => {
     touchedRef.current = true;
-    setHinting(false);
-    setSeekPulse(false);
-    setChannel(i);
-    setLcdText(CHANNELS[i].label);
+    setSeeking(false);
+    setInteractive(true);
+    setPhase("settle");
+    setLcdText(station);
+    if (station === "GET LOST") setStatement(WORLDS.lost.statement);
+    else if (station === "GET FOUND") setStatement(WORLDS.found.statement);
+    else setStatement(null);
+  };
+
+  const onKeyNav = (e: KeyboardEvent<HTMLElement>) => {
+    if (!interactive && phase !== "settle") return;
+    const n = Number(e.key);
+    if (n >= 1 && n <= 6) {
+      const preset = PRESETS[n - 1];
+      markTouched(preset.station);
+    }
   };
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a]"
+      className={`home-radio relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a] phase-${phase}`}
+      onKeyDown={onKeyNav}
     >
       <picture>
         <source srcSet={`${BASE}/hero-car-road.webp?v=12`} type="image/webp" />
@@ -259,7 +293,10 @@ export function HomeCanvas() {
           style={layout.display}
           aria-live="polite"
         >
-          <span className="radio-lcd-text" key={lcdText}>
+          <span
+            className={`radio-lcd-text${seeking ? " is-seeking" : ""}`}
+            key={lcdText}
+          >
             {lcdText}
           </span>
         </div>
@@ -267,10 +304,10 @@ export function HomeCanvas() {
 
       {layout && (
         <nav
-          className={`absolute inset-0 z-[12]${seekPulse ? " radio-seeking" : ""}`}
-          aria-label="Radio channels — press presets 1 to 6"
+          className={`absolute inset-0 z-[12]${seeking ? " radio-seeking" : ""}`}
+          aria-label="Radio frequency presets 1 to 6"
         >
-          {CHANNELS.map((ch, i) => (
+          {PRESETS.map((ch, i) => (
             <Link
               key={ch.id}
               href={ch.href}
@@ -281,23 +318,48 @@ export function HomeCanvas() {
                   ["--seek-i" as string]: i,
                 } as CSSProperties
               }
-              aria-label={`Channel ${ch.id}: ${ch.label}`}
-              aria-current={channel === i ? "page" : undefined}
-              onMouseEnter={() => markTouched(i)}
-              onFocus={() => markTouched(i)}
-              onTouchStart={() => markTouched(i)}
+              aria-label={`Frequency ${ch.id}: ${ch.station}`}
+              onMouseEnter={() => interactive && markTouched(ch.station)}
+              onFocus={() => markTouched(ch.station)}
+              onTouchStart={() => markTouched(ch.station)}
             />
           ))}
         </nav>
       )}
 
+      {/* Overlay copy — philosophy without large paragraphs */}
+      <div className="home-radio__overlay" aria-live="polite">
+        {brandLine && (
+          <p className="home-radio__brand">
+            <span>OFF_COURSE</span>
+            <span className="home-radio__tag">Concrete &amp; Code</span>
+          </p>
+        )}
+        {statement && (
+          <p className="home-radio__statement" key={statement}>
+            {statement}
+          </p>
+        )}
+      </div>
+
+      {/* Accessible fallback — never depend only on experimentation */}
+      <div className="home-radio__fallback">
+        <Link href="/get-lost">{WORLDS.lost.label}</Link>
+        <span aria-hidden>·</span>
+        <Link href="/get-found">{WORLDS.found.label}</Link>
+        <span aria-hidden>·</span>
+        <a href="#home-editorial">{HOME.continueLabel}</a>
+      </div>
+
       <p className="sr-only">
-        The car radio is the menu. Press presets 1 through 6 to navigate, or use
-        the header links.
+        Off Course. Concrete and Code. The car radio searches frequencies.
+        GET LOST — ideas become physical. GET FOUND — ideas become accessible.
+        Use presets 1 to 6, or the text links, to navigate. Prefer reduced
+        motion skips the search animation.
       </p>
 
       <div
-        className={`pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-white transition-opacity duration-700 ${
+        className={`pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-[var(--ed-paper)] transition-opacity duration-700 ${
           ready ? "opacity-0" : "opacity-100"
         }`}
         aria-hidden={ready}
