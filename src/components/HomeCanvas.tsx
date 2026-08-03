@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -26,14 +27,10 @@ const PRESETS = [
 
 /** Road / scene axis in image space (vanishing point x). */
 const SCENE_CX = 0.467;
-/** Horizon / asphalt start in image-normalized Y. */
 const ROAD_Y0 = 0.338;
-/** Road end just above dashboard / wiper lip. */
 const ROAD_Y1 = 0.455;
-/** Centre-line dash half-widths (image-normalized). */
 const DASH_HALF_FAR = 0.0028;
 const DASH_HALF_NEAR = 0.038;
-/** Full road edge half-widths — clip mask only. */
 const ROAD_EDGE_FAR = 0.048;
 const ROAD_EDGE_NEAR = 0.318;
 
@@ -43,16 +40,25 @@ const BUTTON_CY = 0.664;
 const BUTTON_W = 0.04;
 const BUTTON_H = 0.03;
 
-/** Rear-view mirror plate in image-normalized coords. */
+/** SCAN button — right of LCD, where the hand presses. */
+const SCAN = { x0: 0.618, y0: 0.592, x1: 0.702, y1: 0.652 };
+
 const MIRROR = { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 };
+
+/** Bias crop so the radio LCD sits as the optical weight of the frame. */
+const FOCUS_IMG_Y = 0.618;
+const FOCUS_VIEW_Y = 0.64;
 
 type Box = { left: string; top: string; width: string; height: string };
 
 type Phase =
   | "boot"
-  | "static"
-  | "seek-lost"
+  | "searching"
+  | "await-scan"
+  | "tuning"
+  | "signal"
   | "lock-lost"
+  | "mirage"
   | "seek-found"
   | "lock-found"
   | "settle";
@@ -62,6 +68,7 @@ type Layout = {
   display: Box;
   buttons: Box[];
   mirror: Box;
+  scan: Box;
   road: {
     cx: number;
     y0: number;
@@ -77,19 +84,20 @@ type Layout = {
   dh: number;
   vw: number;
   vh: number;
-  /** Wide viewports fit full illustration height so mirror + radio stay framed. */
   wideFit: boolean;
 };
 
 function coverLayout(vw: number, vh: number): Layout {
   const wideFit = vw / vh > 1.05;
-  // Landscape: nearly full illustration height (tiny crop) so mirror + radio
-  // stay framed while the plate reads larger than pure contain.
-  const scale = wideFit ? vh / (IH * 0.92) : Math.max(vw / IW, vh / IH);
+  // Tighter fit enlarges the radio in-frame without a naked CSS scale.
+  const scale = wideFit
+    ? vh / (IH * 0.86)
+    : Math.max(vw / IW, vh / IH) * 1.06;
   const dw = IW * scale;
   const dh = IH * scale;
   const dx = vw / 2 - SCENE_CX * dw;
-  const dy = wideFit ? (vh - dh) / 2 : (vh - dh) / 2;
+  let dy = FOCUS_VIEW_Y * vh - FOCUS_IMG_Y * dh;
+  dy = Math.min(0, Math.max(vh - dh, dy));
 
   const box = (x0: number, y0: number, x1: number, y1: number): Box => ({
     left: `${(((dx + x0 * dw) / vw) * 100).toFixed(3)}%`,
@@ -115,6 +123,7 @@ function coverLayout(vw: number, vh: number): Layout {
       )
     ),
     mirror: box(MIRROR.x0, MIRROR.y0, MIRROR.x1, MIRROR.y1),
+    scan: box(SCAN.x0, SCAN.y0, SCAN.x1, SCAN.y1),
     road: {
       cx: dx + dw * SCENE_CX,
       y0: dy + dh * ROAD_Y0,
@@ -134,7 +143,6 @@ function coverLayout(vw: number, vh: number): Layout {
   };
 }
 
-/** Paint asphalt dashes in true road-plane perspective (canvas, no WebGL). */
 function paintRoad(
   ctx: CanvasRenderingContext2D,
   layout: Layout,
@@ -148,10 +156,8 @@ function paintRoad(
   ctx.clearRect(0, 0, layout.vw, layout.vh);
   ctx.save();
 
-  // Vanishing point slightly above the asphalt start
   const vpY = y0 - Math.max(6, h * 0.08);
 
-  // Mask markings strictly inside the asphalt trapezoid
   ctx.beginPath();
   ctx.moveTo(cx - edgeFar * 0.5, y0);
   ctx.lineTo(cx + edgeFar * 0.5, y0);
@@ -160,17 +166,13 @@ function paintRoad(
   ctx.closePath();
   ctx.clip();
 
-  /** Half-width on the road plane at screen y — edges aim at the VP. */
   const halfAt = (y: number) => {
     const t = (y - vpY) / (y1 - vpY);
-    // Blend toward a small far width so the line doesn't vanish to a point too early
-    const raw = halfNear * t;
-    return Math.max(halfFar * 0.85, raw);
+    return Math.max(halfFar * 0.85, halfNear * t);
   };
 
   const count = 10;
   const span = y1 - y0;
-  // Space dashes in *depth* (more packing near horizon) via quadratic samples
   const yOf = (u: number) => y0 + span * Math.pow(Math.min(1, Math.max(0, u)), 2.2);
   const gap = 1 / count;
   const offset = moving ? ((scroll % gap) + gap) % gap : gap * 0.2;
@@ -187,8 +189,6 @@ function paintRoad(
     const hA = halfAt(yA);
     const hB = halfAt(yB);
     const depth = (yA - y0) / span;
-
-    // Deterministic paint wear
     const wearL = 0.7 + ((i * 13) % 11) * 0.025;
     const wearR = 0.7 + ((i * 29) % 11) * 0.025;
     const jig = (((i * 17) % 7) - 3) * 0.015;
@@ -208,7 +208,6 @@ function paintRoad(
     body.addColorStop(0.45, `rgba(${r}, ${g}, ${bl}, ${alpha})`);
     body.addColorStop(1, `rgba(${r - 28}, ${g - 20}, ${bl}, ${alpha * 0.7})`);
     ctx.fillStyle = body;
-
     ctx.beginPath();
     ctx.moveTo(ax0, yA);
     ctx.lineTo(ax1, yA);
@@ -222,7 +221,6 @@ function paintRoad(
     ctx.stroke();
   }
 
-  // Atmospheric veil on far asphalt
   const grad = ctx.createLinearGradient(0, y0, 0, y0 + h * 0.55);
   grad.addColorStop(0, "rgba(200, 182, 155, 0.36)");
   grad.addColorStop(0.5, "rgba(200, 182, 155, 0.1)");
@@ -233,38 +231,167 @@ function paintRoad(
   ctx.restore();
 }
 
+/** Reused offscreens for heat mirage (avoid per-frame allocation). */
+let mirageRoadOff: HTMLCanvasElement | null = null;
+let mirageTextOff: HTMLCanvasElement | null = null;
+
+function ensureCanvas(current: HTMLCanvasElement | null, w: number, h: number) {
+  if (current && current.width === w && current.height === h) return current;
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  return c;
+}
+
 /**
- * Car-radio entrance — diegetic radio + mirror identity,
- * perspective road canvas, environmental philosophy (no UI panels).
+ * Desert heat mirage — row displacement + refraction shimmer.
+ * No blur, glow, drop-shadow, or glass panels.
+ */
+function paintMirage(
+  ctx: CanvasRenderingContext2D,
+  layout: Layout,
+  plate: HTMLImageElement | null,
+  tSec: number,
+  life: number,
+  line: string
+) {
+  const { cx, y0, y1, edgeNear } = layout.road;
+  const { vw, vh, dx, dy, dw, dh } = layout;
+  ctx.clearRect(0, 0, vw, vh);
+  if (life <= 0.01) return;
+
+  const form = Math.min(1, life);
+  const dissolve = life > 1.35 ? Math.min(1, (life - 1.35) / 0.65) : 0;
+  const readable = Math.max(0, Math.min(1, (form - 0.25) / 0.55));
+  const amp =
+    (10 + (1 - readable) * 18) * (1 - dissolve * 0.85) * Math.min(1, form * 1.4);
+  const opacity = (0.15 + readable * 0.75) * (1 - dissolve);
+
+  const padX = edgeNear * 1.05;
+  const x0 = Math.max(0, Math.floor(cx - padX));
+  const x1 = Math.min(vw, Math.ceil(cx + padX));
+  const yy0 = Math.max(0, Math.floor(y0 - (y1 - y0) * 0.15));
+  const yy1 = Math.min(vh, Math.ceil(y1 + (y1 - y0) * 0.08));
+  const bw = x1 - x0;
+  const bh = yy1 - yy0;
+  if (bw < 8 || bh < 8) return;
+
+  if (plate && plate.complete && plate.naturalWidth > 0) {
+    mirageRoadOff = ensureCanvas(mirageRoadOff, bw, bh);
+    const octx = mirageRoadOff.getContext("2d");
+    if (octx) {
+      const sx = ((x0 - dx) / dw) * IW;
+      const sy = ((yy0 - dy) / dh) * IH;
+      const sw = (bw / dw) * IW;
+      const sh = (bh / dh) * IH;
+      octx.clearRect(0, 0, bw, bh);
+      octx.drawImage(plate, sx, sy, sw, sh, 0, 0, bw, bh);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx - edgeNear * 0.35, y0);
+      ctx.lineTo(cx + edgeNear * 0.35, y0);
+      ctx.lineTo(cx + edgeNear * 0.95, y1);
+      ctx.lineTo(cx - edgeNear * 0.95, y1);
+      ctx.closePath();
+      ctx.clip();
+      ctx.globalAlpha = 0.55 * (1 - dissolve) * Math.min(1, form * 1.6);
+
+      for (let row = 0; row < bh; row++) {
+        const ny = row / bh;
+        const wave =
+          Math.sin(ny * 14 + tSec * 3.2) * amp * (0.35 + ny * 0.9) +
+          Math.sin(ny * 31 + tSec * 5.1) * amp * 0.28;
+        ctx.drawImage(mirageRoadOff, 0, row, bw, 1, x0 + wave, yy0 + row, bw, 1);
+      }
+      ctx.restore();
+    }
+  }
+
+  const tw = Math.max(8, Math.floor(Math.min(bw * 0.92, vw * 0.42)));
+  const th = Math.max(36, Math.floor(bh * 0.42));
+  mirageTextOff = ensureCanvas(mirageTextOff, tw, th);
+  const tctx = mirageTextOff.getContext("2d");
+  if (!tctx) return;
+
+  tctx.clearRect(0, 0, tw, th);
+  tctx.fillStyle = `rgba(245, 236, 220, ${0.55 + readable * 0.35})`;
+  const family =
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--font-archivo-black")
+      .trim() || "sans-serif";
+  tctx.font = `700 ${Math.max(11, tw * 0.055)}px ${family}, sans-serif`;
+  tctx.textAlign = "center";
+  tctx.textBaseline = "middle";
+  tctx.fillText(line.toUpperCase(), tw / 2, th / 2);
+
+  const tx = cx - tw / 2;
+  const ty = y0 + (y1 - y0) * 0.28;
+
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  for (let row = 0; row < th; row++) {
+    const ny = row / th;
+    const wave =
+      Math.sin(ny * 18 + tSec * 4.0) * amp * (1.1 - readable * 0.7) +
+      Math.sin(ny * 41 + tSec * 6.2) * amp * 0.35 * (1 - readable);
+    const squash = 1 + Math.sin(ny * 9 + tSec * 2.4) * 0.012 * (1 - readable);
+    ctx.drawImage(
+      mirageTextOff,
+      0,
+      row,
+      tw,
+      1,
+      tx + wave,
+      ty + row,
+      tw * squash,
+      1
+    );
+  }
+  ctx.restore();
+}
+
+/**
+ * Opening hero — radio is the story.
+ * Mirror → LCD → road. Diegetic LCD only. Heat-haze philosophy.
  */
 export function HomeCanvas() {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const plateRef = useRef<HTMLImageElement>(null);
+  const roadCanvasRef = useRef<HTMLCanvasElement>(null);
+  const mirageCanvasRef = useRef<HTMLCanvasElement>(null);
   const layoutRef = useRef<Layout | null>(null);
-  const rafRef = useRef(0);
+  const roadRafRef = useRef(0);
+  const mirageRafRef = useRef(0);
   const scrollRef = useRef(0);
+  const mirageLifeRef = useRef(0);
+  const postScanTimers = useRef<number[]>([]);
 
   const [ready, setReady] = useState(false);
   const [layout, setLayout] = useState<Layout | null>(null);
   const [phase, setPhase] = useState<Phase>("boot");
   const [lcdText, setLcdText] = useState<string>("");
-  const [statement, setStatement] = useState<string | null>(null);
   const [mirrorOn, setMirrorOn] = useState(false);
-  const [seeking, setSeeking] = useState(false);
   const [roadMoving, setRoadMoving] = useState(false);
   const [interactive, setInteractive] = useState(false);
+  const [awaitingScan, setAwaitingScan] = useState(false);
+  const [mirageOn, setMirageOn] = useState(false);
+  const [seekingVisual, setSeekingVisual] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const touchedRef = useRef(false);
+  const scannedRef = useRef(false);
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReduceMotion(reduce);
+    setReduceMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
   }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
-    const canvas = canvasRef.current;
-    if (!section || !canvas) return;
+    const road = roadCanvasRef.current;
+    const mirage = mirageCanvasRef.current;
+    if (!section || !road) return;
 
     const sync = () => {
       const w = section.clientWidth;
@@ -275,22 +402,24 @@ export function HomeCanvas() {
       setLayout(next);
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        paintRoad(ctx, next, scrollRef.current, false);
+      for (const canvas of [road, mirage]) {
+        if (!canvas) continue;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${h}px`;
+        const ctx = canvas.getContext("2d");
+        if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
+      const ctx = road.getContext("2d");
+      if (ctx) paintRoad(ctx, next, scrollRef.current, false);
     };
 
     sync();
     const ro = new ResizeObserver(sync);
     ro.observe(section);
     window.addEventListener("orientationchange", sync);
-    const t = window.setTimeout(() => setReady(true), 1800);
+    const t = window.setTimeout(() => setReady(true), 1600);
     return () => {
       ro.disconnect();
       window.removeEventListener("orientationchange", sync);
@@ -298,10 +427,10 @@ export function HomeCanvas() {
     };
   }, []);
 
-  // Road motion loop — only while travelling
+  // Road motion
   useEffect(() => {
     if (!ready || reduceMotion || !roadMoving) {
-      const canvas = canvasRef.current;
+      const canvas = roadCanvasRef.current;
       const lay = layoutRef.current;
       if (canvas && lay) {
         const ctx = canvas.getContext("2d");
@@ -309,64 +438,135 @@ export function HomeCanvas() {
       }
       return;
     }
-
     let last = performance.now();
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       scrollRef.current += dt * 0.2;
-      const canvas = canvasRef.current;
+      const canvas = roadCanvasRef.current;
       const lay = layoutRef.current;
       if (canvas && lay) {
         const ctx = canvas.getContext("2d");
         if (ctx) paintRoad(ctx, lay, scrollRef.current, true);
       }
-      rafRef.current = requestAnimationFrame(tick);
+      roadRafRef.current = requestAnimationFrame(tick);
     };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    roadRafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(roadRafRef.current);
   }, [ready, roadMoving, reduceMotion]);
 
-  // Allow early skip via scroll / Escape — never trap the visitor
+  // Heat mirage loop
   useEffect(() => {
-    if (!ready || reduceMotion || interactive) return;
+    if (!mirageOn || reduceMotion) {
+      const canvas = mirageCanvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      return;
+    }
 
-    const skip = () => {
-      if (touchedRef.current) return;
-      touchedRef.current = true;
-      setMirrorOn(true);
-      setSeeking(false);
-      setPhase("settle");
-      setLcdText(HOME.radio.settled);
-      setStatement(null);
-      setInteractive(true);
-      setRoadMoving(true);
+    let last = performance.now();
+    mirageLifeRef.current = 0;
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      mirageLifeRef.current += dt / 2.4; // ~4.8s full cycle to 2.0
+      const canvas = mirageCanvasRef.current;
+      const lay = layoutRef.current;
+      if (canvas && lay) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          paintMirage(
+            ctx,
+            lay,
+            plateRef.current,
+            now / 1000,
+            mirageLifeRef.current,
+            WORLDS.lost.statement.replace(/\.$/, "")
+          );
+        }
+      }
+      if (mirageLifeRef.current >= 2) {
+        setMirageOn(false);
+        return;
+      }
+      mirageRafRef.current = requestAnimationFrame(tick);
+    };
+    mirageRafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(mirageRafRef.current);
+  }, [mirageOn, reduceMotion]);
+
+  const clearPostScan = () => {
+    postScanTimers.current.forEach((id) => window.clearTimeout(id));
+    postScanTimers.current = [];
+  };
+
+  const finishToSettle = useCallback(() => {
+    setPhase("settle");
+    setLcdText(HOME.radio.settled);
+    setInteractive(true);
+    setAwaitingScan(false);
+    setMirageOn(false);
+    setSeekingVisual(false);
+    setRoadMoving(!reduceMotion);
+  }, [reduceMotion]);
+
+  const runAfterScan = useCallback(() => {
+    if (scannedRef.current) return;
+    scannedRef.current = true;
+    touchedRef.current = true;
+    setAwaitingScan(false);
+    clearPostScan();
+
+    const at = (ms: number, fn: () => void) => {
+      postScanTimers.current.push(window.setTimeout(fn, ms));
     };
 
-    const onWheel = () => skip();
-    const onKey = (e: Event) => {
-      if ((e as globalThis.KeyboardEvent).key === "Escape") skip();
-    };
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("keydown", onKey);
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [ready, reduceMotion, interactive]);
+    setPhase("tuning");
+    setLcdText(HOME.radio.tuning);
+    setRoadMoving(true);
+    setSeekingVisual(true);
 
-  // Cinematic sequence
+    at(900, () => {
+      setPhase("signal");
+      setLcdText(HOME.radio.signal);
+    });
+    at(1800, () => {
+      setPhase("lock-lost");
+      setLcdText(HOME.radio.lockLost);
+      setSeekingVisual(false);
+    });
+    at(2200, () => {
+      setPhase("mirage");
+      if (!reduceMotion) setMirageOn(true);
+    });
+    at(7200, () => {
+      setMirageOn(false);
+      setPhase("seek-found");
+      setLcdText(HOME.radio.searching);
+      setSeekingVisual(true);
+    });
+    at(8200, () => {
+      setPhase("lock-found");
+      setLcdText(HOME.radio.lockFound);
+      setSeekingVisual(false);
+    });
+    at(11000, () => {
+      finishToSettle();
+    });
+  }, [finishToSettle, reduceMotion]);
+
+  // Opening sequence — stops at PRESS SCAN until the visitor acts
   useEffect(() => {
     if (!ready) return;
 
     if (reduceMotion) {
       setMirrorOn(true);
       setLcdText(HOME.radio.settled);
-      setStatement(null);
       setPhase("settle");
       setInteractive(true);
-      setSeeking(false);
+      setAwaitingScan(false);
       setRoadMoving(false);
       return;
     }
@@ -376,123 +576,125 @@ export function HomeCanvas() {
       timers.push(window.setTimeout(fn, ms));
     };
 
+    scannedRef.current = false;
+    touchedRef.current = false;
     setPhase("boot");
     setLcdText("");
     setMirrorOn(false);
-    setStatement(null);
     setRoadMoving(false);
+    setAwaitingScan(false);
+    setMirageOn(false);
+    setInteractive(false);
 
-    // 1–2. Scene settles → mirror identity
-    at(400, () => {
+    at(350, () => {
       if (touchedRef.current) return;
       setMirrorOn(true);
     });
-
-    // 3–5. Radio search + road motion; static clears toward a lock
-    at(1400, () => {
+    at(900, () => {
       if (touchedRef.current) return;
-      setPhase("static");
-      setSeeking(true);
-      setRoadMoving(true);
-      setLcdText(HOME.radio.static);
-    });
-    at(2400, () => {
-      if (touchedRef.current) return;
-      setLcdText(HOME.radio.tuning);
-    });
-    at(3200, () => {
-      if (touchedRef.current) return;
-      setPhase("seek-lost");
-      setLcdText(HOME.radio.seek);
-    });
-
-    // 6–7. GET LOST lock + philosophy in windscreen
-    at(4200, () => {
-      if (touchedRef.current) return;
-      setPhase("lock-lost");
-      setSeeking(false);
-      setLcdText(HOME.radio.lockLost);
-      setStatement(WORLDS.lost.statement);
-    });
-
-    // 8. Signal lost
-    at(7000, () => {
-      if (touchedRef.current) return;
-      setPhase("seek-found");
-      setSeeking(true);
-      setStatement(null);
-      setLcdText(HOME.radio.static);
-    });
-    at(7800, () => {
-      if (touchedRef.current) return;
-      setLcdText(HOME.radio.seek);
-    });
-
-    // 9–10. SIGNAL FOUND → GET FOUND + statement
-    at(8800, () => {
-      if (touchedRef.current) return;
-      setPhase("lock-found");
-      setSeeking(false);
-      setLcdText(HOME.radio.signalFound);
-      setStatement(null);
-    });
-    at(9600, () => {
-      if (touchedRef.current) return;
-      setLcdText(HOME.radio.lockFound);
-      setStatement(WORLDS.found.statement);
-    });
-
-    // 11. Settle (~13s total — under 15s brief)
-    at(12500, () => {
-      if (touchedRef.current) return;
-      setPhase("settle");
-      setLcdText(HOME.radio.settled);
-      setStatement(null);
-      setInteractive(true);
-      setSeeking(false);
+      setPhase("searching");
+      setLcdText(HOME.radio.searching);
+      setSeekingVisual(true);
       setRoadMoving(true);
     });
+    at(3900, () => {
+      if (touchedRef.current || scannedRef.current) return;
+      setPhase("await-scan");
+      setLcdText(HOME.radio.pressScan);
+      setSeekingVisual(false);
+      setAwaitingScan(true);
+    });
 
-    return () => timers.forEach((id) => window.clearTimeout(id));
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      clearPostScan();
+    };
   }, [ready, reduceMotion]);
 
+  // Skip without trapping
+  useEffect(() => {
+    if (!ready || reduceMotion || interactive) return;
+    const skip = () => {
+      if (interactive) return;
+      touchedRef.current = true;
+      scannedRef.current = true;
+      clearPostScan();
+      setMirrorOn(true);
+      setAwaitingScan(false);
+      setMirageOn(false);
+      setSeekingVisual(false);
+      finishToSettle();
+    };
+    const onWheel = () => skip();
+    const onKey = (e: Event) => {
+      const key = (e as globalThis.KeyboardEvent).key;
+      if (key === "Escape") skip();
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [ready, reduceMotion, interactive, finishToSettle]);
+
+  const onScan = () => {
+    if (!awaitingScan || scannedRef.current) return;
+    runAfterScan();
+  };
+
   const markTouched = (station: string) => {
+    if (!interactive && !awaitingScan) return;
+    if (awaitingScan) {
+      onScan();
+      return;
+    }
     touchedRef.current = true;
-    setSeeking(false);
+    scannedRef.current = true;
+    clearPostScan();
+    setSeekingVisual(false);
+    setAwaitingScan(false);
+    setMirageOn(false);
     setInteractive(true);
     setPhase("settle");
     setMirrorOn(true);
     setRoadMoving(!reduceMotion);
     setLcdText(station);
-    if (station === "GET LOST") setStatement(WORLDS.lost.statement);
-    else if (station === "GET FOUND") setStatement(WORLDS.found.statement);
-    else setStatement(null);
   };
 
   const onKeyNav = (e: KeyboardEvent<HTMLElement>) => {
+    if (awaitingScan && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onScan();
+      return;
+    }
     if (!interactive && phase !== "settle") return;
     const n = Number(e.key);
     if (n >= 1 && n <= 6) markTouched(PRESETS[n - 1].station);
   };
+
+  const lcdPrompt = phase === "await-scan";
 
   return (
     <section
       ref={sectionRef}
       className={`home-radio relative h-[100svh] w-full overflow-hidden bg-[#1a1a1a] phase-${phase}${
         reduceMotion ? " is-reduced" : ""
-      }${roadMoving && !reduceMotion ? " is-travelling" : ""}`}
+      }${roadMoving && !reduceMotion ? " is-travelling" : ""}${
+        awaitingScan ? " is-awaiting-scan" : ""
+      }${mirageOn ? " is-mirage" : ""}`}
       onKeyDown={onKeyNav}
+      tabIndex={0}
     >
       <div
         className={`home-radio__scene${ready ? " is-live" : ""}${
           layout?.wideFit ? " is-wide" : ""
         }`}
       >
-        {/* Side bleed for landscape height-fit — keeps full-bleed atmosphere */}
         {layout?.wideFit && (
           <div className="home-radio__bleed" aria-hidden>
             <img
-              src={`${BASE}/hero-car-road.jpg?v=14`}
+              src={`${BASE}/hero-car-road.jpg?v=15`}
               alt=""
               className="home-radio__bleed-img"
               draggable={false}
@@ -502,9 +704,10 @@ export function HomeCanvas() {
         )}
 
         <picture>
-          <source srcSet={`${BASE}/hero-car-road.webp?v=14`} type="image/webp" />
+          <source srcSet={`${BASE}/hero-car-road.webp?v=15`} type="image/webp" />
           <img
-            src={`${BASE}/hero-car-road.jpg?v=14`}
+            ref={plateRef}
+            src={`${BASE}/hero-car-road.jpg?v=15`}
             alt=""
             className={
               layout
@@ -519,23 +722,24 @@ export function HomeCanvas() {
           />
         </picture>
 
-        {/* Perspective road markings — painted onto asphalt plane */}
         <canvas
-          ref={canvasRef}
+          ref={roadCanvasRef}
           className="pointer-events-none absolute inset-0 z-[5] home-radio__road-canvas"
           aria-hidden
         />
 
-        {/* Atmospheric haze over distant landscape */}
+        <canvas
+          ref={mirageCanvasRef}
+          className="pointer-events-none absolute inset-0 z-[6] home-radio__mirage-canvas"
+          aria-hidden
+        />
+
+        {/* Hierarchy: dim periphery so the radio carries the story */}
+        <div className="home-radio__focus" aria-hidden />
+
         <div className="home-radio__haze" aria-hidden />
-
-        {/* Soft windscreen reflection veil */}
-        <div className="home-radio__glass" aria-hidden />
-
-        {/* Analogue grain */}
         <div className="home-radio__grain" aria-hidden />
 
-        {/* A. Rear-view mirror — identity only */}
         {layout && (
           <div
             className={`home-radio__mirror${mirrorOn ? " is-on" : ""}`}
@@ -547,16 +751,17 @@ export function HomeCanvas() {
           </div>
         )}
 
-        {/* B. Radio LCD — diegetic stations */}
         {layout && (
           <div
-            className="radio-lcd pointer-events-none absolute z-[8] flex items-center justify-center overflow-hidden"
+            className={`radio-lcd pointer-events-none absolute z-[8] flex items-center justify-center overflow-hidden${
+              lcdPrompt ? " is-prompt" : ""
+            }`}
             style={layout.display}
             aria-live="polite"
           >
             {lcdText ? (
               <span
-                className={`radio-lcd-text${seeking ? " is-seeking" : ""}`}
+                className={`radio-lcd-text${seekingVisual ? " is-seeking" : ""}`}
                 key={lcdText}
               >
                 {lcdText}
@@ -565,21 +770,22 @@ export function HomeCanvas() {
           </div>
         )}
 
-        {/* C. Philosophy as windscreen ghost — no dark panel */}
-        {statement && (
-          <p
-            className={`home-radio__ghost${
-              phase === "lock-lost" ? " is-lost" : ""
-            }${phase === "lock-found" || phase === "settle" ? " is-found" : ""}`}
-            key={statement}
-          >
-            {statement}
-          </p>
+        {/* Diegetic SCAN — the radio teaches the interaction */}
+        {layout && awaitingScan && (
+          <button
+            type="button"
+            className="radio-scan-hit absolute z-[14] cursor-pointer rounded-[2px]"
+            style={layout.scan}
+            aria-label="Press SCAN on the radio"
+            onClick={onScan}
+          />
         )}
 
         {layout && (
           <nav
-            className={`absolute inset-0 z-[12]${seeking ? " radio-seeking" : ""}`}
+            className={`absolute inset-0 z-[12]${
+              seekingVisual ? " radio-seeking" : ""
+            }${interactive ? "" : " pointer-events-none"}`}
             aria-label="Radio frequency presets 1 to 6"
           >
             {PRESETS.map((ch, i) => (
@@ -594,9 +800,10 @@ export function HomeCanvas() {
                   } as CSSProperties
                 }
                 aria-label={`Frequency ${ch.id}: ${ch.station}`}
+                tabIndex={interactive ? 0 : -1}
                 onMouseEnter={() => interactive && markTouched(ch.station)}
-                onFocus={() => markTouched(ch.station)}
-                onTouchStart={() => markTouched(ch.station)}
+                onFocus={() => interactive && markTouched(ch.station)}
+                onTouchStart={() => interactive && markTouched(ch.station)}
               />
             ))}
           </nav>
@@ -612,10 +819,11 @@ export function HomeCanvas() {
       </div>
 
       <p className="sr-only">
-        Off Course. Concrete and Code. Identity appears in the rear-view mirror.
-        The car radio searches frequencies. GET LOST — ideas become physical.
-        GET FOUND — ideas become accessible. Use presets 1 to 6, or the text
-        links. Reduced motion skips the search animation.
+        Off Course. Concrete and Code. The rear-view mirror shows the studio
+        name. The car radio searches, then asks you to press SCAN. After tuning,
+        GET LOST locks and a desert heat mirage reveals Ideas become physical.
+        Later GET FOUND appears on the display. Use SCAN, presets 1 to 6, or the
+        text links. Reduced motion skips the sequence.
       </p>
 
       <div

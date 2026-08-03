@@ -55,15 +55,14 @@ export const NAV = {
 } as const;
 
 export const HOME = {
-  // editable — radio LCD script beats
+  // editable — radio LCD script beats (diegetic only)
   radio: {
-    boot: "OFF_COURSE",
-    tuning: "TUNING",
-    static: "···· ····",
-    seek: "SEEKING",
+    searching: "SEARCHING...",
+    pressScan: "PRESS SCAN",
+    tuning: "TUNING...",
+    signal: "SIGNAL...",
     lockLost: "GET LOST",
     lockFound: "GET FOUND",
-    signalFound: "SIGNAL FOUND",
     settled: "TUNE IN",
   },
   // editable

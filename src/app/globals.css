@@ -357,12 +357,12 @@ body {
   color: var(--ed-ink);
 }
 
-/* —— Home radio hero — diegetic CGI integration —— */
+/* —— Home radio hero — radio as protagonist —— */
 .home-radio__scene {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform-origin: 50% 42%;
+  transform-origin: 50% 64%;
   will-change: transform;
 }
 
@@ -383,11 +383,11 @@ body {
 @keyframes hero-settle {
   from {
     opacity: 0.72;
-    transform: scale(1.045);
+    transform: scale(1.04);
   }
   to {
     opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1.015);
   }
 }
 
@@ -421,19 +421,63 @@ body {
   width: 116%;
   height: 116%;
   object-fit: cover;
-  object-position: 47% 42%;
-  filter: blur(18px) saturate(0.92) brightness(0.78);
+  object-position: 47% 62%;
+  filter: blur(18px) saturate(0.92) brightness(0.72);
   transform: scale(1.04);
 }
 
 .home-radio__plate {
   z-index: 2;
-  filter: contrast(1.02) saturate(0.98);
+  filter: contrast(1.03) saturate(0.96);
 }
 
 .home-radio__road-canvas {
   mix-blend-mode: normal;
   opacity: 0.95;
+}
+
+.home-radio__mirage-canvas {
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+/* Eye path: mirror → radio → road — dim sky / HVAC, keep radio bright */
+.home-radio__focus {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 50% 64%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 42%,
+      rgba(8, 6, 4, 0.28) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(10, 8, 6, 0.22) 0%,
+      transparent 18%,
+      transparent 52%,
+      rgba(10, 8, 6, 0.35) 88%
+    );
+}
+
+.home-radio.is-awaiting-scan .home-radio__focus {
+  background:
+    radial-gradient(
+      ellipse 48% 36% at 50% 66%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 38%,
+      rgba(8, 6, 4, 0.38) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(10, 8, 6, 0.28) 0%,
+      transparent 16%,
+      transparent 50%,
+      rgba(10, 8, 6, 0.4) 90%
+    );
 }
 
 .home-radio__haze {
@@ -444,35 +488,17 @@ body {
   background:
     radial-gradient(
       ellipse 55% 28% at 47% 34%,
-      rgba(220, 200, 170, 0.22) 0%,
+      rgba(220, 200, 170, 0.18) 0%,
       transparent 70%
     ),
     linear-gradient(
       180deg,
-      rgba(170, 195, 210, 0.08) 8%,
+      rgba(170, 195, 210, 0.06) 8%,
       transparent 28%,
       transparent 48%,
-      rgba(20, 16, 12, 0.12) 72%
+      rgba(20, 16, 12, 0.1) 72%
     );
   opacity: 0.85;
-}
-
-.home-radio__glass {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 14%;
-  height: 34%;
-  z-index: 6;
-  pointer-events: none;
-  background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.07) 0%,
-    transparent 38%,
-    transparent 62%,
-    rgba(255, 245, 230, 0.04) 100%
-  );
-  mix-blend-mode: soft-light;
 }
 
 .home-radio__grain {
@@ -486,7 +512,7 @@ body {
   background-size: 180px 180px;
 }
 
-/* A — Rear-view mirror identity (no UI panel) */
+/* A — Rear-view mirror identity */
 .home-radio__mirror {
   position: absolute;
   z-index: 9;
@@ -547,51 +573,22 @@ body {
   }
 }
 
-/* C — Windscreen ghost philosophy (no dark box) */
-.home-radio__ghost {
-  position: absolute;
-  left: 50%;
-  top: 38%;
-  z-index: 10;
-  width: min(22rem, 78vw);
-  margin: 0;
+/* Diegetic SCAN hit — invisible, no tooltip chrome */
+.radio-scan-hit {
+  border: 0;
+  background: transparent;
   padding: 0;
-  transform: translate(-50%, -50%) perspective(600px) rotateX(8deg);
-  text-align: center;
-  pointer-events: none;
-  font-family: var(--font-archivo-black), sans-serif;
-  font-size: clamp(0.95rem, 2.4vw, 1.55rem);
-  line-height: 1.2;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 252, 245, 0.42);
-  background: none;
-  text-shadow:
-    0 0 1px rgba(255, 255, 255, 0.25),
-    0 1px 10px rgba(20, 16, 10, 0.2);
-  mix-blend-mode: soft-light;
-  animation: ghost-in 1.2s ease both;
+  min-width: 44px;
+  min-height: 44px;
 }
 
-.home-radio__ghost.is-lost {
-  top: 36%;
+.radio-scan-hit:focus-visible {
+  outline: 2px solid #ea9a26;
+  outline-offset: 3px;
 }
 
-.home-radio__ghost.is-found {
-  top: 40%;
-}
-
-@keyframes ghost-in {
-  from {
-    opacity: 0;
-    letter-spacing: 0.14em;
-    filter: blur(1.4px);
-  }
-  to {
-    opacity: 1;
-    letter-spacing: 0.06em;
-    filter: blur(0.35px);
-  }
+.home-radio.is-awaiting-scan .radio-scan-hit {
+  box-shadow: inset 0 0 0 1px rgba(234, 154, 38, 0.18);
 }
 
 .home-radio__fallback {
@@ -626,9 +623,23 @@ body {
   outline-offset: 3px;
 }
 
+.radio-lcd.is-prompt .radio-lcd-text {
+  animation: lcd-prompt 1.4s ease-in-out infinite;
+}
+
 .radio-lcd-text.is-seeking {
   opacity: 0.55;
   letter-spacing: 0.2em;
+}
+
+@keyframes lcd-prompt {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.42;
+  }
 }
 
 @media (max-width: 720px) {
@@ -642,26 +653,21 @@ body {
     letter-spacing: 0.14em;
   }
 
-  .home-radio__ghost {
-    top: 33%;
-    width: min(18rem, 86vw);
-    font-size: clamp(0.78rem, 3.6vw, 1.05rem);
-    mix-blend-mode: soft-light;
-    color: rgba(255, 250, 242, 0.55);
-    filter: blur(0.2px);
-    text-shadow:
-      0 0 1px rgba(255, 255, 255, 0.2),
-      0 1px 8px rgba(20, 14, 8, 0.35);
-  }
-
-  .home-radio__ghost.is-lost,
-  .home-radio__ghost.is-found {
-    top: 33%;
-  }
-
-  .home-radio__glass {
-    top: 12%;
-    height: 28%;
+  .home-radio__focus {
+    background:
+      radial-gradient(
+        ellipse 70% 48% at 50% 68%,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 45%,
+        rgba(8, 6, 4, 0.3) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(10, 8, 6, 0.18) 0%,
+        transparent 14%,
+        transparent 55%,
+        rgba(10, 8, 6, 0.32) 92%
+      );
   }
 
   .home-radio.is-travelling .home-radio__plate {
@@ -670,7 +676,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-radio__ghost {
+  .radio-lcd.is-prompt .radio-lcd-text {
     animation: none;
   }
   .home-radio__mirror,
