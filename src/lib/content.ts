@@ -58,11 +58,12 @@ export const HOME = {
   // editable — radio LCD script beats
   radio: {
     boot: "OFF_COURSE",
-    tuning: "TUNING…",
-    static: "···· SIGNAL ····",
+    tuning: "TUNING",
+    static: "···· ····",
     seek: "SEEKING",
     lockLost: "GET LOST",
     lockFound: "GET FOUND",
+    signalFound: "SIGNAL FOUND",
     settled: "TUNE IN",
   },
   // editable
