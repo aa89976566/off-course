@@ -9,7 +9,11 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import { HOME, STUDIO, WORLDS } from "@/lib/content";
+
+/** Matches `.home-loader` opacity transition — do not extend load duration. */
+const LOADER_EXIT_MS = 700;
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -403,6 +407,8 @@ export function HomeCanvas() {
   const postScanTimers = useRef<number[]>([]);
 
   const [ready, setReady] = useState(false);
+  const [loaderMounted, setLoaderMounted] = useState(true);
+  const [loaderPortal, setLoaderPortal] = useState(false);
   const [layout, setLayout] = useState<Layout | null>(null);
   const [phase, setPhase] = useState<Phase>("boot");
   const [lcdText, setLcdText] = useState<string>("");
@@ -426,6 +432,68 @@ export function HomeCanvas() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
   }, []);
+
+  /* Portal to body so section overflow/transforms cannot clip the overlay. */
+  useEffect(() => {
+    setLoaderPortal(true);
+  }, []);
+
+  /* Fullscreen loader: unmount after fade so body overflow is restored. */
+  useEffect(() => {
+    if (!ready) return;
+    const t = window.setTimeout(() => setLoaderMounted(false), LOADER_EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [ready]);
+
+  /* Lock document scroll + block underlying interaction only while loader exists. */
+  useEffect(() => {
+    if (!loaderMounted) return;
+
+    const root = document.documentElement;
+    const body = document.body;
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevRootOverscroll = root.style.overscrollBehavior;
+    const prevBodyOverscroll = body.style.overscrollBehavior;
+
+    root.classList.add("home-loader-active");
+    root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    root.style.overscrollBehavior = "none";
+    body.style.overscrollBehavior = "none";
+
+    const blockScroll = (e: Event) => {
+      e.preventDefault();
+    };
+    const blockKeys = (e: globalThis.KeyboardEvent) => {
+      const keys = [
+        "ArrowUp",
+        "ArrowDown",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        " ",
+        "Spacebar",
+      ];
+      if (keys.includes(e.key)) e.preventDefault();
+    };
+
+    document.addEventListener("wheel", blockScroll, { passive: false });
+    document.addEventListener("touchmove", blockScroll, { passive: false });
+    document.addEventListener("keydown", blockKeys);
+
+    return () => {
+      root.classList.remove("home-loader-active");
+      root.style.overflow = prevRootOverflow;
+      body.style.overflow = prevBodyOverflow;
+      root.style.overscrollBehavior = prevRootOverscroll;
+      body.style.overscrollBehavior = prevBodyOverscroll;
+      document.removeEventListener("wheel", blockScroll);
+      document.removeEventListener("touchmove", blockScroll);
+      document.removeEventListener("keydown", blockKeys);
+    };
+  }, [loaderMounted]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -721,6 +789,27 @@ export function HomeCanvas() {
 
   const lcdPrompt = phase === "await-scan";
 
+  const loaderNode = loaderMounted ? (
+    <div
+      className={`home-loader${ready ? " is-done" : ""}`}
+      role="status"
+      aria-live="polite"
+      aria-busy={!ready}
+      aria-hidden={ready}
+    >
+      <div className="home-loader__center">
+        <span className="home-loader__brand inline-flex items-baseline font-display text-lg uppercase tracking-[0.08em] text-black md:text-xl">
+          <span>OFF</span>
+          <span className="logo-underscore mx-[0.06em] cursor-blink" />
+          <span>COURSE</span>
+        </span>
+        <span className="home-loader__label text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+          Loading
+        </span>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <section
       ref={sectionRef}
@@ -885,23 +974,9 @@ export function HomeCanvas() {
         links. Escape skips. Reduced motion skips the sequence.
       </p>
 
-      <div
-        className={`pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-[var(--ed-paper)] transition-opacity duration-700 ${
-          ready ? "opacity-0" : "opacity-100"
-        }`}
-        aria-hidden={ready}
-      >
-        <div className="flex flex-col items-center gap-3">
-          <span className="inline-flex items-baseline font-display text-lg uppercase tracking-[0.08em] text-black md:text-xl">
-            <span>OFF</span>
-            <span className="logo-underscore mx-[0.06em] cursor-blink" />
-            <span>COURSE</span>
-          </span>
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
-            Loading
-          </span>
-        </div>
-      </div>
+      {loaderPortal && loaderNode
+        ? createPortal(loaderNode, document.body)
+        : loaderNode}
     </section>
   );
 }

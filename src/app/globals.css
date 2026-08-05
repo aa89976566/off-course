@@ -387,6 +387,58 @@ body:has(.case-study--found) .site-footer__link {
   color: var(--ed-ink);
 }
 
+/* —— Homepage loading screen (fullscreen viewport-locked overlay) —— */
+.home-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  width: 100vw;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  /* Safe-area padding centres type in the visible viewport without
+     shrinking the painted background (background-clip: border-box). */
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 0;
+  background: var(--ed-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  pointer-events: auto;
+  opacity: 1;
+  transition: opacity 0.7s ease;
+}
+
+.home-loader.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-loader__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+html.home-loader-active,
+html.home-loader-active body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
 /* —— Home radio hero — radio as protagonist —— */
 .home-radio__scene {
   position: absolute;
