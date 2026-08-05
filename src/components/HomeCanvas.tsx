@@ -445,22 +445,13 @@ export function HomeCanvas() {
     return () => window.clearTimeout(t);
   }, [ready]);
 
-  /* Lock document scroll + block underlying interaction only while loader exists. */
+  /* Lock document scroll + block underlying interaction only while loader exists.
+   * Class-based overflow avoids clobbering body overflow-x: clip via inline shorthand. */
   useEffect(() => {
     if (!loaderMounted) return;
 
     const root = document.documentElement;
-    const body = document.body;
-    const prevRootOverflow = root.style.overflow;
-    const prevBodyOverflow = body.style.overflow;
-    const prevRootOverscroll = root.style.overscrollBehavior;
-    const prevBodyOverscroll = body.style.overscrollBehavior;
-
     root.classList.add("home-loader-active");
-    root.style.overflow = "hidden";
-    body.style.overflow = "hidden";
-    root.style.overscrollBehavior = "none";
-    body.style.overscrollBehavior = "none";
 
     const blockScroll = (e: Event) => {
       e.preventDefault();
@@ -485,10 +476,6 @@ export function HomeCanvas() {
 
     return () => {
       root.classList.remove("home-loader-active");
-      root.style.overflow = prevRootOverflow;
-      body.style.overflow = prevBodyOverflow;
-      root.style.overscrollBehavior = prevRootOverscroll;
-      body.style.overscrollBehavior = prevBodyOverscroll;
       document.removeEventListener("wheel", blockScroll);
       document.removeEventListener("touchmove", blockScroll);
       document.removeEventListener("keydown", blockKeys);
