@@ -149,18 +149,23 @@ export function WorldSignalField({
     const paintField = (t: number) => {
       const img = fieldCtx.createImageData(simW, simH);
       const data = img.data;
-      const driftX = Math.sin(t * 0.07) * 0.35 + Math.sin(t * 0.031) * 0.2;
-      const driftY = Math.cos(t * 0.055) * 0.28 + Math.sin(t * 0.019) * 0.18;
-      const camX = Math.sin(t * 0.045) * 0.04;
-      const camY = Math.cos(t * 0.038) * 0.035;
+      // Time scale tuned so 5–10s shows clear morphological change
+      const t2 = t * 1.15;
+      const driftX = Math.sin(t2 * 0.11) * 0.55 + Math.sin(t2 * 0.047) * 0.32;
+      const driftY = Math.cos(t2 * 0.09) * 0.45 + Math.sin(t2 * 0.033) * 0.28;
+      const camX = Math.sin(t2 * 0.07) * 0.075;
+      const camY = Math.cos(t2 * 0.06) * 0.06;
 
-      // Volume centres slowly orbit
-      const v1x = 0.62 + Math.sin(t * 0.11) * 0.12 + camX;
-      const v1y = 0.38 + Math.cos(t * 0.09) * 0.1 + camY;
-      const v2x = 0.28 + Math.cos(t * 0.08) * 0.14 + camX * 0.6;
-      const v2y = 0.72 + Math.sin(t * 0.1) * 0.12 + camY * 0.6;
-      const v3x = 0.78 + Math.sin(t * 0.06 + 1.2) * 0.1;
-      const v3y = 0.68 + Math.cos(t * 0.07 + 0.4) * 0.1;
+      // Volume centres orbit with enough travel to read as evolution
+      const v1x = 0.62 + Math.sin(t2 * 0.19) * 0.22 + camX;
+      const v1y = 0.38 + Math.cos(t2 * 0.16) * 0.18 + camY;
+      const v2x = 0.28 + Math.cos(t2 * 0.14) * 0.24 + camX * 0.6;
+      const v2y = 0.72 + Math.sin(t2 * 0.17) * 0.2 + camY * 0.6;
+      const v3x = 0.78 + Math.sin(t2 * 0.12 + 1.2) * 0.18;
+      const v3y = 0.68 + Math.cos(t2 * 0.13 + 0.4) * 0.16;
+      // Cross-fade volume emphasis over ~8s
+      const pulseA = 0.55 + 0.45 * Math.sin(t2 * 0.35);
+      const pulseB = 0.55 + 0.45 * Math.cos(t2 * 0.28);
       const step = width < 500 ? 2 : 1;
 
       for (let y = 0; y < simH; y += step) {
@@ -172,13 +177,13 @@ export function WorldSignalField({
 
           // Low-frequency flow (layered sines — no external noise lib)
           const f1 =
-            Math.sin((px + driftX) * 4.2 + t * 0.55) *
-            Math.cos((py + driftY) * 3.1 - t * 0.42);
+            Math.sin((px + driftX) * 4.2 + t2 * 0.85) *
+            Math.cos((py + driftY) * 3.1 - t2 * 0.62);
           const f2 =
-            Math.sin((px * 2.4 - py * 1.7 + t * 0.28) * Math.PI) * 0.55;
+            Math.sin((px * 2.4 - py * 1.7 + t2 * 0.48) * Math.PI) * 0.55;
           const f3 =
-            Math.cos((px + py) * 5.5 - t * 0.33) *
-            Math.sin(px * 3.8 + t * 0.21) *
+            Math.cos((px + py) * 5.5 - t2 * 0.52) *
+            Math.sin(px * 3.8 + t2 * 0.38) *
             0.35;
           const flow = clamp01(0.5 + f1 * 0.28 + f2 * 0.22 + f3 * 0.18);
 
@@ -187,20 +192,24 @@ export function WorldSignalField({
           const d2 = (px - v2x) * (px - v2x) + dy2 * dy2;
           const dx3 = (px - v3x) * 1.2;
           const d3 = dx3 * dx3 + (py - v3y) * (py - v3y);
-          const vol1 = Math.exp(-d1 * (isAmbient ? 6 : 4.2));
-          const vol2 = Math.exp(-d2 * (isAmbient ? 7 : 5));
+          const vol1 = Math.exp(-d1 * (isAmbient ? 6 : 4.2)) * pulseA;
+          const vol2 = Math.exp(-d2 * (isAmbient ? 7 : 5)) * pulseB;
           const vol3 = Math.exp(-d3 * 8);
 
           let col = palette.base;
-          col = mix(col, palette.a, vol1 * (isAmbient ? 0.45 : 0.72));
+          col = mix(col, palette.a, vol1 * (isAmbient ? 0.45 : 0.78));
           col = mix(
             col,
             palette.b,
-            vol2 * (isAmbient ? 0.35 : 0.55) * (0.55 + flow * 0.45)
+            vol2 * (isAmbient ? 0.35 : 0.62) * (0.55 + flow * 0.45)
           );
-          col = mix(col, palette.c, vol3 * (isAmbient ? 0.25 : 0.4));
+          col = mix(col, palette.c, vol3 * (isAmbient ? 0.25 : 0.48));
           const ridge = Math.abs(f1) * Math.abs(f1);
-          col = mix(col, palette.edge, ridge * (theme === "found" ? 0.22 : 0.14));
+          col = mix(
+            col,
+            palette.edge,
+            ridge * (theme === "found" ? 0.32 : 0.2) * (0.7 + 0.3 * Math.sin(t2 * 0.5))
+          );
 
           const fall = theme === "found" ? 1 - py * 0.18 : 0.92 + py * 0.08;
           const r = Math.min(255, col[0] * fall);
@@ -228,17 +237,17 @@ export function WorldSignalField({
       // Refraction / displacement bands — evolve over 5–10s cycles
       bandCtx.clearRect(0, 0, simW, simH);
       const bandCount = isAmbient ? 10 : 18;
-      const amp = (isAmbient ? 2.2 : 4.5) * (1 + Math.sin(t * 0.4) * 0.25);
+      const amp = (isAmbient ? 3.2 : 7.5) * (1 + Math.sin(t * 0.55) * 0.4);
       for (let i = 0; i < bandCount; i++) {
         const y0 = Math.floor((i / bandCount) * simH);
         const y1 = Math.floor(((i + 1) / bandCount) * simH);
         const h = Math.max(1, y1 - y0);
         const phase =
-          t * (0.55 + i * 0.03) +
+          t * (0.85 + i * 0.05) +
           i * 0.7 +
-          Math.sin(t * 0.19 + i) * 0.8;
-        const shift = Math.sin(phase) * amp + Math.sin(phase * 1.7 + t) * amp * 0.35;
-        const skew = Math.cos(t * 0.27 + i * 0.4) * (isAmbient ? 0.4 : 0.9);
+          Math.sin(t * 0.32 + i) * 1.1;
+        const shift = Math.sin(phase) * amp + Math.sin(phase * 1.7 + t) * amp * 0.45;
+        const skew = Math.cos(t * 0.4 + i * 0.4) * (isAmbient ? 0.6 : 1.6);
         bandCtx.drawImage(
           field,
           0,
