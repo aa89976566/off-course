@@ -8,23 +8,11 @@ export const metadata: Metadata = {
   description: WORLDS.found.blurb,
 };
 
-const FEATURED = [
-  "jieshin-tseng",
-  "freds-cafe",
-  "boxing-training",
-  "ams-com",
-  "crespidia-coffee",
-  "shop-x-booking",
-] as const;
-
+/**
+ * GET FOUND index — published projects only, in authoritative data order:
+ * Jieshin → Fred's → Boxing → AMS → Crespidia → Shop X.
+ */
 export default function GetFoundPage() {
-  const found = getProjectsByStream("found");
-  const featured = FEATURED.map((slug) =>
-    found.find((p) => p.slug === slug)
-  ).filter(Boolean) as typeof found;
-  const featuredSlugs = new Set(featured.map((p) => p.slug));
-  const rest = found.filter((p) => !featuredSlugs.has(p.slug));
-  const projects = [...featured, ...rest];
-
+  const projects = getProjectsByStream("found");
   return <FoundIndex projects={projects} />;
 }

@@ -106,6 +106,12 @@ export function FoundCaseStudy({
               <dd>{project.stack}</dd>
             </div>
           )}
+          {project.materials && (
+            <div>
+              <dt>Materials</dt>
+              <dd>{project.materials}</dd>
+            </div>
+          )}
           {client && (
             <div>
               <dt>Client</dt>

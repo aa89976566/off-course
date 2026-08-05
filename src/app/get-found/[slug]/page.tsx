@@ -12,7 +12,10 @@ type Props = {
 };
 
 export function generateStaticParams() {
-  return getProjectsByStream("found").map((p) => ({ slug: p.slug }));
+  // Keep unpublished entries routable (data retained) without featuring them.
+  return getProjectsByStream("found", { includeUnpublished: true }).map(
+    (p) => ({ slug: p.slug })
+  );
 }
 
 export function generateMetadata({ params }: Props): Metadata {
@@ -24,6 +27,7 @@ export function generateMetadata({ params }: Props): Metadata {
 export default function GetFoundProjectPage({ params }: Props) {
   const project = getProject("found", params.slug);
   if (!project) notFound();
+  // Related strip: published peers only
   const others = getProjectsByStream("found").filter(
     (p) => p.slug !== project.slug
   );

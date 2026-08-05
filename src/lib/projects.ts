@@ -45,10 +45,20 @@ export type Project = {
   liveUrl?: string | null;
   pitch?: ProjectPitch | null;
   lost?: LostNarrative | null;
-  /** Optional editorial code override e.g. FOUND 001 */
+  /** Optional editorial code override e.g. FOUND 001 — prefer stream order */
   code?: string | null;
   /** Opening artwork paths (non-mockup) for case studies */
   artwork?: string[] | null;
+  /**
+   * When false, kept in data but excluded from public world indexes,
+   * adjacency, and codes. Default true when omitted.
+   */
+  published?: boolean;
+};
+
+export type ProjectQuery = {
+  /** Include unpublished / archive-only entries. Default false. */
+  includeUnpublished?: boolean;
 };
 
 export const STREAM_META: Record<
@@ -71,28 +81,49 @@ export const STREAM_META: Record<
   },
 };
 
-/** Editorial project code — LOST 001 / FOUND 001 from stream order. */
+function isPublished(project: Project): boolean {
+  return project.published !== false;
+}
+
+/** Editorial project code — LOST 001 / FOUND 001 from published stream order. */
 export function getProjectCode(project: Project): string {
   if (project.code) return project.code;
   const list = getProjectsByStream(project.stream);
   const index = list.findIndex((p) => p.slug === project.slug);
-  const n = String(Math.max(index, 0) + 1).padStart(3, "0");
+  if (index === -1) {
+    // Unpublished / off-sequence — still emit a stable label from full stream
+    const full = getProjectsByStream(project.stream, {
+      includeUnpublished: true,
+    });
+    const i = full.findIndex((p) => p.slug === project.slug);
+    const n = String(Math.max(i, 0) + 1).padStart(3, "0");
+    return `${project.stream === "lost" ? "LOST" : "FOUND"} ${n}`;
+  }
+  const n = String(index + 1).padStart(3, "0");
   return `${project.stream === "lost" ? "LOST" : "FOUND"} ${n}`;
 }
 
-export function getAllProjects(): Project[] {
-  return projectsData.projects as Project[];
+export function getAllProjects(query: ProjectQuery = {}): Project[] {
+  const all = projectsData.projects as Project[];
+  if (query.includeUnpublished) return all;
+  return all.filter(isPublished);
 }
 
-export function getProjectsByStream(stream: ProjectStream): Project[] {
-  return getAllProjects().filter((p) => p.stream === stream);
+export function getProjectsByStream(
+  stream: ProjectStream,
+  query: ProjectQuery = {}
+): Project[] {
+  return getAllProjects(query).filter((p) => p.stream === stream);
 }
 
 export function getProject(
   stream: ProjectStream,
   slug: string
 ): Project | undefined {
-  return getProjectsByStream(stream).find((p) => p.slug === slug);
+  // Allow direct case routes for unpublished entries still in data
+  return getProjectsByStream(stream, { includeUnpublished: true }).find(
+    (p) => p.slug === slug
+  );
 }
 
 export function getAdjacentProjects(
