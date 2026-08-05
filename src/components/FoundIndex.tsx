@@ -6,6 +6,9 @@ import { WORLDS } from "@/lib/content";
 import { getProjectCode, type Project } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
 import { WorldChapterRail, type WorldChapter } from "@/components/WorldChapterRail";
+import { WorldSignalField } from "@/components/WorldSignalField";
+import { WorldProjectStage } from "@/components/WorldProjectStage";
+import { WorldCapsReveal } from "@/components/WorldCapsReveal";
 
 type FoundIndexProps = {
   projects: Project[];
@@ -23,7 +26,7 @@ const CAPABILITIES = [
 
 /**
  * GET FOUND index — quiet editorial frame, chapter rail,
- * oversized opening, typographic capabilities, one project per viewport.
+ * Canvas CGI opening, typographic capabilities, one project per viewport.
  */
 export function FoundIndex({ projects }: FoundIndexProps) {
   const chapters: WorldChapter[] = [
@@ -44,7 +47,7 @@ export function FoundIndex({ projects }: FoundIndexProps) {
         className="world-screen world-screen--open"
         aria-labelledby="found-open-title"
       >
-        <div className="world-open__field" aria-hidden="true" />
+        <WorldSignalField theme="found" intensity="opening" />
         <div className="world-open__content">
           <p className="world-open__meta">Frequency locked · Digital</p>
           <h1 id="found-open-title" className="world-open__title">
@@ -60,20 +63,22 @@ export function FoundIndex({ projects }: FoundIndexProps) {
         className="world-screen world-screen--caps world-tone--paper"
         aria-labelledby="found-caps-title"
       >
-        <p className="world-caps__meta">Capabilities</p>
-        <h2 id="found-caps-title" className="sr-only">
-          Digital access
-        </h2>
-        <ul className="world-caps__list">
-          {CAPABILITIES.map((item) => (
-            <li
-              key={item.label}
-              className={`world-caps__line${item.emphasis ? " is-strong" : " is-soft"}`}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
+        <WorldCapsReveal>
+          <p className="world-caps__meta">Capabilities</p>
+          <h2 id="found-caps-title" className="sr-only">
+            Digital access
+          </h2>
+          <ul className="world-caps__list">
+            {CAPABILITIES.map((item) => (
+              <li
+                key={item.label}
+                className={`world-caps__line${item.emphasis ? " is-strong" : " is-soft"}`}
+              >
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </WorldCapsReveal>
       </section>
 
       {projects.map((project, i) => {
@@ -89,42 +94,44 @@ export function FoundIndex({ projects }: FoundIndexProps) {
             className={`world-screen world-screen--project world-tone--${tone} world-project--${side}`}
             aria-labelledby={`found-title-${project.slug}`}
           >
-            <Link
-              href={`/get-found/${project.slug}`}
-              className="world-project__link"
-            >
-              <div className="world-project__frame">
-                <Image
-                  src={assetPath(src)}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 899px) 92vw, 58vw"
-                  priority={i < 2}
-                />
-              </div>
-              <div className="world-project__type">
-                <p className="world-project__code">
-                  {code}
-                  <span aria-hidden> · </span>
-                  {project.type}
-                  <span aria-hidden> · </span>
-                  {project.year}
-                </p>
-                <h2
-                  id={`found-title-${project.slug}`}
-                  className="world-project__title"
-                >
-                  {project.title}
-                </h2>
-                <p className="world-project__detail">
-                  {project.stack ||
-                    project.location?.split(",")[0] ||
-                    "Digital place"}
-                </p>
-                <span className="world-project__cta">Open case</span>
-              </div>
-            </Link>
+            <WorldProjectStage theme="found">
+              <Link
+                href={`/get-found/${project.slug}`}
+                className="world-project__link"
+              >
+                <div className="world-project__frame">
+                  <Image
+                    src={assetPath(src)}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 899px) 92vw, 58vw"
+                    priority={i < 2}
+                  />
+                </div>
+                <div className="world-project__type">
+                  <p className="world-project__code">
+                    {code}
+                    <span aria-hidden> · </span>
+                    {project.type}
+                    <span aria-hidden> · </span>
+                    {project.year}
+                  </p>
+                  <h2
+                    id={`found-title-${project.slug}`}
+                    className="world-project__title"
+                  >
+                    {project.title}
+                  </h2>
+                  <p className="world-project__detail">
+                    {project.stack ||
+                      project.location?.split(",")[0] ||
+                      "Digital place"}
+                  </p>
+                  <span className="world-project__cta">Open case</span>
+                </div>
+              </Link>
+            </WorldProjectStage>
           </section>
         );
       })}

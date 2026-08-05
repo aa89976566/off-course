@@ -1181,45 +1181,24 @@ body:has(.case-study--found) .site-footer__link {
   background: var(--world-paper);
 }
 
-.world-open__field {
+/* Canvas CGI signal field — presentational only */
+.world-signal {
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
-.world-ed--found .world-open__field {
-  background:
-    radial-gradient(ellipse 55% 50% at 72% 38%, rgba(61, 255, 168, 0.16) 0%, transparent 62%),
-    radial-gradient(ellipse 70% 60% at 18% 80%, rgba(40, 90, 120, 0.35) 0%, transparent 70%),
-    linear-gradient(160deg, var(--world-field-a) 0%, var(--world-field-b) 100%);
-}
-
-.world-ed--lost .world-open__field {
-  background:
-    radial-gradient(ellipse 50% 45% at 78% 30%, rgba(232, 90, 36, 0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 55% at 20% 85%, rgba(180, 140, 90, 0.22) 0%, transparent 70%),
-    linear-gradient(165deg, var(--world-field-a) 0%, var(--world-field-b) 100%);
-  opacity: 1;
-}
-
-.world-ed--lost .world-open__field::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  background-image:
-    repeating-linear-gradient(
-      -18deg,
-      transparent,
-      transparent 11px,
-      rgba(26, 24, 20, 0.35) 11px,
-      rgba(26, 24, 20, 0.35) 12px
-    );
+.world-signal__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .world-open__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   padding:
     calc(var(--headerHeight) + 2rem)
@@ -1352,7 +1331,65 @@ body:has(.case-study--found) .site-footer__link {
   overflow: hidden;
   background: var(--world-paper-2);
   box-shadow: 0 0 0 1px var(--world-line);
+  will-change: transform;
+  transition: none;
 }
+
+/* Project stage — depth + sheen + signal-sweep reveal */
+.world-stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100svh;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.world-stage.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+.world-stage__sheen {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.world-ed--lost .world-stage__sheen {
+  mix-blend-mode: soft-light;
+}
+
+.world-caps-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.world-caps-reveal.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+.world-caps-reveal .world-caps__line {
+  transform: translateY(0.35em);
+  opacity: 0.35;
+  transition:
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s ease;
+}
+
+.world-caps-reveal.is-revealed .world-caps__line {
+  transform: none;
+  opacity: 1;
+}
+
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(1) { transition-delay: 0.05s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(2) { transition-delay: 0.1s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(3) { transition-delay: 0.15s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(4) { transition-delay: 0.2s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(5) { transition-delay: 0.25s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(6) { transition-delay: 0.3s; }
+.world-caps-reveal.is-revealed .world-caps__line:nth-child(7) { transition-delay: 0.35s; }
 
 .world-project--right .world-project__frame {
   right: clamp(1.5rem, 8vw, 7rem);
@@ -1366,7 +1403,7 @@ body:has(.case-study--found) .site-footer__link {
 
 .world-project__type {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1637,6 +1674,23 @@ body:has(.case-study--found) .site-footer__link {
   .world-rail__mark,
   .world-rail__label {
     transition: none;
+  }
+
+  .world-stage,
+  .world-caps-reveal,
+  .world-caps-reveal .world-caps__line {
+    transition: none !important;
+    clip-path: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .world-project__frame {
+    will-change: auto;
+  }
+
+  .world-stage__sheen {
+    display: none;
   }
 }
 

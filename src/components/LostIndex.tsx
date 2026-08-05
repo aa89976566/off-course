@@ -6,6 +6,9 @@ import { WORLDS } from "@/lib/content";
 import { getProjectCode, type Project } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
 import { WorldChapterRail, type WorldChapter } from "@/components/WorldChapterRail";
+import { WorldSignalField } from "@/components/WorldSignalField";
+import { WorldProjectStage } from "@/components/WorldProjectStage";
+import { WorldCapsReveal } from "@/components/WorldCapsReveal";
 
 type LostIndexProps = {
   projects: Project[];
@@ -23,7 +26,7 @@ const CAPABILITIES = [
 
 /**
  * GET LOST index — shared editorial system with FOUND;
- * warm paper / road-orange / physical texture.
+ * Canvas CGI opening; warm paper / road-orange / physical texture.
  */
 export function LostIndex({ projects }: LostIndexProps) {
   const chapters: WorldChapter[] = [
@@ -44,7 +47,7 @@ export function LostIndex({ projects }: LostIndexProps) {
         className="world-screen world-screen--open"
         aria-labelledby="lost-open-title"
       >
-        <div className="world-open__field" aria-hidden="true" />
+        <WorldSignalField theme="lost" intensity="opening" />
         <div className="world-open__content">
           <p className="world-open__meta">Distance · Off-map · Physical</p>
           <h1 id="lost-open-title" className="world-open__title">
@@ -60,20 +63,22 @@ export function LostIndex({ projects }: LostIndexProps) {
         className="world-screen world-screen--caps world-tone--deep"
         aria-labelledby="lost-caps-title"
       >
-        <p className="world-caps__meta">Capabilities</p>
-        <h2 id="lost-caps-title" className="sr-only">
-          Physical expression
-        </h2>
-        <ul className="world-caps__list">
-          {CAPABILITIES.map((item) => (
-            <li
-              key={item.label}
-              className={`world-caps__line${item.emphasis ? " is-strong" : " is-soft"}`}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
+        <WorldCapsReveal>
+          <p className="world-caps__meta">Capabilities</p>
+          <h2 id="lost-caps-title" className="sr-only">
+            Physical expression
+          </h2>
+          <ul className="world-caps__list">
+            {CAPABILITIES.map((item) => (
+              <li
+                key={item.label}
+                className={`world-caps__line${item.emphasis ? " is-strong" : " is-soft"}`}
+              >
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </WorldCapsReveal>
       </section>
 
       {projects.map((project, i) => {
@@ -88,42 +93,44 @@ export function LostIndex({ projects }: LostIndexProps) {
             className={`world-screen world-screen--project world-tone--${tone} world-project--${side}`}
             aria-labelledby={`lost-title-${project.slug}`}
           >
-            <Link
-              href={`/get-lost/${project.slug}`}
-              className="world-project__link"
-            >
-              <div className="world-project__frame">
-                <Image
-                  src={assetPath(project.cover)}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 899px) 92vw, 58vw"
-                  priority={i < 2}
-                />
-              </div>
-              <div className="world-project__type">
-                <p className="world-project__code">
-                  {code}
-                  <span aria-hidden> · </span>
-                  {project.type}
-                  <span aria-hidden> · </span>
-                  {project.year}
-                </p>
-                <h2
-                  id={`lost-title-${project.slug}`}
-                  className="world-project__title"
-                >
-                  {project.title}
-                </h2>
-                <p className="world-project__detail">
-                  {project.materials ||
-                    project.location?.split(",")[0] ||
-                    "Physical work"}
-                </p>
-                <span className="world-project__cta">Open case</span>
-              </div>
-            </Link>
+            <WorldProjectStage theme="lost">
+              <Link
+                href={`/get-lost/${project.slug}`}
+                className="world-project__link"
+              >
+                <div className="world-project__frame">
+                  <Image
+                    src={assetPath(project.cover)}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 899px) 92vw, 58vw"
+                    priority={i < 2}
+                  />
+                </div>
+                <div className="world-project__type">
+                  <p className="world-project__code">
+                    {code}
+                    <span aria-hidden> · </span>
+                    {project.type}
+                    <span aria-hidden> · </span>
+                    {project.year}
+                  </p>
+                  <h2
+                    id={`lost-title-${project.slug}`}
+                    className="world-project__title"
+                  >
+                    {project.title}
+                  </h2>
+                  <p className="world-project__detail">
+                    {project.materials ||
+                      project.location?.split(",")[0] ||
+                      "Physical work"}
+                  </p>
+                  <span className="world-project__cta">Open case</span>
+                </div>
+              </Link>
+            </WorldProjectStage>
           </section>
         );
       })}
