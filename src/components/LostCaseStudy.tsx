@@ -34,7 +34,7 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
     `${project.type} — ideas becoming physical.`;
 
   return (
-    <article className="case-study case-study--lost">
+    <article className="case-study case-study--lost world-case">
       <header className="case-study__header">
         <p className="ed-meta">
           {code}

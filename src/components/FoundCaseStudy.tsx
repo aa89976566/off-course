@@ -71,7 +71,9 @@ export function FoundCaseStudy({
     `${project.type} — crafted so the work can be found.`;
 
   return (
-    <article className={`case-study${isArtistLed ? " case-study--artist" : ""}`}>
+    <article
+      className={`case-study case-study--found world-case${isArtistLed ? " case-study--artist" : ""}`}
+    >
       {/* SPREAD 1 — Title: type mass; optional narrow crop only */}
       <header className="spread spread--case-title">
         <p className="ed-meta">
