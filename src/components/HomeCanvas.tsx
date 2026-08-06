@@ -783,7 +783,7 @@ export function HomeCanvas() {
           />
           <source
             media="(min-aspect-ratio: 1/1)"
-            srcSet={`${BASE}/hero-car-road-wide.png?v=${HERO_V}`}
+            srcSet={`${BASE}/hero-car-road-wide.jpg?v=${HERO_V}`}
           />
           <source
             srcSet={`${BASE}/hero-car-road.webp?v=${HERO_V}`}
