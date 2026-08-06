@@ -30,6 +30,8 @@ jobs:
           STATIC_EXPORT: "1"
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build:static
+      - name: Drop multi-MB PNG from publish set
+        run: rm -f out/hero-car-road-wide.png
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
