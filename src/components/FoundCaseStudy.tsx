@@ -70,11 +70,25 @@ export function FoundCaseStudy({
     project.summary?.split("\n\n")[0] ||
     `${project.type} — crafted so the work can be found.`;
 
+  const openingSrc = artworkSrc || allSrc[0] || project.cover;
+
   return (
     <article
       className={`case-study case-study--found world-case${isArtistLed ? " case-study--artist" : ""}`}
     >
-      {/* SPREAD 1 — Title: type mass; optional narrow crop only */}
+      {/* Opening — full-bleed media first */}
+      <figure className="spread spread--case-art case-study__bleed--open">
+        <Image
+          src={assetPath(openingSrc)}
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+      </figure>
+
+      {/* Title + metadata grid */}
       <header className="spread spread--case-title">
         <p className="ed-meta">
           {code}
@@ -102,7 +116,7 @@ export function FoundCaseStudy({
           </div>
           {project.stack && (
             <div>
-              <dt>Built with</dt>
+              <dt>Role / stack</dt>
               <dd>{project.stack}</dd>
             </div>
           )}
@@ -119,35 +133,9 @@ export function FoundCaseStudy({
             </div>
           )}
         </dl>
-        {isArtistLed && artworkSrc && (
-          <div className="spread-case-title__sliver" aria-hidden>
-            <Image
-              src={assetPath(artworkSrc)}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="120px"
-              priority
-            />
-          </div>
-        )}
       </header>
 
-      {/* SPREAD 2 — Artwork environment */}
-      {isArtistLed && artworkSrc && (
-        <figure className="spread spread--case-art">
-          <Image
-            src={assetPath(artworkSrc)}
-            alt=""
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-        </figure>
-      )}
-
-      {/* SPREAD 3 — Unequal detail crops */}
+      {/* Paired / detail media */}
       {isArtistLed && details.length > 0 && (
         <section className="spread spread--case-details" aria-label="Details">
           {details.map((src, i) => (
@@ -167,20 +155,6 @@ export function FoundCaseStudy({
             </figure>
           ))}
         </section>
-      )}
-
-      {/* Non-artist cases: opening bleed from first visual */}
-      {!isArtistLed && (
-        <figure className="spread spread--case-art">
-          <Image
-            src={assetPath(allSrc[0] || project.cover)}
-            alt=""
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-        </figure>
       )}
 
       {/* SPREAD 4 — Context text-led */}
@@ -278,9 +252,12 @@ export function FoundCaseStudy({
           )}
         </div>
 
-        <nav className="spread-case-close__next" aria-label="Next on route">
+        <nav className="spread-case-close__next" aria-label="Case navigation">
           <Link href="/get-found" className="ed-text-link">
-            ← GET FOUND
+            ← Back to GET FOUND
+          </Link>
+          <Link href="/archive" className="ed-text-link">
+            Archive
           </Link>
           {next ? (
             <Link

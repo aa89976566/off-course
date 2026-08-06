@@ -12,7 +12,7 @@ import {
 import { HOME, STUDIO, WORLDS } from "@/lib/content";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
-const HERO_V = "16";
+const HERO_V = "17";
 
 const PRESETS = [
   { id: 1, href: "/get-lost", station: "GET LOST" },
@@ -61,15 +61,19 @@ const PORTRAIT: Artboard = {
   roadEdgeFar: 0.048,
   roadEdgeNear: 0.318,
   display: { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 },
-  buttonCx: [0.346, 0.394, 0.441, 0.49, 0.533, 0.584],
-  buttonCy: 0.664,
-  buttonW: 0.04,
-  buttonH: 0.03,
-  scan: { x0: 0.598, y0: 0.575, x1: 0.745, y1: 0.685 },
+  /** Preset centres from digit bright-pixel gap midpoints under LCD. */
+  buttonCx: [0.348, 0.392, 0.44, 0.488, 0.537, 0.582],
+  buttonCy: 0.663,
+  buttonW: 0.042,
+  buttonH: 0.032,
+  scan: { x0: 0.6, y0: 0.62, x1: 0.72, y1: 0.7 },
   mirror: { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 },
 };
 
-/** Wide 16:9 hero (1672×941) — desktops / landscape. */
+/**
+ * Wide 16:9 hero (1672×941) — desktops / landscape.
+ * Coords from connected-component LCD + digit bright-pixel gaps + fingertip.
+ */
 const WIDE: Artboard = {
   iw: 1672,
   ih: 941,
@@ -79,13 +83,14 @@ const WIDE: Artboard = {
   dashHalfNear: 0.014,
   roadEdgeFar: 0.02,
   roadEdgeNear: 0.16,
-  display: { x0: 0.458, y0: 0.68, x1: 0.56, y1: 0.736 },
-  buttonCx: [0.463, 0.482, 0.5, 0.518, 0.536, 0.555],
-  buttonCy: 0.777,
+  display: { x0: 0.453, y0: 0.678, x1: 0.561, y1: 0.735 },
+  /** Preset centres from digit bright-pixel gap midpoints under LCD. */
+  buttonCx: [0.457, 0.476, 0.496, 0.516, 0.537, 0.556],
+  buttonCy: 0.757,
   buttonW: 0.018,
-  buttonH: 0.028,
-  scan: { x0: 0.544, y0: 0.723, x1: 0.64, y1: 0.81 },
-  mirror: { x0: 0.43, y0: 0.015, x1: 0.57, y1: 0.135 },
+  buttonH: 0.03,
+  scan: { x0: 0.548, y0: 0.71, x1: 0.635, y1: 0.79 },
+  mirror: { x0: 0.43, y0: 0.02, x1: 0.57, y1: 0.14 },
 };
 
 /**
@@ -874,16 +879,18 @@ export function HomeCanvas() {
 
         {layout && (
           <nav
-            className={`absolute inset-0 z-[12]${
+            className={`pointer-events-none absolute inset-0 z-[12]${
               seekingVisual ? " radio-seeking" : ""
-            }${interactive ? "" : " pointer-events-none"}`}
+            }`}
             aria-label="Radio frequency presets 1 to 6"
           >
             {PRESETS.map((ch, i) => (
               <Link
                 key={ch.id}
                 href={ch.href}
-                className="radio-channel absolute block rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ea9a26]"
+                className={`radio-channel absolute block rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ea9a26]${
+                  interactive ? " pointer-events-auto" : " pointer-events-none"
+                }`}
                 style={
                   {
                     ...layout.buttons[i],

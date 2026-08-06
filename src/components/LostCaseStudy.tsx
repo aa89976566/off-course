@@ -33,8 +33,33 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
     project.summary ||
     `${project.type} — ideas becoming physical.`;
 
+  /** Shared mural bytes — do not present as unique verified deliverables. */
+  const archivePending = [
+    "shoreditch-facade",
+    "borough-market-wall",
+    "camden-interior",
+    "brixton-arcade",
+  ].includes(project.slug);
+
   return (
     <article className="case-study case-study--lost world-case">
+      <figure className="case-study__bleed case-study__bleed--lost case-study__bleed--open">
+        <Image
+          src={assetPath(hero)}
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        {archivePending && (
+          <div className="world-gallery__pending" aria-hidden>
+            <span>ARCHIVE MATERIAL PENDING</span>
+          </div>
+        )}
+        <figcaption className="ed-meta">Opening · site documentation</figcaption>
+      </figure>
+
       <header className="case-study__header">
         <p className="ed-meta">
           {code}
@@ -87,43 +112,30 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
         </section>
       )}
 
-      {/* Full-scale final work */}
-      <figure className="case-study__bleed case-study__bleed--lost">
-        <Image
-          src={assetPath(hero)}
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-        <figcaption className="ed-meta">Final work · full scale</figcaption>
-      </figure>
-
       {/* Material / process details — imperfect crops, texture */}
-      {details.length > 0 && (
-        <section
-          className="case-study__material"
-          aria-label="Material and process"
-        >
-          <div className="case-study__block">
-            <p className="ed-meta">Surface</p>
-            <h2 className="ed-section">Material and gesture</h2>
-            {project.materials && (
-              <p className="ed-body">{project.materials}.</p>
-            )}
-            {narrative?.process ? (
-              <p className="ed-body">{narrative.process}</p>
-            ) : (
-              <p className="ed-meta case-study__gap">
-                Process notes — content pending
-              </p>
-            )}
-          </div>
+      <section
+        className="case-study__material"
+        aria-label="Material and process"
+      >
+        <div className="case-study__block">
+          <p className="ed-meta">Surface</p>
+          <h2 className="ed-section">Material and gesture</h2>
+          {project.materials && (
+            <p className="ed-body">{project.materials}.</p>
+          )}
+          {narrative?.process ? (
+            <p className="ed-body">{narrative.process}</p>
+          ) : (
+            <p className="ed-meta case-study__gap">
+              Process notes — CONTENT PENDING
+            </p>
+          )}
+        </div>
+        {details.length > 0 ? (
           <div className="case-study__detail-grid">
             {details.map((src, i) => (
               <figure
-                key={src}
+                key={`${src}-${i}`}
                 className={`case-study__detail case-study__detail--${i % 3}`}
               >
                 <Image
@@ -134,11 +146,18 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
                   className="h-auto w-full object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
+                {archivePending && (
+                  <figcaption className="ed-meta case-study__gap">
+                    Archive frame · CONTENT PENDING
+                  </figcaption>
+                )}
               </figure>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="ed-meta case-study__gap">Media sequence — CONTENT PENDING</p>
+        )}
+      </section>
 
       {(narrative?.relationship || client) && (
         <section className="case-study__block">
@@ -148,7 +167,7 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
             {narrative?.relationship ||
               (client
                 ? `Made with ${client}.`
-                : "Relationship notes — content pending")}
+                : "Relationship notes — CONTENT PENDING")}
           </p>
         </section>
       )}
@@ -160,7 +179,7 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
           <p className="ed-body">{narrative.outcome}</p>
         ) : (
           <p className="ed-meta case-study__gap">
-            Outcome notes — content pending (no invented metrics)
+            Outcome notes — CONTENT PENDING (no invented metrics)
           </p>
         )}
       </section>
@@ -175,9 +194,12 @@ export function LostCaseStudy({ project, next, prev }: LostCaseStudyProps) {
           </p>
         </div>
 
-        <nav className="case-study__next" aria-label="Next on route">
+        <nav className="case-study__next" aria-label="Case navigation">
           <Link href="/get-lost" className="ed-text-link">
-            ← GET LOST
+            ← Back to GET LOST
+          </Link>
+          <Link href="/archive" className="ed-text-link">
+            Archive
           </Link>
           {next ? (
             <Link

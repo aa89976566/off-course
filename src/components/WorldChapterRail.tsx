@@ -30,7 +30,7 @@ export function WorldChapterRail({ chapters, theme }: Props) {
           setActive(visible[0].target.id);
         }
       },
-      { rootMargin: "-35% 0px -45% 0px", threshold: [0.15, 0.35, 0.55] }
+      { rootMargin: "-30% 0px -45% 0px", threshold: [0.12, 0.35, 0.55] }
     );
 
     nodes.forEach((n) => observer.observe(n));

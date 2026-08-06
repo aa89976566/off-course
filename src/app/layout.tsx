@@ -33,6 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivoBlack.variable} ${spaceGrotesk.variable}`}>
       <body className="flex min-h-screen flex-col bg-[var(--ed-paper)] font-sans text-[var(--ed-ink)] antialiased">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <SiteHeader />
         <MainShell>{children}</MainShell>
         <Footer />
