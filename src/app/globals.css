@@ -771,10 +771,16 @@ body:has(.case-study--found) .site-footer__link {
   background: transparent;
 }
 
-.radio-channel:hover,
+/* No filled highlight tiles — diegetic hits stay invisible except focus-visible */
+.radio-channel:hover {
+  background: transparent;
+  box-shadow: none;
+}
+
 .radio-channel:focus-visible {
-  background: rgba(255, 200, 40, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(234, 154, 38, 0.35);
+  background: transparent;
+  outline: 2px solid #ea9a26;
+  outline-offset: 2px;
 }
 
 .radio-seeking .radio-channel {
@@ -785,12 +791,11 @@ body:has(.case-study--found) .site-footer__link {
 @keyframes radio-seek-pulse {
   0%,
   100% {
-    background: transparent;
-    box-shadow: none;
+    outline-color: transparent;
   }
   40% {
-    background: rgba(255, 200, 40, 0.16);
-    box-shadow: inset 0 0 0 1px rgba(234, 154, 38, 0.4);
+    outline: 1px solid rgba(234, 154, 38, 0.55);
+    outline-offset: 1px;
   }
 }
 
