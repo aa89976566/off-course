@@ -12,9 +12,7 @@ import {
 import { HOME, STUDIO, WORLDS } from "@/lib/content";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
-const IW = 1024;
-const IH = 1536;
+const HERO_V = "16";
 
 const PRESETS = [
   { id: 1, href: "/get-lost", station: "GET LOST" },
@@ -25,16 +23,6 @@ const PRESETS = [
   { id: 6, href: "mailto:hello@offcourse.studio", station: "HELLO" },
 ] as const;
 
-/** Road / scene axis in image space (vanishing point x). */
-const SCENE_CX = 0.467;
-const ROAD_Y0 = 0.338;
-const ROAD_Y1 = 0.455;
-/** Screen half-width of centre dash at the near lip (image-normalized). */
-const DASH_HALF_NEAR = 0.028;
-/** Full road edge half-widths — clip mask only. */
-const ROAD_EDGE_FAR = 0.048;
-const ROAD_EDGE_NEAR = 0.318;
-
 /** Pseudo-3D camera: world Z grows away from the cabin. */
 const ROAD_Z_NEAR = 1;
 const ROAD_Z_FAR = 9;
@@ -42,24 +30,71 @@ const ROAD_Z_FAR = 9;
 const ROAD_DASH_LEN = 0.42;
 const ROAD_DASH_GAP = 0.58;
 
-const DISPLAY = { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 };
-const BUTTON_CX = [0.346, 0.394, 0.441, 0.49, 0.533, 0.584];
-const BUTTON_CY = 0.664;
-const BUTTON_W = 0.04;
-const BUTTON_H = 0.03;
+type NormBox = { x0: number; y0: number; x1: number; y1: number };
 
-/** SCAN button — generous hit over the printed SCAN + fingertip. */
-const SCAN = { x0: 0.598, y0: 0.575, x1: 0.745, y1: 0.685 };
+type Artboard = {
+  iw: number;
+  ih: number;
+  sceneCx: number;
+  roadY0: number;
+  roadY1: number;
+  dashHalfNear: number;
+  roadEdgeFar: number;
+  roadEdgeNear: number;
+  display: NormBox;
+  buttonCx: number[];
+  buttonCy: number;
+  buttonW: number;
+  buttonH: number;
+  scan: NormBox;
+  mirror: NormBox;
+};
 
-const MIRROR = { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 };
+/** Portrait hero (1024×1536) — phones / tall viewports. */
+const PORTRAIT: Artboard = {
+  iw: 1024,
+  ih: 1536,
+  sceneCx: 0.467,
+  roadY0: 0.338,
+  roadY1: 0.455,
+  dashHalfNear: 0.028,
+  roadEdgeFar: 0.048,
+  roadEdgeNear: 0.318,
+  display: { x0: 0.328, y0: 0.587, x1: 0.605, y1: 0.651 },
+  buttonCx: [0.346, 0.394, 0.441, 0.49, 0.533, 0.584],
+  buttonCy: 0.664,
+  buttonW: 0.04,
+  buttonH: 0.03,
+  scan: { x0: 0.598, y0: 0.575, x1: 0.745, y1: 0.685 },
+  mirror: { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 },
+};
+
+/** Wide 16:9 hero (1672×941) — desktops / landscape. */
+const WIDE: Artboard = {
+  iw: 1672,
+  ih: 941,
+  sceneCx: 0.507,
+  roadY0: 0.355,
+  roadY1: 0.52,
+  dashHalfNear: 0.014,
+  roadEdgeFar: 0.02,
+  roadEdgeNear: 0.16,
+  display: { x0: 0.458, y0: 0.68, x1: 0.56, y1: 0.736 },
+  buttonCx: [0.463, 0.482, 0.5, 0.518, 0.536, 0.555],
+  buttonCy: 0.777,
+  buttonW: 0.018,
+  buttonH: 0.028,
+  scan: { x0: 0.544, y0: 0.723, x1: 0.64, y1: 0.81 },
+  mirror: { x0: 0.43, y0: 0.015, x1: 0.57, y1: 0.135 },
+};
 
 /**
- * Crop bias — radio is the story.
- * Keep rear-view mirror in frame, weight the LCD, leave road as environment.
- * (Not a naked scale of the radio alone.)
+ * Landscape / square → wide art. Tall phones & portrait tablets → portrait art.
+ * Matches <picture> min-aspect-ratio: 1/1.
  */
-const FOCUS_IMG_Y = 0.62;
-const FOCUS_VIEW_Y = 0.64;
+function preferWide(vw: number, vh: number) {
+  return vw / vh >= 1;
+}
 
 type Box = { left: string; top: string; width: string; height: string };
 
@@ -76,7 +111,6 @@ type Phase =
   | "settle";
 
 type Layout = {
-  image: { left: string; top: string; width: string; height: string };
   display: Box;
   buttons: Box[];
   mirror: Box;
@@ -95,20 +129,21 @@ type Layout = {
   dh: number;
   vw: number;
   vh: number;
-  wideFit: boolean;
+  iw: number;
+  ih: number;
+  useWide: boolean;
 };
 
+/** True object-fit: cover + object-position: center — no blur sidebars / plate. */
 function coverLayout(vw: number, vh: number): Layout {
-  const wideFit = vw / vh > 1.05;
-  // Fit mirror → radio → road. Slightly tighter than contain so the LCD reads first.
-  const scale = wideFit
-    ? vh / (IH * 0.9)
-    : Math.max(vw / IW, vh / IH) * 1.08;
-  const dw = IW * scale;
-  const dh = IH * scale;
-  const dx = vw / 2 - SCENE_CX * dw;
-  let dy = FOCUS_VIEW_Y * vh - FOCUS_IMG_Y * dh;
-  dy = Math.min(0, Math.max(vh - dh, dy));
+  const useWide = preferWide(vw, vh);
+  const art = useWide ? WIDE : PORTRAIT;
+  const { iw, ih } = art;
+  const scale = Math.max(vw / iw, vh / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  const dx = (vw - dw) / 2;
+  const dy = (vh - dh) / 2;
 
   const box = (x0: number, y0: number, x1: number, y1: number): Box => ({
     left: `${(((dx + x0 * dw) / vw) * 100).toFixed(3)}%`,
@@ -118,30 +153,29 @@ function coverLayout(vw: number, vh: number): Layout {
   });
 
   return {
-    image: {
-      left: `${dx}px`,
-      top: `${dy}px`,
-      width: `${dw}px`,
-      height: `${dh}px`,
-    },
-    display: box(DISPLAY.x0, DISPLAY.y0, DISPLAY.x1, DISPLAY.y1),
-    buttons: BUTTON_CX.map((cxFrac) =>
+    display: box(
+      art.display.x0,
+      art.display.y0,
+      art.display.x1,
+      art.display.y1
+    ),
+    buttons: art.buttonCx.map((cxFrac) =>
       box(
-        cxFrac - BUTTON_W / 2,
-        BUTTON_CY - BUTTON_H / 2,
-        cxFrac + BUTTON_W / 2,
-        BUTTON_CY + BUTTON_H / 2
+        cxFrac - art.buttonW / 2,
+        art.buttonCy - art.buttonH / 2,
+        cxFrac + art.buttonW / 2,
+        art.buttonCy + art.buttonH / 2
       )
     ),
-    mirror: box(MIRROR.x0, MIRROR.y0, MIRROR.x1, MIRROR.y1),
-    scan: box(SCAN.x0, SCAN.y0, SCAN.x1, SCAN.y1),
+    mirror: box(art.mirror.x0, art.mirror.y0, art.mirror.x1, art.mirror.y1),
+    scan: box(art.scan.x0, art.scan.y0, art.scan.x1, art.scan.y1),
     road: {
-      cx: dx + dw * SCENE_CX,
-      y0: dy + dh * ROAD_Y0,
-      y1: dy + dh * ROAD_Y1,
-      halfNear: dw * DASH_HALF_NEAR,
-      edgeFar: dw * ROAD_EDGE_FAR,
-      edgeNear: dw * ROAD_EDGE_NEAR,
+      cx: dx + dw * art.sceneCx,
+      y0: dy + dh * art.roadY0,
+      y1: dy + dh * art.roadY1,
+      halfNear: dw * art.dashHalfNear,
+      edgeFar: dw * art.roadEdgeFar,
+      edgeNear: dw * art.roadEdgeNear,
     },
     dx,
     dy,
@@ -149,7 +183,9 @@ function coverLayout(vw: number, vh: number): Layout {
     dh,
     vw,
     vh,
-    wideFit,
+    iw,
+    ih,
+    useWide,
   };
 }
 
@@ -314,10 +350,10 @@ function paintMirage(
     mirageRoadOff = ensureCanvas(mirageRoadOff, bw, bh);
     const octx = mirageRoadOff.getContext("2d");
     if (octx) {
-      const sx = ((x0 - dx) / dw) * IW;
-      const sy = ((yy0 - dy) / dh) * IH;
-      const sw = (bw / dw) * IW;
-      const sh = (bh / dh) * IH;
+      const sx = ((x0 - dx) / dw) * layout.iw;
+      const sy = ((yy0 - dy) / dh) * layout.ih;
+      const sw = (bw / dw) * layout.iw;
+      const sh = (bh / dh) * layout.ih;
       octx.clearRect(0, 0, bw, bh);
       octx.drawImage(plate, sx, sy, sw, sh, 0, 0, bw, bh);
 
@@ -728,39 +764,36 @@ export function HomeCanvas() {
         reduceMotion ? " is-reduced" : ""
       }${roadMoving && !reduceMotion ? " is-travelling" : ""}${
         awaitingScan ? " is-awaiting-scan" : ""
-      }${mirageOn ? " is-mirage" : ""}`}
+      }${mirageOn ? " is-mirage" : ""}${
+        layout?.useWide ? " is-wide-art" : " is-portrait-art"
+      }`}
       onKeyDown={onKeyNav}
       tabIndex={0}
     >
       <div
         className={`home-radio__scene${ready ? " is-live" : ""}${
-          layout?.wideFit ? " is-wide" : ""
+          layout?.useWide ? " is-wide" : ""
         }`}
       >
-        {layout?.wideFit && (
-          <div className="home-radio__bleed" aria-hidden>
-            <img
-              src={`${BASE}/hero-car-road.jpg?v=15`}
-              alt=""
-              className="home-radio__bleed-img"
-              draggable={false}
-              decoding="async"
-            />
-          </div>
-        )}
-
         <picture>
-          <source srcSet={`${BASE}/hero-car-road.webp?v=15`} type="image/webp" />
+          <source
+            media="(min-aspect-ratio: 1/1)"
+            srcSet={`${BASE}/hero-car-road-wide.webp?v=${HERO_V}`}
+            type="image/webp"
+          />
+          <source
+            media="(min-aspect-ratio: 1/1)"
+            srcSet={`${BASE}/hero-car-road-wide.png?v=${HERO_V}`}
+          />
+          <source
+            srcSet={`${BASE}/hero-car-road.webp?v=${HERO_V}`}
+            type="image/webp"
+          />
           <img
             ref={plateRef}
-            src={`${BASE}/hero-car-road.jpg?v=15`}
+            src={`${BASE}/hero-car-road.jpg?v=${HERO_V}`}
             alt=""
-            className={
-              layout
-                ? "pointer-events-none absolute max-w-none select-none home-radio__plate"
-                : "pointer-events-none absolute inset-0 h-full w-full object-cover select-none"
-            }
-            style={layout?.image}
+            className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover object-center home-radio__plate"
             draggable={false}
             decoding="async"
             fetchPriority="high"
