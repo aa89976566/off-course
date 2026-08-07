@@ -178,9 +178,10 @@ async function main() {
       waitUntil: "networkidle",
       timeout: 60000,
     });
-    await page.waitForSelector(".home-radio");
+    await waitPhase(page, "await-scan", 15000);
+    await page.locator(".home-radio").focus();
     await page.keyboard.press("Escape");
-    await waitPhase(page, "settle", 8000);
+    await waitPhase(page, "settle", 5000);
     await page.locator('a[aria-label="Frequency 2: GET FOUND"]').click();
     await page.waitForURL(/get-found/, { timeout: 8000 });
     check.presetOk = page.url().includes("get-found");

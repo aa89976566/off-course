@@ -921,6 +921,21 @@ export function HomeCanvas() {
   };
 
   const onKeyNav = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Escape" && !interactive && phase !== "settle") {
+      e.preventDefault();
+      touchedRef.current = true;
+      scannedRef.current = true;
+      pendingScanRef.current = false;
+      clearPostScan();
+      setMirrorOn(true);
+      setAwaitingScan(false);
+      awaitingScanRef.current = false;
+      setMirageOn(false);
+      setSeekingVisual(false);
+      setLastScanAction("keyboard:escape-settle");
+      finishToSettle();
+      return;
+    }
     if (
       (phase === "await-scan" ||
         phase === "searching" ||
