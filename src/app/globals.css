@@ -735,6 +735,12 @@ body:has(.case-study--found) .site-footer__link {
   box-shadow: none;
 }
 
+.radio-scan-hit.is-pressed {
+  transform: translateY(1px) scale(0.97);
+  /* Visible without yellow fill — soft edge so the press is obvious */
+  box-shadow: inset 0 0 0 1px rgba(234, 154, 38, 0.55);
+}
+
 .radio-scan-hit:focus {
   outline: none;
 }
