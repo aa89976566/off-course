@@ -5,14 +5,80 @@ import Link from "next/link";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type KeyboardEvent,
+  type RefObject,
 } from "react";
 import { WORLDS } from "@/lib/content";
 import { getProjectCode, type Project, type ProjectStream } from "@/lib/projects";
 import { assetPath } from "@/lib/utils";
+
+type MediaStatus = "pending" | "ready" | "error";
+
+/**
+ * Sync media readiness with the DOM image element.
+ * Cached images often fire load before React attaches onLoad — check
+ * `complete && naturalWidth > 0` on mount / src change so `is-pending`
+ * cannot stick after the bytes are already available.
+ */
+function useMediaReady(src: string | undefined): {
+  imgRef: RefObject<HTMLImageElement>;
+  status: MediaStatus;
+  isPending: boolean;
+  onLoad: () => void;
+  onError: () => void;
+} {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const trackedSrc = useRef<string | undefined>(undefined);
+  const [status, setStatus] = useState<MediaStatus>(src ? "pending" : "ready");
+
+  const syncFromElement = useCallback(() => {
+    const img = imgRef.current;
+    if (!img || !src) return;
+    if (img.complete && img.naturalWidth > 0) {
+      trackedSrc.current = src;
+      setStatus("ready");
+      return;
+    }
+    if (img.complete && img.naturalWidth === 0) {
+      setStatus("error");
+    }
+  }, [src]);
+
+  useLayoutEffect(() => {
+    if (!src) {
+      trackedSrc.current = undefined;
+      setStatus("ready");
+      return;
+    }
+    if (trackedSrc.current !== src) {
+      setStatus("pending");
+    }
+    syncFromElement();
+    const frame = requestAnimationFrame(() => syncFromElement());
+    return () => cancelAnimationFrame(frame);
+  }, [src, syncFromElement]);
+
+  const onLoad = useCallback(() => {
+    trackedSrc.current = src;
+    setStatus("ready");
+  }, [src]);
+
+  const onError = useCallback(() => {
+    setStatus("error");
+  }, []);
+
+  return {
+    imgRef,
+    status,
+    isPending: Boolean(src) && status === "pending",
+    onLoad,
+    onError,
+  };
+}
 
 export type BrowseMode = "vertical" | "horizontal" | "grid";
 
@@ -273,7 +339,7 @@ export function WorldGallery({
                 subtitle={world.statement}
                 note={world.blurb}
                 stream={stream}
-                pending={false}
+                archivePending={false}
               />
             </div>
           )}
@@ -309,24 +375,17 @@ export function WorldGallery({
                   subtitle={activeProject.type}
                   note="ARCHIVE MATERIAL PENDING"
                   stream={stream}
-                  pending
+                  archivePending
                   textureSrc={
                     activeProject.artwork?.[0] || activeProject.cover
                   }
                 />
               ) : (
-                <div className="world-browser__stage-media">
-                  <Image
-                    src={assetPath(
-                      activeProject.artwork?.[0] || activeProject.cover
-                    )}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 899px) 100vw, 58vw"
-                    priority
-                  />
-                </div>
+                <StageMedia
+                  src={activeProject.artwork?.[0] || activeProject.cover}
+                  sizes="(max-width: 899px) 100vw, 58vw"
+                  priority
+                />
               )}
               <span className="world-browser__stage-cta">Open case</span>
             </Link>
@@ -464,13 +523,51 @@ export function WorldGallery({
   );
 }
 
+function StageMedia({
+  src,
+  sizes,
+  priority = false,
+}: {
+  src: string;
+  sizes: string;
+  priority?: boolean;
+}) {
+  const resolved = assetPath(src);
+  const { imgRef, status, isPending, onLoad, onError } = useMediaReady(resolved);
+
+  return (
+    <div
+      className={`world-browser__stage-media${isPending ? " is-pending" : ""}${
+        status === "error" ? " is-error" : ""
+      }`}
+      data-media={status}
+    >
+      {status !== "error" ? (
+        <Image
+          ref={imgRef}
+          src={resolved}
+          alt=""
+          fill
+          className="object-cover"
+          sizes={sizes}
+          priority={priority}
+          onLoad={onLoad}
+          onError={onError}
+        />
+      ) : (
+        <div className="world-browser__media-fallback" aria-hidden />
+      )}
+    </div>
+  );
+}
+
 function ArchivePlate({
   code,
   title,
   subtitle,
   note,
   stream,
-  pending,
+  archivePending,
   textureSrc,
 }: {
   code: string;
@@ -478,26 +575,38 @@ function ArchivePlate({
   subtitle?: string;
   note?: string;
   stream: ProjectStream;
-  pending: boolean;
+  /** Content honesty: shared archive bytes, not unique client deliverables. */
+  archivePending: boolean;
   textureSrc?: string;
 }) {
+  const resolved = textureSrc ? assetPath(textureSrc) : undefined;
+  const { imgRef, status, isPending, onLoad, onError } = useMediaReady(resolved);
+
   return (
     <div
       className={`world-browser__plate world-browser__plate--${stream}${
-        pending ? " is-pending" : ""
+        isPending ? " is-pending" : ""
+      }${status === "error" ? " is-error" : ""}${
+        archivePending ? " is-archive" : ""
       }`}
+      data-media={status}
     >
-      {textureSrc && (
+      {resolved && status !== "error" ? (
         <div className="world-browser__plate-texture" aria-hidden>
           <Image
-            src={assetPath(textureSrc)}
+            ref={imgRef}
+            src={resolved}
             alt=""
             fill
             className="object-cover"
             sizes="(max-width: 899px) 100vw, 58vw"
             priority
+            onLoad={onLoad}
+            onError={onError}
           />
         </div>
+      ) : (
+        <div className="world-browser__media-fallback" aria-hidden />
       )}
       <div className="world-browser__plate-grain" aria-hidden />
       <div className="world-browser__plate-body">
@@ -505,8 +614,12 @@ function ArchivePlate({
         <p className="world-browser__plate-title">{title}</p>
         {subtitle && <p className="world-browser__plate-sub">{subtitle}</p>}
         {note && (
-          <p className={`world-browser__plate-note${pending ? " is-pending" : ""}`}>
-            {note}
+          <p
+            className={`world-browser__plate-note${
+              archivePending ? " is-archive" : ""
+            }`}
+          >
+            {status === "error" ? "MEDIA UNAVAILABLE" : note}
           </p>
         )}
       </div>
@@ -530,6 +643,7 @@ function ProjectCard({
   stream: ProjectStream;
 }) {
   const code = getProjectCode(project);
+  const mediaSrc = project.artwork?.[0] || project.cover;
   return (
     <Link
       href={href}
@@ -544,15 +658,12 @@ function ProjectCard({
             subtitle={project.type}
             note="ARCHIVE MATERIAL PENDING"
             stream={stream}
-            pending
-            textureSrc={project.artwork?.[0] || project.cover}
+            archivePending
+            textureSrc={mediaSrc}
           />
         ) : (
-          <Image
-            src={assetPath(project.artwork?.[0] || project.cover)}
-            alt=""
-            fill
-            className="object-cover"
+          <StageMedia
+            src={mediaSrc}
             sizes={
               layout === "grid"
                 ? "(max-width: 699px) 100vw, 33vw"

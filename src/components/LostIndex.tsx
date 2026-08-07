@@ -8,8 +8,9 @@ type LostIndexProps = {
 };
 
 /**
- * Shared mural bytes across several LOST titles — treat as archive-pending
- * so we never present duplicate stock as unique client deliverables.
+ * Shared mural bytes across several LOST titles — archive-content flag only
+ * (honesty badge). Media load `is-pending` is handled separately in
+ * WorldGallery and must clear when the image is already complete/cached.
  */
 const PENDING_MEDIA_SLUGS = [
   "shoreditch-facade",
@@ -19,8 +20,8 @@ const PENDING_MEDIA_SLUGS = [
 ];
 
 /**
- * GET LOST index — Obys-style browse; pending treatment where archive media
- * is not uniquely verified per project.
+ * GET LOST index — world browser; archive badge where media is not uniquely
+ * verified per project. Does not block interactivity on image decode.
  */
 export function LostIndex({ projects }: LostIndexProps) {
   return (

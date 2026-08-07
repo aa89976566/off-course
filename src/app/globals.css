@@ -2589,15 +2589,50 @@ body:has(.case-study--found) .site-footer__link {
 .world-browser__stage-media {
   position: absolute;
   inset: 0;
+  background: var(--wb-deep, #14110e);
+}
+
+.world-browser__stage-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(14, 12, 10, 0.55);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.world-browser__stage-media.is-pending::after {
+  opacity: 1;
+}
+
+.world-browser__stage-media.is-error::after {
+  opacity: 0;
 }
 
 .world-browser__stage-media img {
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease;
 }
 
-.world-browser__stage:hover .world-browser__stage-media img,
-.world-browser__stage:focus-visible .world-browser__stage-media img {
+.world-browser__stage-media.is-pending img {
+  opacity: 0.45;
+}
+
+.world-browser__stage:hover .world-browser__stage-media:not(.is-pending) img,
+.world-browser__stage:focus-visible
+  .world-browser__stage-media:not(.is-pending)
+  img {
   transform: scale(1.03);
+}
+
+.world-browser__media-fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(145deg, #2a241c 0%, #14110e 55%, #1c1814 100%);
+  pointer-events: none;
 }
 
 .world-browser__stage-cta {
@@ -2711,13 +2746,31 @@ body:has(.case-study--found) .site-footer__link {
 .world-browser__plate-texture {
   position: absolute;
   inset: 0;
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Load pending only — never leave the stage dark after bytes are ready. */
+.world-browser__plate.is-pending .world-browser__plate-texture {
   opacity: 0.42;
-  filter: grayscale(0.35) contrast(1.05);
+  filter: grayscale(0.35) contrast(1.05) brightness(0.78);
 }
 
 .world-browser__plate-grain {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, background 0.3s ease;
+  background: linear-gradient(
+    180deg,
+    transparent 38%,
+    rgba(14, 12, 10, 0.55) 100%
+  );
+  opacity: 1;
+}
+
+.world-browser__plate.is-pending .world-browser__plate-grain {
   background:
     repeating-linear-gradient(
       -18deg,
@@ -2725,7 +2778,14 @@ body:has(.case-study--found) .site-footer__link {
       rgba(14, 12, 10, 0.02) 2px 8px
     ),
     linear-gradient(180deg, rgba(14, 12, 10, 0.15), rgba(14, 12, 10, 0.72));
-  pointer-events: none;
+}
+
+.world-browser__plate.is-error .world-browser__plate-grain {
+  background: linear-gradient(
+    180deg,
+    transparent 30%,
+    rgba(14, 12, 10, 0.7) 100%
+  );
 }
 
 .world-browser__plate-body {
@@ -2735,6 +2795,7 @@ body:has(.case-study--found) .site-footer__link {
   padding: clamp(1rem, 3vh, 1.75rem);
   display: grid;
   gap: 0.45rem;
+  pointer-events: none;
 }
 
 .world-browser__plate-title {
@@ -2761,7 +2822,8 @@ body:has(.case-study--found) .site-footer__link {
   color: rgba(243, 239, 230, 0.72);
 }
 
-.world-browser__plate-note.is-pending {
+/* Archive honesty badge — independent from media load pending. */
+.world-browser__plate-note.is-archive {
   display: inline-flex;
   width: fit-content;
   margin-top: 0.65rem;
@@ -2774,6 +2836,15 @@ body:has(.case-study--found) .site-footer__link {
   color: #f3efe6;
   background: rgba(14, 12, 10, 0.72);
   border-left: 2px solid var(--wb-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-browser__plate-texture,
+  .world-browser__plate-grain,
+  .world-browser__stage-media::after,
+  .world-browser__stage-media img {
+    transition: none !important;
+  }
 }
 
 .world-browser__horizontal {
