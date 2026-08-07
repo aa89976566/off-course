@@ -523,13 +523,21 @@ export function HomeCanvas() {
   const [seekingVisual, setSeekingVisual] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [debugHit, setDebugHit] = useState(false);
+  const [lastScanAction, setLastScanAction] = useState("");
+  const [scanPressed, setScanPressed] = useState(false);
   const touchedRef = useRef(false);
   const scannedRef = useRef(false);
   const awaitingScanRef = useRef(false);
+  const pendingScanRef = useRef(false);
+  const phaseRef = useRef<Phase>("boot");
 
   useEffect(() => {
     awaitingScanRef.current = awaitingScan;
   }, [awaitingScan]);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
 
   useEffect(() => {
     setReduceMotion(
@@ -677,10 +685,16 @@ export function HomeCanvas() {
     setRoadMoving(!reduceMotion);
   }, [reduceMotion]);
 
+  const flashScanPress = useCallback(() => {
+    setScanPressed(true);
+    window.setTimeout(() => setScanPressed(false), 180);
+  }, []);
+
   const runAfterScan = useCallback(() => {
     if (scannedRef.current) return;
     scannedRef.current = true;
     touchedRef.current = true;
+    pendingScanRef.current = false;
     setAwaitingScan(false);
     awaitingScanRef.current = false;
     clearPostScan();
@@ -689,10 +703,12 @@ export function HomeCanvas() {
       postScanTimers.current.push(window.setTimeout(fn, ms));
     };
 
+    // Immediate LCD/phase feedback — must be visible within the same frame/tick
     setPhase("tuning");
     setLcdText(HOME.radio.tuning);
     setRoadMoving(true);
     setSeekingVisual(true);
+    setMirrorOn(true);
 
     at(900, () => {
       setPhase("signal");
@@ -726,7 +742,61 @@ export function HomeCanvas() {
   const runAfterScanRef = useRef(runAfterScan);
   runAfterScanRef.current = runAfterScan;
 
-  // Opening sequence — SEARCHING → PRESS SCAN, then wait for SCAN (or auto-continue)
+  /**
+   * SCAN is always actionable for humans:
+   * - searching / boot / await-scan → start tuning immediately
+   * - settle (TUNE IN) → replay from tuning
+   * - mid post-scan sequence → never silent: flash + record ignored-inflight
+   * No short auto-advance off PRESS SCAN.
+   */
+  const triggerScan = useCallback(
+    (source: "pointer" | "keyboard" | "queued") => {
+      flashScanPress();
+      const current = phaseRef.current;
+
+      const inFlight =
+        current === "tuning" ||
+        current === "signal" ||
+        current === "lock-lost" ||
+        current === "mirage" ||
+        current === "seek-found" ||
+        current === "lock-found";
+
+      if (inFlight && scannedRef.current) {
+        setLastScanAction(`${source}:ignored-inflight`);
+        return;
+      }
+
+      if (!ready) {
+        pendingScanRef.current = true;
+        setLastScanAction(`${source}:queued`);
+        return;
+      }
+
+      if (
+        current === "boot" ||
+        current === "searching" ||
+        current === "await-scan" ||
+        current === "settle" ||
+        awaitingScanRef.current
+      ) {
+        if (current === "settle") {
+          scannedRef.current = false;
+          clearPostScan();
+          setInteractive(false);
+        }
+        setLastScanAction(`${source}:tuning`);
+        runAfterScan();
+        return;
+      }
+
+      pendingScanRef.current = true;
+      setLastScanAction(`${source}:queued`);
+    },
+    [flashScanPress, ready, runAfterScan]
+  );
+
+  // Opening sequence — SEARCHING → PRESS SCAN, then wait indefinitely for SCAN
   useEffect(() => {
     if (!ready) return;
 
@@ -756,33 +826,49 @@ export function HomeCanvas() {
     setAwaitingScan(false);
     setMirageOn(false);
     setInteractive(false);
+    setLastScanAction("");
+
+    // Consume a press that arrived before the sequence started
+    if (pendingScanRef.current) {
+      pendingScanRef.current = false;
+      setLastScanAction("queued:tuning");
+      runAfterScanRef.current();
+      return () => {
+        timers.forEach((id) => window.clearTimeout(id));
+      };
+    }
 
     at(350, () => {
-      if (touchedRef.current) return;
+      if (scannedRef.current) return;
       setMirrorOn(true);
     });
     at(900, () => {
-      if (touchedRef.current) return;
+      if (scannedRef.current) return;
       setPhase("searching");
       setLcdText(HOME.radio.searching);
       setSeekingVisual(true);
       setRoadMoving(true);
+      if (pendingScanRef.current) {
+        pendingScanRef.current = false;
+        setLastScanAction("queued:tuning");
+        runAfterScanRef.current();
+      }
     });
-    // After 3s of SEARCHING → PRESS SCAN
+    // After ~3s of SEARCHING → PRESS SCAN, then stay until the user presses SCAN
     at(3900, () => {
-      if (touchedRef.current || scannedRef.current) return;
+      if (scannedRef.current) return;
       setPhase("await-scan");
       setLcdText(HOME.radio.pressScan);
       setSeekingVisual(false);
       setAwaitingScan(true);
       awaitingScanRef.current = true;
+      if (pendingScanRef.current) {
+        pendingScanRef.current = false;
+        setLastScanAction("queued:tuning");
+        runAfterScanRef.current();
+      }
     });
-    // Auto-continue if the visitor does not press SCAN — mirage must still play
-    at(3900 + 4500, () => {
-      if (scannedRef.current || touchedRef.current) return;
-      if (!awaitingScanRef.current) return;
-      runAfterScanRef.current();
-    });
+    // No auto-advance — PRESS SCAN remains until user action (or Escape)
 
     return () => {
       timers.forEach((id) => window.clearTimeout(id));
@@ -797,12 +883,14 @@ export function HomeCanvas() {
       if (interactive) return;
       touchedRef.current = true;
       scannedRef.current = true;
+      pendingScanRef.current = false;
       clearPostScan();
       setMirrorOn(true);
       setAwaitingScan(false);
       awaitingScanRef.current = false;
       setMirageOn(false);
       setSeekingVisual(false);
+      setLastScanAction("keyboard:escape-settle");
       finishToSettle();
     };
     window.addEventListener("keydown", onKey);
@@ -810,14 +898,13 @@ export function HomeCanvas() {
   }, [ready, reduceMotion, interactive, finishToSettle]);
 
   const onScan = () => {
-    if (!awaitingScanRef.current || scannedRef.current) return;
-    runAfterScan();
+    triggerScan("pointer");
   };
 
   const markTouched = (station: string) => {
     if (!interactive && !awaitingScan) return;
-    if (awaitingScan) {
-      onScan();
+    if (awaitingScan || phase === "searching" || phase === "await-scan") {
+      triggerScan("pointer");
       return;
     }
     touchedRef.current = true;
@@ -834,9 +921,30 @@ export function HomeCanvas() {
   };
 
   const onKeyNav = (e: KeyboardEvent<HTMLElement>) => {
-    if (awaitingScan && (e.key === "Enter" || e.key === " ")) {
+    if (e.key === "Escape" && !interactive && phase !== "settle") {
       e.preventDefault();
-      onScan();
+      touchedRef.current = true;
+      scannedRef.current = true;
+      pendingScanRef.current = false;
+      clearPostScan();
+      setMirrorOn(true);
+      setAwaitingScan(false);
+      awaitingScanRef.current = false;
+      setMirageOn(false);
+      setSeekingVisual(false);
+      setLastScanAction("keyboard:escape-settle");
+      finishToSettle();
+      return;
+    }
+    if (
+      (phase === "await-scan" ||
+        phase === "searching" ||
+        phase === "boot" ||
+        phase === "settle") &&
+      (e.key === "Enter" || e.key === " ")
+    ) {
+      e.preventDefault();
+      triggerScan("keyboard");
       return;
     }
     if (!interactive && phase !== "settle") return;
@@ -858,6 +966,7 @@ export function HomeCanvas() {
       }`}
       data-phase={phase}
       data-awaiting-scan={awaitingScan ? "true" : "false"}
+      data-last-scan-action={lastScanAction || undefined}
       onKeyDown={onKeyNav}
       tabIndex={0}
     >
@@ -943,11 +1052,13 @@ export function HomeCanvas() {
           </div>
         )}
 
-        {/* Single diegetic SCAN — natural-image key → cover map → ≥44×44 hit */}
+        {/* Single diegetic SCAN — always mounted; actionable from searching onward */}
         {layout && (
           <button
             type="button"
-            className="radio-scan-hit absolute z-[16] cursor-pointer rounded-[2px]"
+            className={`radio-scan-hit absolute z-[16] cursor-pointer rounded-[2px]${
+              scanPressed ? " is-pressed" : ""
+            }`}
             style={layout.scan}
             aria-label="Scan radio signal"
             data-radio-scan="true"
@@ -955,6 +1066,9 @@ export function HomeCanvas() {
             data-scan-center-y={layout.scanCenter.y.toFixed(2)}
             data-scan-natural-cx={layout.scanNatural.cx.toFixed(6)}
             data-scan-natural-cy={layout.scanNatural.cy.toFixed(6)}
+            onPointerDown={() => {
+              flashScanPress();
+            }}
             onClick={onScan}
           />
         )}
@@ -1011,11 +1125,12 @@ export function HomeCanvas() {
 
       <p className="sr-only">
         Off Course. Concrete and Code. The rear-view mirror shows the studio
-        name. The car radio searches, then asks you to press SCAN. After tuning,
+        name. The car radio searches, then asks you to press SCAN and waits.
+        Pressing SCAN — even during SEARCHING — starts tuning. After tuning,
         GET LOST locks and a desert heat mirage reveals Ideas become physical.
-        If you do not press SCAN, the radio continues on its own. Later GET FOUND
-        appears on the display. Use SCAN, Enter, presets 1 to 6, or the text
-        links. Escape skips. Reduced motion skips the sequence.
+        Later GET FOUND appears on the display, then TUNE IN. Use SCAN, Enter,
+        presets 1 to 6, or the text links. Escape skips. Reduced motion skips
+        the sequence.
       </p>
 
       <div
