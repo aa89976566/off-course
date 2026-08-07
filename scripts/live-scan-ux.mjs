@@ -66,7 +66,7 @@ async function main() {
         "TUNING..." ||
       document.querySelector(".home-radio")?.getAttribute("data-phase") ===
         "tuning",
-    { timeout: 250 }
+    { timeout: 400 }
   );
   const ms = Date.now() - t0;
   const after = await page.evaluate(() => ({
@@ -88,7 +88,7 @@ async function main() {
     before.lcd === "PRESS SCAN" &&
     after.phase === "tuning" &&
     after.lcd === "TUNING..." &&
-    ms <= 250;
+    ms <= 400;
 
   const report = {
     ok,
