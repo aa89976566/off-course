@@ -2314,7 +2314,7 @@ body:has(.case-study--found) .site-footer__link {
   --wb-line: rgba(18, 16, 14, 0.14);
   --wb-deep: #141210;
   --wb-accent: #e85a24;
-  --wb-stage-h: clamp(55vh, 62vh, 72vh);
+  --wb-stage-h: clamp(58vh, 64vh, 72vh);
   background: var(--wb-paper);
   color: var(--wb-ink);
   min-height: 100svh;
