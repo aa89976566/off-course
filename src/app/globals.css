@@ -717,8 +717,25 @@ body:has(.case-study--found) .site-footer__link {
   border: 0;
   background: transparent;
   padding: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
   min-width: 44px;
   min-height: 44px;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 16;
+  box-shadow: none;
+}
+
+.radio-scan-hit:hover,
+.radio-scan-hit:active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.radio-scan-hit:focus {
+  outline: none;
 }
 
 .radio-scan-hit:focus-visible {
@@ -726,14 +743,31 @@ body:has(.case-study--found) .site-footer__link {
   outline-offset: 3px;
 }
 
-/* No persistent debug fill — awaiting SCAN stays invisible until focus-visible */
-.home-radio.is-awaiting-scan .radio-scan-hit:not(:focus-visible) {
-  box-shadow: none;
-}
-
 /* —— Radio LCD + channel hit targets —— */
 .radio-lcd {
+  border: 0;
   background: transparent;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
+  color: inherit;
+}
+
+.radio-lcd:hover,
+.radio-lcd:active {
+  background: transparent;
+}
+
+.radio-lcd:focus {
+  outline: none;
+}
+
+.radio-lcd:focus-visible {
+  outline: 2px solid #ea9a26;
+  outline-offset: 3px;
 }
 
 .radio-lcd-text {
