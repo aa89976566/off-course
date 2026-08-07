@@ -12,7 +12,7 @@ import {
 import { HOME, STUDIO, WORLDS } from "@/lib/content";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
-const HERO_V = "17";
+const HERO_V = "18";
 
 const PRESETS = [
   { id: 1, href: "/get-lost", station: "GET LOST" },
@@ -67,10 +67,10 @@ const PORTRAIT: Artboard = {
   buttonW: 0.042,
   buttonH: 0.032,
   /**
-   * Physical SCAN — right of preset 6, aligned to preset row.
-   * Centre from red-nail tip cluster on hero-car-road.jpg (1024×1536).
+   * Physical SCAN key — natural image fractions on hero-car-road.jpg (1024×1536).
+   * Tight to printed SCAN cap + black key; not the finger.
    */
-  scan: { x0: 0.6142, y0: 0.6414, x1: 0.7066, y1: 0.6846 },
+  scan: { x0: 0.638, y0: 0.644, x1: 0.68, y1: 0.668 },
   mirror: { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 },
 };
 
@@ -94,10 +94,11 @@ const WIDE: Artboard = {
   buttonW: 0.018,
   buttonH: 0.03,
   /**
-   * Physical SCAN — right of preset 6 / under knob, preset-row height.
-   * Centre from red-nail tip on hero-car-road-wide.png (1672×941): ~0.5886×0.757.
+   * Physical SCAN key — natural image fractions on hero-car-road-wide (1672×941).
+   * Calibrated to the black SCAN key / printed cap (upper key), not the fingertip.
+   * At 1324×977 cover → centre ≈ (804, 724); visual ≈ x776–832, y700–749.
    */
-  scan: { x0: 0.5688, y0: 0.7368, x1: 0.6084, y1: 0.7773 },
+  scan: { x0: 0.568043, y0: 0.721915, x1: 0.595555, y1: 0.760173 },
   mirror: { x0: 0.43, y0: 0.02, x1: 0.57, y1: 0.14 },
 };
 
@@ -127,9 +128,12 @@ type Layout = {
   display: Box;
   buttons: Box[];
   mirror: Box;
+  /** Expanded hit rect (≥44×44), centred on the physical SCAN key. */
   scan: Box;
-  /** Viewport-pixel centre of the physical SCAN control (for alignment checks). */
+  /** Cover-mapped centre of the physical SCAN key (before min-size expand). */
   scanCenter: { x: number; y: number };
+  /** Natural-image normalised centre (0–1) of the physical SCAN key. */
+  scanNatural: { cx: number; cy: number; x0: number; y0: number; x1: number; y1: number };
   road: {
     cx: number;
     y0: number;
@@ -151,7 +155,10 @@ type Layout = {
 
 const MIN_HIT_PX = 44;
 
-/** True object-fit: cover + object-position: center — no blur sidebars / plate. */
+/**
+ * object-fit: cover + object-position: center mapping.
+ * Natural image point (nx, ny) in 0–1 → CSS px inside the scene/plate box.
+ */
 function coverLayout(vw: number, vh: number): Layout {
   const useWide = preferWide(vw, vh);
   const art = useWide ? WIDE : PORTRAIT;
@@ -162,37 +169,48 @@ function coverLayout(vw: number, vh: number): Layout {
   const dx = (vw - dw) / 2;
   const dy = (vh - dh) / 2;
 
+  const mapX = (nx: number) => dx + nx * dw;
+  const mapY = (ny: number) => dy + ny * dh;
+
   const box = (x0: number, y0: number, x1: number, y1: number): Box => ({
-    left: `${(((dx + x0 * dw) / vw) * 100).toFixed(3)}%`,
-    top: `${(((dy + y0 * dh) / vh) * 100).toFixed(3)}%`,
-    width: `${((((x1 - x0) * dw) / vw) * 100).toFixed(3)}%`,
-    height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
+    left: `${mapX(x0).toFixed(3)}px`,
+    top: `${mapY(y0).toFixed(3)}px`,
+    width: `${(mapX(x1) - mapX(x0)).toFixed(3)}px`,
+    height: `${(mapY(y1) - mapY(y0)).toFixed(3)}px`,
   });
 
-  /** Map artboard box → CSS%, expanding symmetrically to ≥44×44 CSS px. */
-  const hitBox = (x0: number, y0: number, x1: number, y1: number): Box => {
-    let left = dx + x0 * dw;
-    let top = dy + y0 * dh;
-    let width = (x1 - x0) * dw;
-    let height = (y1 - y0) * dh;
-    const cx = left + width / 2;
-    const cy = top + height / 2;
-    width = Math.max(MIN_HIT_PX, width);
-    height = Math.max(MIN_HIT_PX, height);
-    left = cx - width / 2;
-    top = cy - height / 2;
+  /**
+   * Map a natural-image rect through cover, then expand symmetrically to ≥44×44.
+   * Centre stays on the illustrated control — never biased down/right.
+   */
+  const hitBox = (x0: number, y0: number, x1: number, y1: number): Box & { cx: number; cy: number } => {
+    const keyLeft = mapX(x0);
+    const keyTop = mapY(y0);
+    const keyRight = mapX(x1);
+    const keyBottom = mapY(y1);
+    const cx = (keyLeft + keyRight) / 2;
+    const cy = (keyTop + keyBottom) / 2;
+    const width = Math.max(MIN_HIT_PX, keyRight - keyLeft);
+    const height = Math.max(MIN_HIT_PX, keyBottom - keyTop);
     return {
-      left: `${((left / vw) * 100).toFixed(3)}%`,
-      top: `${((top / vh) * 100).toFixed(3)}%`,
-      width: `${((width / vw) * 100).toFixed(3)}%`,
-      height: `${((height / vh) * 100).toFixed(3)}%`,
+      left: `${(cx - width / 2).toFixed(3)}px`,
+      top: `${(cy - height / 2).toFixed(3)}px`,
+      width: `${width.toFixed(3)}px`,
+      height: `${height.toFixed(3)}px`,
+      cx,
+      cy,
     };
   };
 
-  const scanCx =
-    dx + ((art.scan.x0 + art.scan.x1) / 2) * dw;
-  const scanCy =
-    dy + ((art.scan.y0 + art.scan.y1) / 2) * dh;
+  const scanHit = hitBox(art.scan.x0, art.scan.y0, art.scan.x1, art.scan.y1);
+  const scanNatural = {
+    cx: (art.scan.x0 + art.scan.x1) / 2,
+    cy: (art.scan.y0 + art.scan.y1) / 2,
+    x0: art.scan.x0,
+    y0: art.scan.y0,
+    x1: art.scan.x1,
+    y1: art.scan.y1,
+  };
 
   return {
     display: box(
@@ -201,21 +219,33 @@ function coverLayout(vw: number, vh: number): Layout {
       art.display.x1,
       art.display.y1
     ),
-    buttons: art.buttonCx.map((cxFrac) =>
-      hitBox(
+    buttons: art.buttonCx.map((cxFrac) => {
+      const b = hitBox(
         cxFrac - art.buttonW / 2,
         art.buttonCy - art.buttonH / 2,
         cxFrac + art.buttonW / 2,
         art.buttonCy + art.buttonH / 2
-      )
-    ),
+      );
+      return {
+        left: b.left,
+        top: b.top,
+        width: b.width,
+        height: b.height,
+      };
+    }),
     mirror: box(art.mirror.x0, art.mirror.y0, art.mirror.x1, art.mirror.y1),
-    scan: hitBox(art.scan.x0, art.scan.y0, art.scan.x1, art.scan.y1),
-    scanCenter: { x: scanCx, y: scanCy },
+    scan: {
+      left: scanHit.left,
+      top: scanHit.top,
+      width: scanHit.width,
+      height: scanHit.height,
+    },
+    scanCenter: { x: scanHit.cx, y: scanHit.cy },
+    scanNatural,
     road: {
-      cx: dx + dw * art.sceneCx,
-      y0: dy + dh * art.roadY0,
-      y1: dy + dh * art.roadY1,
+      cx: mapX(art.sceneCx),
+      y0: mapY(art.roadY0),
+      y1: mapY(art.roadY1),
       halfNear: dw * art.dashHalfNear,
       edgeFar: dw * art.roadEdgeFar,
       edgeNear: dw * art.roadEdgeNear,
@@ -492,6 +522,7 @@ export function HomeCanvas() {
   const [mirageOn, setMirageOn] = useState(false);
   const [seekingVisual, setSeekingVisual] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [debugHit, setDebugHit] = useState(false);
   const touchedRef = useRef(false);
   const scannedRef = useRef(false);
   const awaitingScanRef = useRef(false);
@@ -504,6 +535,21 @@ export function HomeCanvas() {
     setReduceMotion(
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
+  }, []);
+
+  useEffect(() => {
+    const syncDebug = () => {
+      try {
+        setDebugHit(
+          new URLSearchParams(window.location.search).get("debugHit") === "1"
+        );
+      } catch {
+        setDebugHit(false);
+      }
+    };
+    syncDebug();
+    window.addEventListener("popstate", syncDebug);
+    return () => window.removeEventListener("popstate", syncDebug);
   }, []);
 
   useEffect(() => {
@@ -879,19 +925,12 @@ export function HomeCanvas() {
         )}
 
         {layout && (
-          <button
-            type="button"
-            className={`radio-lcd absolute z-[15] flex items-center justify-center overflow-hidden${
+          <div
+            className={`radio-lcd pointer-events-none absolute z-[8] flex items-center justify-center overflow-hidden${
               lcdPrompt ? " is-prompt" : ""
             }`}
             style={layout.display}
-            aria-label={
-              awaitingScan
-                ? "Press SCAN — radio is waiting"
-                : "Radio signal display"
-            }
             aria-live="polite"
-            onClick={onScan}
           >
             {lcdText ? (
               <span
@@ -901,10 +940,10 @@ export function HomeCanvas() {
                 {lcdText}
               </span>
             ) : null}
-          </button>
+          </div>
         )}
 
-        {/* Diegetic SCAN — always mounted; centres on printed SCAN; ≥44×44 hit */}
+        {/* Single diegetic SCAN — natural-image key → cover map → ≥44×44 hit */}
         {layout && (
           <button
             type="button"
@@ -914,8 +953,21 @@ export function HomeCanvas() {
             data-radio-scan="true"
             data-scan-center-x={layout.scanCenter.x.toFixed(2)}
             data-scan-center-y={layout.scanCenter.y.toFixed(2)}
+            data-scan-natural-cx={layout.scanNatural.cx.toFixed(6)}
+            data-scan-natural-cy={layout.scanNatural.cy.toFixed(6)}
             onClick={onScan}
           />
+        )}
+
+        {layout && debugHit && (
+          <div
+            className="radio-scan-debug"
+            style={layout.scan}
+            aria-hidden
+            data-scan-debug="true"
+          >
+            <span className="radio-scan-debug__dot" />
+          </div>
         )}
 
         {layout && (
