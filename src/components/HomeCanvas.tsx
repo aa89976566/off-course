@@ -66,7 +66,11 @@ const PORTRAIT: Artboard = {
   buttonCy: 0.663,
   buttonW: 0.042,
   buttonH: 0.032,
-  scan: { x0: 0.6, y0: 0.62, x1: 0.72, y1: 0.7 },
+  /**
+   * Physical SCAN — right of preset 6, aligned to preset row.
+   * Centre from red-nail tip cluster on hero-car-road.jpg (1024×1536).
+   */
+  scan: { x0: 0.6142, y0: 0.6414, x1: 0.7066, y1: 0.6846 },
   mirror: { x0: 0.395, y0: 0.055, x1: 0.565, y1: 0.162 },
 };
 
@@ -89,7 +93,11 @@ const WIDE: Artboard = {
   buttonCy: 0.757,
   buttonW: 0.018,
   buttonH: 0.03,
-  scan: { x0: 0.548, y0: 0.71, x1: 0.635, y1: 0.79 },
+  /**
+   * Physical SCAN — right of preset 6 / under knob, preset-row height.
+   * Centre from red-nail tip on hero-car-road-wide.png (1672×941): ~0.5886×0.757.
+   */
+  scan: { x0: 0.5688, y0: 0.7368, x1: 0.6084, y1: 0.7773 },
   mirror: { x0: 0.43, y0: 0.02, x1: 0.57, y1: 0.14 },
 };
 
@@ -120,6 +128,8 @@ type Layout = {
   buttons: Box[];
   mirror: Box;
   scan: Box;
+  /** Viewport-pixel centre of the physical SCAN control (for alignment checks). */
+  scanCenter: { x: number; y: number };
   road: {
     cx: number;
     y0: number;
@@ -139,6 +149,8 @@ type Layout = {
   useWide: boolean;
 };
 
+const MIN_HIT_PX = 44;
+
 /** True object-fit: cover + object-position: center — no blur sidebars / plate. */
 function coverLayout(vw: number, vh: number): Layout {
   const useWide = preferWide(vw, vh);
@@ -157,6 +169,31 @@ function coverLayout(vw: number, vh: number): Layout {
     height: `${((((y1 - y0) * dh) / vh) * 100).toFixed(3)}%`,
   });
 
+  /** Map artboard box → CSS%, expanding symmetrically to ≥44×44 CSS px. */
+  const hitBox = (x0: number, y0: number, x1: number, y1: number): Box => {
+    let left = dx + x0 * dw;
+    let top = dy + y0 * dh;
+    let width = (x1 - x0) * dw;
+    let height = (y1 - y0) * dh;
+    const cx = left + width / 2;
+    const cy = top + height / 2;
+    width = Math.max(MIN_HIT_PX, width);
+    height = Math.max(MIN_HIT_PX, height);
+    left = cx - width / 2;
+    top = cy - height / 2;
+    return {
+      left: `${((left / vw) * 100).toFixed(3)}%`,
+      top: `${((top / vh) * 100).toFixed(3)}%`,
+      width: `${((width / vw) * 100).toFixed(3)}%`,
+      height: `${((height / vh) * 100).toFixed(3)}%`,
+    };
+  };
+
+  const scanCx =
+    dx + ((art.scan.x0 + art.scan.x1) / 2) * dw;
+  const scanCy =
+    dy + ((art.scan.y0 + art.scan.y1) / 2) * dh;
+
   return {
     display: box(
       art.display.x0,
@@ -165,7 +202,7 @@ function coverLayout(vw: number, vh: number): Layout {
       art.display.y1
     ),
     buttons: art.buttonCx.map((cxFrac) =>
-      box(
+      hitBox(
         cxFrac - art.buttonW / 2,
         art.buttonCy - art.buttonH / 2,
         cxFrac + art.buttonW / 2,
@@ -173,7 +210,8 @@ function coverLayout(vw: number, vh: number): Layout {
       )
     ),
     mirror: box(art.mirror.x0, art.mirror.y0, art.mirror.x1, art.mirror.y1),
-    scan: box(art.scan.x0, art.scan.y0, art.scan.x1, art.scan.y1),
+    scan: hitBox(art.scan.x0, art.scan.y0, art.scan.x1, art.scan.y1),
+    scanCenter: { x: scanCx, y: scanCy },
     road: {
       cx: dx + dw * art.sceneCx,
       y0: dy + dh * art.roadY0,
@@ -772,6 +810,8 @@ export function HomeCanvas() {
       }${mirageOn ? " is-mirage" : ""}${
         layout?.useWide ? " is-wide-art" : " is-portrait-art"
       }`}
+      data-phase={phase}
+      data-awaiting-scan={awaitingScan ? "true" : "false"}
       onKeyDown={onKeyNav}
       tabIndex={0}
     >
@@ -839,12 +879,19 @@ export function HomeCanvas() {
         )}
 
         {layout && (
-          <div
-            className={`radio-lcd pointer-events-none absolute z-[8] flex items-center justify-center overflow-hidden${
+          <button
+            type="button"
+            className={`radio-lcd absolute z-[15] flex items-center justify-center overflow-hidden${
               lcdPrompt ? " is-prompt" : ""
             }`}
             style={layout.display}
+            aria-label={
+              awaitingScan
+                ? "Press SCAN — radio is waiting"
+                : "Radio signal display"
+            }
             aria-live="polite"
+            onClick={onScan}
           >
             {lcdText ? (
               <span
@@ -854,27 +901,21 @@ export function HomeCanvas() {
                 {lcdText}
               </span>
             ) : null}
-          </div>
+          </button>
         )}
 
-        {/* Diegetic SCAN — printed SCAN control (+ LCD as secondary hit while prompting) */}
-        {layout && awaitingScan && (
-          <>
-            <button
-              type="button"
-              className="radio-scan-hit absolute z-[14] cursor-pointer rounded-[2px]"
-              style={layout.scan}
-              aria-label="Press SCAN on the radio"
-              onClick={onScan}
-            />
-            <button
-              type="button"
-              className="radio-scan-hit radio-scan-hit--lcd absolute z-[14] cursor-pointer"
-              style={layout.display}
-              aria-label="Press SCAN — radio is waiting"
-              onClick={onScan}
-            />
-          </>
+        {/* Diegetic SCAN — always mounted; centres on printed SCAN; ≥44×44 hit */}
+        {layout && (
+          <button
+            type="button"
+            className="radio-scan-hit absolute z-[16] cursor-pointer rounded-[2px]"
+            style={layout.scan}
+            aria-label="Scan radio signal"
+            data-radio-scan="true"
+            data-scan-center-x={layout.scanCenter.x.toFixed(2)}
+            data-scan-center-y={layout.scanCenter.y.toFixed(2)}
+            onClick={onScan}
+          />
         )}
 
         {layout && (
