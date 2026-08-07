@@ -426,7 +426,8 @@ body:has(.case-study--found) .site-footer__link {
   }
   to {
     opacity: 1;
-    transform: scale(1.015);
+    /* Must end at scale(1) so hit geometry matches exact object-fit: cover */
+    transform: scale(1);
   }
 }
 
@@ -743,31 +744,32 @@ body:has(.case-study--found) .site-footer__link {
   outline-offset: 3px;
 }
 
+/* Opt-in alignment proof — ?debugHit=1 only */
+.radio-scan-debug {
+  position: absolute;
+  z-index: 17;
+  pointer-events: none;
+  border: 2px solid rgba(0, 255, 180, 0.95);
+  background: rgba(0, 255, 180, 0.12);
+  box-sizing: border-box;
+}
+
+.radio-scan-debug__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #ff2d55;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65);
+}
+
 /* —— Radio LCD + channel hit targets —— */
 .radio-lcd {
-  border: 0;
   background: transparent;
-  padding: 0;
-  margin: 0;
-  appearance: none;
-  -webkit-appearance: none;
-  pointer-events: auto;
-  cursor: pointer;
-  color: inherit;
-}
-
-.radio-lcd:hover,
-.radio-lcd:active {
-  background: transparent;
-}
-
-.radio-lcd:focus {
-  outline: none;
-}
-
-.radio-lcd:focus-visible {
-  outline: 2px solid #ea9a26;
-  outline-offset: 3px;
+  pointer-events: none;
 }
 
 .radio-lcd-text {
