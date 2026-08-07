@@ -1,9 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export function ContactForm() {
+  const searchParams = useSearchParams();
   const [sent, setSent] = useState(false);
+  const presetEmail = searchParams.get("email") ?? "";
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +45,7 @@ export function ContactForm() {
           type="email"
           required
           autoComplete="email"
+          defaultValue={presetEmail}
           className="input-line mt-1"
           placeholder="you@example.com"
         />

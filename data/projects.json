@@ -11,12 +11,19 @@
       "stack": null,
       "client": "for East Street Market",
       "accent": "#FF3829",
-      "cover": "/murals/shoreditch-1.jpg",
+      "cover": "/media/murals/shoreditch-1.jpg",
       "images": [
-        "/murals/shoreditch-1.jpg",
-        "/murals/shoreditch-2.jpg",
-        "/murals/shoreditch-3.jpg"
-      ]
+        "/media/murals/shoreditch-1.jpg",
+        "/media/murals/shoreditch-2.jpg",
+        "/media/murals/shoreditch-3.jpg"
+      ],
+      "lost": {
+        "proposition": "A storefront mural where colour and gesture meet a Shoreditch façade.",
+        "place": "Shoreditch, London — a street-facing wall at East Street Market.",
+        "process": null,
+        "relationship": "Commissioned with East Street Market for a public-facing storefront surface.",
+        "outcome": null
+      }
     },
     {
       "slug": "borough-market-wall",
@@ -29,11 +36,11 @@
       "stack": null,
       "client": "for Borough Market",
       "accent": "#F7A80D",
-      "cover": "/murals/borough-1.jpg",
+      "cover": "/media/murals/borough-1.jpg",
       "images": [
-        "/murals/borough-1.jpg",
-        "/murals/borough-2.jpg",
-        "/murals/borough-3.jpg"
+        "/media/murals/borough-1.jpg",
+        "/media/murals/borough-2.jpg",
+        "/media/murals/borough-3.jpg"
       ]
     },
     {
@@ -47,11 +54,11 @@
       "stack": null,
       "client": "for Northside Café",
       "accent": "#4848ED",
-      "cover": "/murals/camden-1.jpg",
+      "cover": "/media/murals/camden-1.jpg",
       "images": [
-        "/murals/camden-1.jpg",
-        "/murals/camden-2.jpg",
-        "/murals/camden-3.jpg"
+        "/media/murals/camden-1.jpg",
+        "/media/murals/camden-2.jpg",
+        "/media/murals/camden-3.jpg"
       ]
     },
     {
@@ -65,11 +72,11 @@
       "stack": null,
       "client": "for Violet Records",
       "accent": "#FF3829",
-      "cover": "/murals/soho-1.jpg",
+      "cover": "/media/murals/soho-1.jpg",
       "images": [
-        "/murals/soho-1.jpg",
-        "/murals/soho-2.jpg",
-        "/murals/soho-3.jpg"
+        "/media/murals/soho-1.jpg",
+        "/media/murals/soho-2.jpg",
+        "/media/murals/soho-3.jpg"
       ]
     },
     {
@@ -83,11 +90,11 @@
       "stack": null,
       "client": "for Yard Collective",
       "accent": "#008B8E",
-      "cover": "/murals/hackney-1.jpg",
+      "cover": "/media/murals/hackney-1.jpg",
       "images": [
-        "/murals/hackney-1.jpg",
-        "/murals/hackney-2.jpg",
-        "/murals/hackney-3.jpg"
+        "/media/murals/hackney-1.jpg",
+        "/media/murals/hackney-2.jpg",
+        "/media/murals/hackney-3.jpg"
       ]
     },
     {
@@ -101,51 +108,329 @@
       "stack": null,
       "client": "for Arcade Collective",
       "accent": "#D1ADD4",
-      "cover": "/murals/brixton-1.jpg",
+      "cover": "/media/murals/brixton-1.jpg",
       "images": [
-        "/murals/brixton-1.jpg",
-        "/murals/brixton-2.jpg",
-        "/murals/brixton-3.jpg"
+        "/media/murals/brixton-1.jpg",
+        "/media/murals/brixton-2.jpg",
+        "/media/murals/brixton-3.jpg"
       ]
+    },
+    {
+      "slug": "jieshin-tseng",
+      "title": "JIESHIN TSENG",
+      "stream": "found",
+      "year": "2026",
+      "type": "Artist portfolio",
+      "materials": "Paper remnants, found objects, tissue-paper casts, site fragments",
+      "location": "London, UK / Taiwan",
+      "stack": "Next.js",
+      "client": "for Jieshin Tseng 曾潔心",
+      "accent": "#111111",
+      "artwork": [
+        "/media/digital/artwork/jieshin-sculpture-1.jpg",
+        "/media/digital/artwork/jieshin-sculpture-2.jpg",
+        "/media/digital/pitch/jieshin-tseng-detail.webp",
+        "/media/digital/pitch/jieshin-tseng-process.webp",
+        "/media/digital/pitch/jieshin-tseng-about.webp"
+      ],
+      "cover": "/media/digital/artwork/jieshin-sculpture-1.jpg",
+      "images": [
+        "/media/digital/pitch/jieshin-tseng-hero.webp",
+        "/media/digital/pitch/jieshin-tseng-wide.webp",
+        "/media/digital/pitch/jieshin-tseng-board-2.webp",
+        "/media/digital/pitch/jieshin-tseng-detail.webp",
+        "/media/digital/pitch/jieshin-tseng-about.webp",
+        "/media/digital/pitch/jieshin-tseng-process.webp"
+      ],
+      "summary": "A bilingual living archive that turns studio research into a discoverable public practice — so curators, tutors and collaborators can find the work, the process, and a clear path to contact.",
+      "liveUrl": "https://jieshin.vercel.app",
+      "pitch": {
+        "hook": "From private studio notes to a public artist presence that institutions can actually navigate.",
+        "challenge": "Jieshin’s practice spans sculpture, installation, painting and writing between London and Taiwan — but the work lived as scattered folders, Instagram fragments and closed studio notes. For a degree-show year and residency cycle, that made the practice hard to brief, hard to cite, and hard to commission.",
+        "influence": "The website positions 曾潔心 as the hero of the story. Instead of a generic gallery template, we built an indexed archive that makes material research legible: titles, years, process writing and installation images sit in one bilingual system. Email and Instagram stay one tap away, so interest converts into conversation — for tutors, curators, pop-up hosts and future residencies.",
+        "features": [
+          "Split archive: numbered works list + live media stage",
+          "Bilingual artist identity (EN / 中文) from the first viewport",
+          "Project pages with process writing and image sequences",
+          "About as a living studio statement, not a static bio block",
+          "Direct enquiry paths: Email + Instagram CTAs",
+          "Mobile-first index for fast scanning at shows and studio visits",
+          "Image-heavy Next.js delivery tuned for portfolio performance"
+        ],
+        "outcomes": [
+          "20+ works (2020–2026) organised as a navigable archive",
+          "Degree show, Dilston residency and pop-ups documented as chapters",
+          "Clear bilingual brand surface for international discovery",
+          "A durable home for process — not only finished installation shots"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-hero.webp",
+            "label": "01 · Work detail",
+            "caption": "Process writing beside installation imagery — research becomes readable."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-wide.webp",
+            "label": "02 · Archive index",
+            "caption": "Chronological works list with live preview — curators can scan in seconds."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-board-2.webp",
+            "label": "03 · About + contact",
+            "caption": "Artist statement opens the practice; Email / IG close the loop."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-detail.webp",
+            "label": "04 · Material chapter",
+            "caption": "Tissue-paper casting documented as a narrative, not a single hero shot."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-process.webp",
+            "label": "05 · Studio to phone",
+            "caption": "Desktop depth and mobile clarity for visits, critiques and share-outs."
+          },
+          {
+            "src": "/media/digital/pitch/jieshin-tseng-about.webp",
+            "label": "06 · Influence surface",
+            "caption": "A quiet page that still carries location, language and professional contact."
+          }
+        ]
+      },
+      "published": true
     },
     {
       "slug": "freds-cafe",
       "title": "FRED'S CAFE",
       "stream": "found",
       "year": "2025",
-      "type": "Community cafe website",
+      "type": "Coffee shop",
       "materials": null,
       "location": "358 Brockley Road, London SE4 2BY",
       "stack": "Next.js",
       "client": "for Fred's Community Cafe",
       "accent": "#E85A2A",
-      "cover": "/digital/freds-1.jpg",
+      "cover": "/media/digital/pitch/freds-cafe-cover.webp",
       "images": [
-        "/digital/freds-1.jpg",
-        "/digital/freds-2.jpg",
-        "/digital/freds-3.jpg"
+        "/media/digital/pitch/freds-cafe-hero.webp",
+        "/media/digital/pitch/freds-cafe-wide.webp",
+        "/media/digital/pitch/freds-cafe-board-2.webp",
+        "/media/digital/freds-live-1.jpg",
+        "/media/digital/freds-1.jpg"
       ],
       "summary": "Neighbourhood website for Fred's Community Cafe in Crofton Park — Allpress coffee, garden suntrap, events and local gatherings opposite the station.",
-      "liveUrl": "https://aa89976566.github.io/fred-s-cafe/"
+      "liveUrl": "https://aa89976566.github.io/fred-s-cafe/",
+      "published": true,
+      "pitch": {
+        "hook": "A neighbourhood cafe site that makes Allpress coffee, the garden suntrap and local gatherings easy to find.",
+        "challenge": "Fred’s Community Cafe opposite Crofton Park station needed a clear digital front door — hours, menu cues, events and a sense of place without a corporate template.",
+        "influence": "The site holds Brockley Road identity in one place so regulars and newcomers can plan a visit, check the garden, and stay close to community programming.",
+        "features": [
+          "Place-led hero with cafe atmosphere",
+          "Practical visit information for Brockley Road",
+          "Space for events and neighbourhood gatherings",
+          "Mobile-first reading for on-the-go locals"
+        ],
+        "outcomes": [
+          "A durable home for Fred’s online presence",
+          "Clear coordinates: 358 Brockley Road, London SE4 2BY"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/freds-cafe-hero.webp",
+            "label": "01 · Arrival",
+            "caption": "Cafe atmosphere opens the visit."
+          },
+          {
+            "src": "/media/digital/pitch/freds-cafe-wide.webp",
+            "label": "02 · Place",
+            "caption": "Garden and street context for Crofton Park."
+          },
+          {
+            "src": "/media/digital/pitch/freds-cafe-board-2.webp",
+            "label": "03 · Structure",
+            "caption": "Pages that carry menu, events and contact."
+          },
+          {
+            "src": "/media/digital/freds-live-1.jpg",
+            "label": "04 · Live surface",
+            "caption": "Captured from the live neighbourhood site."
+          }
+        ]
+      }
     },
     {
       "slug": "boxing-training",
       "title": "BOXING TRAINING",
       "stream": "found",
       "year": "2025",
-      "type": "Brand website + booking",
+      "type": "Boxing coach",
       "materials": null,
       "location": "166 Benhill Rd, London SE5 7LL",
       "stack": "Next.js",
       "client": "for Kings Health & Fitness",
       "accent": "#E10600",
-      "cover": "/digital/boxing-1.jpg",
+      "cover": "/media/digital/pitch/boxing-training-cover.webp",
       "images": [
-        "/digital/boxing-1.jpg",
-        "/digital/boxing-2.jpg",
-        "/digital/boxing-3.jpg"
+        "/media/digital/pitch/boxing-training-wide.webp",
+        "/media/digital/pitch/boxing-training-board-2.webp",
+        "/media/digital/boxing-1.jpg",
+        "/media/digital/boxing-2.jpg",
+        "/media/digital/boxing-3.jpg"
       ],
-      "summary": "Private boxing training site with timetable, pricing and booking for Kings Health & Fitness in Camberwell."
+      "summary": "Private boxing coaching site with timetable, pricing and booking for Kings Health & Fitness in Camberwell.",
+      "published": true,
+      "pitch": {
+        "hook": "Private boxing coaching made bookable — timetable, pricing and a clear path to train in Camberwell.",
+        "challenge": "Kings Health & Fitness needed a focused surface for private boxing coaching at 166 Benhill Rd, without burying sessions inside a generic gym brochure.",
+        "influence": "The site puts the coach, schedule and booking intent first so prospective clients can decide quickly and get in touch.",
+        "features": [
+          "Coach-led introduction",
+          "Timetable and pricing clarity",
+          "Location pinned to Benhill Road, Camberwell",
+          "Direct enquiry / booking path"
+        ],
+        "outcomes": [
+          "A dedicated digital home for private boxing sessions"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/boxing-training-wide.webp",
+            "label": "01 · Session",
+            "caption": "Training presence before interface chrome."
+          },
+          {
+            "src": "/media/digital/pitch/boxing-training-board-2.webp",
+            "label": "02 · Structure",
+            "caption": "Timetable and offer laid out for scanning."
+          },
+          {
+            "src": "/media/digital/boxing-1.jpg",
+            "label": "03 · Detail",
+            "caption": "Gym floor context from the project set."
+          },
+          {
+            "src": "/media/digital/boxing-2.jpg",
+            "label": "04 · Practice",
+            "caption": "Coaching atmosphere for Camberwell clients."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "ams-com",
+      "title": "AMS.COM",
+      "stream": "found",
+      "year": "2025",
+      "type": "Brand website",
+      "materials": null,
+      "location": null,
+      "stack": "HTML, CSS",
+      "client": "for AMS",
+      "accent": "#B8D170",
+      "cover": "/media/digital/pitch/ams-com-cover.webp",
+      "images": [
+        "/media/digital/pitch/ams-com-hero.webp",
+        "/media/digital/pitch/ams-com-wide.webp",
+        "/media/digital/pitch/ams-com-board-2.webp",
+        "/media/digital/ams-1.jpg"
+      ],
+      "summary": "Live brand site for AMS — featured in the GET FOUND product stage.",
+      "liveUrl": "https://aa89976566.github.io/Ams.com/",
+      "published": true,
+      "pitch": {
+        "hook": "A brand website that makes AMS legible — identity first, then the pages people need.",
+        "challenge": "AMS needed a live brand surface that could carry identity and essential information without feeling like a stock template.",
+        "influence": "The site gives AMS a stable public address — colour, type and structure working as one brand system.",
+        "features": [
+          "Brand-led opening",
+          "Lightweight HTML/CSS delivery",
+          "Clear information hierarchy",
+          "Mobile-ready reading"
+        ],
+        "outcomes": [
+          "Live brand site at aa89976566.github.io/Ams.com"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/ams-com-hero.webp",
+            "label": "01 · Brand",
+            "caption": "Identity opens before secondary chrome."
+          },
+          {
+            "src": "/media/digital/pitch/ams-com-wide.webp",
+            "label": "02 · Spread",
+            "caption": "Wide composition for the brand story."
+          },
+          {
+            "src": "/media/digital/pitch/ams-com-board-2.webp",
+            "label": "03 · System",
+            "caption": "Structured pages under the AMS mark."
+          },
+          {
+            "src": "/media/digital/ams-1.jpg",
+            "label": "04 · Capture",
+            "caption": "From the live AMS.com surface."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "crespidia-coffee",
+      "title": "CRESPIDIA COFFEE",
+      "stream": "found",
+      "year": "2025",
+      "type": "Cafe website",
+      "materials": null,
+      "location": "Crystal Palace, London",
+      "stack": "HTML, CSS",
+      "client": "for Crespidia",
+      "accent": "#C4A484",
+      "cover": "/media/digital/pitch/crespidia-coffee-cover.webp",
+      "images": [
+        "/media/digital/pitch/crespidia-coffee-hero.webp",
+        "/media/digital/pitch/crespidia-coffee-wide.webp",
+        "/media/digital/pitch/crespidia-coffee-board-2.webp",
+        "/media/digital/crespidia-1.jpg"
+      ],
+      "summary": "Cafe website for Crespidia in Crystal Palace.",
+      "liveUrl": "https://aa89976566.github.io/Crespidia-coffee/",
+      "published": true,
+      "pitch": {
+        "hook": "A Crystal Palace cafe website that carries warmth, place and a reason to visit.",
+        "challenge": "Crespidia needed a simple digital home that felt like the cafe — not a generic hospitality theme.",
+        "influence": "The site holds location and atmosphere so locals can find Crespidia and plan a stop in Crystal Palace.",
+        "features": [
+          "Warm visual identity",
+          "Place cues for Crystal Palace",
+          "Lightweight HTML/CSS build",
+          "Mobile-first visit reading"
+        ],
+        "outcomes": [
+          "Live cafe site at aa89976566.github.io/Crespidia-coffee"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/crespidia-coffee-hero.webp",
+            "label": "01 · Arrival",
+            "caption": "Cafe character up front."
+          },
+          {
+            "src": "/media/digital/pitch/crespidia-coffee-wide.webp",
+            "label": "02 · Place",
+            "caption": "Crystal Palace context in the spread."
+          },
+          {
+            "src": "/media/digital/pitch/crespidia-coffee-board-2.webp",
+            "label": "03 · Pages",
+            "caption": "Visit information without clutter."
+          },
+          {
+            "src": "/media/digital/crespidia-1.jpg",
+            "label": "04 · Capture",
+            "caption": "From the live Crespidia surface."
+          }
+        ]
+      }
     },
     {
       "slug": "shop-x-booking",
@@ -158,12 +443,49 @@
       "stack": "Next.js, Stripe",
       "client": "for Shop X",
       "accent": "#FF3829",
-      "cover": "/digital/shopx-1.jpg",
+      "cover": "/media/digital/pitch/shop-x-booking-cover.webp",
       "images": [
-        "/digital/shopx-1.jpg",
-        "/digital/shopx-2.jpg",
-        "/digital/shopx-3.jpg"
-      ]
+        "/media/digital/pitch/shop-x-booking-wide.webp",
+        "/media/digital/pitch/shop-x-booking-board-2.webp",
+        "/media/digital/shopx-1.jpg",
+        "/media/digital/shopx-2.jpg",
+        "/media/digital/shopx-3.jpg"
+      ],
+      "published": true,
+      "summary": "Booking system for Shop X — scheduling and payment flow built in Next.js with Stripe.",
+      "pitch": {
+        "hook": "A booking system that turns availability into confirmed appointments.",
+        "challenge": "Shop X needed a focused booking surface — slots, confirmation and payment — without bolting checkout onto an unrelated storefront theme.",
+        "influence": "The product keeps booking intent primary so customers can reserve and pay without friction.",
+        "features": [
+          "Slot-led booking flow",
+          "Stripe payment integration",
+          "Next.js application shell",
+          "Mobile-ready confirmation path"
+        ],
+        "boards": [
+          {
+            "src": "/media/digital/pitch/shop-x-booking-wide.webp",
+            "label": "01 · Flow",
+            "caption": "Booking surface before secondary chrome."
+          },
+          {
+            "src": "/media/digital/pitch/shop-x-booking-board-2.webp",
+            "label": "02 · System",
+            "caption": "Structure for schedule and payment."
+          },
+          {
+            "src": "/media/digital/shopx-1.jpg",
+            "label": "03 · Detail",
+            "caption": "Interface capture from the project set."
+          },
+          {
+            "src": "/media/digital/shopx-2.jpg",
+            "label": "04 · Confirm",
+            "caption": "Reservation states for Shop X."
+          }
+        ]
+      }
     },
     {
       "slug": "atelier-north",
@@ -176,12 +498,15 @@
       "stack": "Next.js, Sanity",
       "client": "for Atelier North",
       "accent": "#4848ED",
-      "cover": "/digital/atelier-1.jpg",
+      "cover": "/media/digital/pitch/atelier-north-cover.webp",
       "images": [
-        "/digital/atelier-1.jpg",
-        "/digital/atelier-2.jpg",
-        "/digital/atelier-3.jpg"
-      ]
+        "/media/digital/pitch/atelier-north-wide.webp",
+        "/media/digital/pitch/atelier-north-board-2.webp",
+        "/media/digital/atelier-1.jpg",
+        "/media/digital/atelier-2.jpg",
+        "/media/digital/atelier-3.jpg"
+      ],
+      "published": false
     },
     {
       "slug": "green-lane-market",
@@ -194,12 +519,15 @@
       "stack": "Shopify, custom app",
       "client": "for Green Lane Market",
       "accent": "#008B8E",
-      "cover": "/digital/greenlane-1.jpg",
+      "cover": "/media/digital/pitch/green-lane-market-cover.webp",
       "images": [
-        "/digital/greenlane-1.jpg",
-        "/digital/greenlane-2.jpg",
-        "/digital/greenlane-3.jpg"
-      ]
+        "/media/digital/pitch/green-lane-market-wide.webp",
+        "/media/digital/pitch/green-lane-market-board-2.webp",
+        "/media/digital/greenlane-1.jpg",
+        "/media/digital/greenlane-2.jpg",
+        "/media/digital/greenlane-3.jpg"
+      ],
+      "published": false
     },
     {
       "slug": "ledger-house",
@@ -212,12 +540,15 @@
       "stack": "Next.js, Postgres",
       "client": "for Ledger House",
       "accent": "#4848ED",
-      "cover": "/digital/ledger-1.jpg",
+      "cover": "/media/digital/pitch/ledger-house-cover.webp",
       "images": [
-        "/digital/ledger-1.jpg",
-        "/digital/ledger-2.jpg",
-        "/digital/ledger-3.jpg"
-      ]
+        "/media/digital/pitch/ledger-house-wide.webp",
+        "/media/digital/pitch/ledger-house-board-2.webp",
+        "/media/digital/ledger-1.jpg",
+        "/media/digital/ledger-2.jpg",
+        "/media/digital/ledger-3.jpg"
+      ],
+      "published": false
     },
     {
       "slug": "noon-crm",
@@ -230,12 +561,15 @@
       "stack": "Next.js, Postgres",
       "client": "for Noon Studio",
       "accent": "#FF3829",
-      "cover": "/digital/noon-1.jpg",
+      "cover": "/media/digital/pitch/noon-crm-cover.webp",
       "images": [
-        "/digital/noon-1.jpg",
-        "/digital/noon-2.jpg",
-        "/digital/noon-3.jpg"
-      ]
+        "/media/digital/pitch/noon-crm-wide.webp",
+        "/media/digital/pitch/noon-crm-board-2.webp",
+        "/media/digital/noon-1.jpg",
+        "/media/digital/noon-2.jpg",
+        "/media/digital/noon-3.jpg"
+      ],
+      "published": false
     },
     {
       "slug": "kiln-automation",
@@ -248,12 +582,15 @@
       "stack": "Next.js, custom integrations",
       "client": "for Kiln Ceramics",
       "accent": "#F7A80D",
-      "cover": "/digital/kiln-1.jpg",
+      "cover": "/media/digital/pitch/kiln-automation-cover.webp",
       "images": [
-        "/digital/kiln-1.jpg",
-        "/digital/kiln-2.jpg",
-        "/digital/kiln-3.jpg"
-      ]
+        "/media/digital/pitch/kiln-automation-wide.webp",
+        "/media/digital/pitch/kiln-automation-board-2.webp",
+        "/media/digital/kiln-1.jpg",
+        "/media/digital/kiln-2.jpg",
+        "/media/digital/kiln-3.jpg"
+      ],
+      "published": false
     }
   ]
 }

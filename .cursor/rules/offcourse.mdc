@@ -1,0 +1,146 @@
+---
+description: Core creative direction for Off Course.
+alwaysApply: true
+---
+
+# OFF COURSE
+
+You are working for _off__course.
+
+Off Course is an independent creative studio.
+
+We build websites, murals, identities and digital experiences for artists,
+cafes, bookshops, cultural organisations and independent businesses.
+
+We are not a software agency.
+
+We are not a marketing agency.
+
+We are not a startup studio.
+
+We are closer to an independent design magazine.
+
+Everything we create should feel thoughtful, calm and contemporary.
+
+Canonical design system: `docs/design-system.md`  
+Canonical IA: `docs/information-architecture.md`
+
+---
+
+## Philosophy
+
+Good work deserves to be found.
+
+Technology exists to support stories.
+
+Design should never feel generic.
+
+Every project should have its own world.
+
+---
+
+## Two worlds
+
+```
+A project never needs to become both worlds.
+GET LOST can exist independently.
+GET FOUND can exist independently.
+Only bridge them when it creates meaningful value.
+```
+
+### GET LOST — Expression · Ideas become physical
+
+Murals · Illustration · Brand Identity · Installations · Creative Direction · Experimental Visual
+
+Case behaviour: place, scale, texture, paint, process, imperfect crops — never open on device mockups.
+
+### GET FOUND — Discovery · Ideas become accessible
+
+Websites · Systems · Applications · CMS · Automation · AI · Internal Tools
+
+Case behaviour: clarity, structure, access — artwork/story before screens when the work is cultural.
+
+### Bridge is metadata, not navigation
+
+Never a third nav category. Never a Bridge archive page.
+
+---
+
+## Quiet navigation (locked)
+
+Permanent header only:
+
+- Brand → Index
+- About
+- Archive
+- Contact
+- Grid → editorial full-screen menu
+
+Do NOT put GET LOST / GET FOUND in the permanent header.
+
+Worlds are discovered via homepage radio + editorial body.
+Menu may list them as secondary destinations (not chrome).
+
+---
+
+## Design principles
+
+Editorial before interface.
+
+Typography before decoration.
+
+Whitespace before components.
+
+One purpose per viewport.
+
+Journey words (signal, frequency, coordinates, route, arrival, mileage…)
+are sparse metadata — never a game HUD.
+
+---
+
+## Never generate / never restore
+
+- SaaS UI · glassmorphism · neon · crypto · startup landings
+- Large floating pill navigation
+- All-black rounded card walls (ZeroFrame / zf-* patterns)
+- Framer CardStack / 3D carousel portfolio toys as the Found system
+- Walala marquee tile grids as the Lost system
+- Duplicate navigation systems
+- Invented awards, metrics, clients, locations, or outcomes
+
+If a previous experiment (`FoundPillNav`, `FoundWorksIndex`, `zf-*`,
+`ProjectTile`, card-stack stages) appears in git history, do not revive it.
+
+Active system components:
+
+- `SiteHeader` / `SiteMenu`
+- `HomeCanvas` / `HomeEditorial`
+- `LostIndex` / `LostCaseStudy`
+- `FoundIndex` / `FoundCaseStudy`
+- `ArchiveIndex`
+
+---
+
+## Always ask
+
+Why does this project exist?
+
+What emotion should visitors remember?
+
+How can interaction support the story?
+
+Only after answering these questions should implementation begin.
+
+---
+
+## Code philosophy
+
+Keep components modular.
+
+Accessibility first.
+
+Performance is part of the design.
+
+Animations communicate meaning — no bounce / elastic.
+
+Prefer maintainable solutions over impressive solutions.

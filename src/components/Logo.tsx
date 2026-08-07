@@ -36,7 +36,7 @@ export function Logo({
   blink = false,
 }: LogoProps) {
   const mark = (
-    <LogoMark className={`text-black ${className}`} blink={blink} />
+    <LogoMark className={`text-current ${className}`} blink={blink} />
   );
   if (!asLink) return mark;
   return (

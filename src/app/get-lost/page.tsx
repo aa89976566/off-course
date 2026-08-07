@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { StreamPage } from "@/components/StreamPage";
+import { LostIndex } from "@/components/LostIndex";
+import { WORLDS } from "@/lib/content";
+import { getProjectsByStream } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "GET LOST",
-  description: "We left the route on purpose.",
+  description: WORLDS.lost.blurb,
 };
 
 export default function GetLostPage() {
-  return <StreamPage stream="lost" />;
+  const projects = getProjectsByStream("lost");
+  return <LostIndex projects={projects} />;
 }

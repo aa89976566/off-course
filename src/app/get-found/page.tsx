@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { StreamPage } from "@/components/StreamPage";
+import { FoundIndex } from "@/components/FoundIndex";
+import { getProjectsByStream } from "@/lib/projects";
+import { WORLDS } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "GET FOUND",
-  description: "Being found is only the beginning.",
+  description: WORLDS.found.blurb,
 };
 
+/**
+ * GET FOUND index — published projects only, in authoritative data order:
+ * Jieshin → Fred's → Boxing → AMS → Crespidia → Shop X.
+ */
 export default function GetFoundPage() {
-  return <StreamPage stream="found" />;
+  const projects = getProjectsByStream("found");
+  return <FoundIndex projects={projects} />;
 }

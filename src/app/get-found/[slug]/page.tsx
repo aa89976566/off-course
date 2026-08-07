@@ -1,24 +1,43 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ProjectDetail } from "@/components/ProjectDetail";
-import { getProject, getProjectsByStream } from "@/lib/projects";
+import { FoundCaseStudy } from "@/components/FoundCaseStudy";
+import {
+  getAdjacentProjects,
+  getProject,
+  getProjectsByStream,
+} from "@/lib/projects";
 
 type Props = {
   params: { slug: string };
 };
 
 export function generateStaticParams() {
-  return getProjectsByStream("found").map((p) => ({ slug: p.slug }));
+  // Keep unpublished entries routable (data retained) without featuring them.
+  return getProjectsByStream("found", { includeUnpublished: true }).map(
+    (p) => ({ slug: p.slug })
+  );
 }
 
 export function generateMetadata({ params }: Props): Metadata {
   const project = getProject("found", params.slug);
   if (!project) return { title: "GET FOUND" };
-  return { title: project.title };
+  return { title: `${project.title} — GET FOUND` };
 }
 
 export default function GetFoundProjectPage({ params }: Props) {
   const project = getProject("found", params.slug);
   if (!project) notFound();
-  return <ProjectDetail project={project} stream="found" />;
+  // Related strip: published peers only
+  const others = getProjectsByStream("found").filter(
+    (p) => p.slug !== project.slug
+  );
+  const { prev, next } = getAdjacentProjects("found", project.slug);
+  return (
+    <FoundCaseStudy
+      project={project}
+      others={others}
+      prev={prev}
+      next={next}
+    />
+  );
 }
